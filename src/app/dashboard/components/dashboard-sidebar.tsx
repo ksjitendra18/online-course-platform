@@ -1,5 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
@@ -8,7 +9,7 @@ const DashboardSidebar = () => {
   return (
     <div className="w-56 h-full fixed top-[80px] border-r-2 border-slate-200">
       <div className="flex flex-col items-center">
-        {/* <a
+        {/* <Link
           className={cn(
             pathName === "/dashboard"
               ? "text-sky-700 bg-sky-400/20"
@@ -18,8 +19,8 @@ const DashboardSidebar = () => {
           href="/dashboard"
         >
           Dashboard
-        </a> */}
-        <a
+        </Link> */}
+        <Link
           className={cn(
             pathName.includes("courses")
               ? "text-sky-700 bg-sky-400/20"
@@ -29,8 +30,8 @@ const DashboardSidebar = () => {
           href="/dashboard/courses"
         >
           Courses
-        </a>
-        <a
+        </Link>
+        <Link
           className={cn(
             pathName === "/dashboard/analytics"
               ? "text-sky-700 bg-sky-400/20"
@@ -40,7 +41,7 @@ const DashboardSidebar = () => {
           href="/dashboard"
         >
           Analytics
-        </a>
+        </Link>
       </div>
     </div>
   );

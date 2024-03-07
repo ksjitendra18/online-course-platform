@@ -6,9 +6,12 @@ import { redirect } from "next/navigation";
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUserSessionRedis();
 
-  console.log("user", user, !user);
   if (!user) {
     return redirect("/login");
+  }
+
+  if (!user.staff) {
+    return redirect("/");
   }
   return (
     <div>

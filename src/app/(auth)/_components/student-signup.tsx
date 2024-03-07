@@ -12,7 +12,7 @@ const StudentSignup = () => {
     <div className="flex mt-5 items-center justify-center flex-col">
       <h1 className="text-3xl font-bold">Sign up</h1>
       <div className="flex w-full flex-col items-center justify-center">
-        {/* <a
+        {/* <Link
           href="/api/auth/google"
           className="px-6 py-2 w-full max-w-full md:w-3/4 lg:w-1/3 flex items-center justify-center rounded-md mt-5 bg-black text-white hover:scale-95 transition-all ease-in-out duration-75"
         >
@@ -20,7 +20,7 @@ const StudentSignup = () => {
             <FcGoogle className="w-8 h-8" />
           </span>
           Sign up with Google
-        </a>
+        </Link>
 
         <div className="mt-5 mb-3 w-full md:w-3/4 lg:w-1/3 flex items-center justify-center">
           <div className="before-or w-[100%] h-[2px] bg-gray-300 mr-2"></div>

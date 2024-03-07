@@ -58,6 +58,10 @@ const Navbar = ({
                       <Link href="/dashboard">Dashboard</Link>
                     </Li>
                   )}
+
+                  <Li setMobileNavActive={setMobileNavActive}>
+                    <Link href="/my-courses">My Courses</Link>
+                  </Li>
                   <button
                     className="bg-blue-600 px-4 py-2 text-white rounded-md "
                     onClick={handleLogout}

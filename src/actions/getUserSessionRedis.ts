@@ -14,7 +14,7 @@ interface CurrentUser {
 }
 export async function getUserSessionRedis() {
   const authToken = cookies().get("auth-token")?.value;
-  console.log("auth-token", authToken);
+
   if (!authToken) {
     return null;
   }
@@ -23,10 +23,13 @@ export async function getUserSessionRedis() {
 
   try {
     cachedUserInfo = await redis.get(authToken);
+    console.log("cached", cachedUserInfo);
   } catch (error) {}
 
+  console.log("cachedUser", cachedUserInfo);
   if (cachedUserInfo) {
-    return cachedUserInfo as CurrentUser;
+    // return cachedUserInfo as CurrentUser;
+    return JSON.parse(cachedUserInfo) as CurrentUser;
   }
 
   if (!cachedUserInfo) {
@@ -53,10 +56,22 @@ export async function getUserSessionRedis() {
           email: sessionExists.user.email,
           staff: sessionExists.user.organizationMember.length > 0,
         }),
-        {
-          ex: 3600,
-        }
+
+        "EX",
+        3600
       );
+      // await redis.set(
+      //   authToken,
+      //   JSON.stringify({
+      //     userId: sessionExists.user.id,
+      //     name: sessionExists.user.name,
+      //     email: sessionExists.user.email,
+      //     staff: sessionExists.user.organizationMember.length > 0,
+      //   }),
+      //   {
+      //     ex: 3600,
+      //   }
+      // );
     } catch (error) {
     } finally {
       return {

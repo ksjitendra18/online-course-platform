@@ -47,7 +47,3 @@ export const courseModuleToCourse = relations(
     chapter: many(chapter),
   })
 );
-
-// export const moduleToChapter = relations(courseModule, ({ many }) => ({
-//   chapter: many(chapter),
-// }));

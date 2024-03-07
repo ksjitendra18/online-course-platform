@@ -44,3 +44,6 @@ export const purchaseRelations = relations(purchase, ({ many, one }) => ({
     references: [user.id],
   }),
 }));
+
+export type Purchase = typeof purchase.$inferSelect; // return type when queried
+export type NewPurchase = typeof purchase.$inferInsert;

@@ -8,16 +8,16 @@ export async function POST(request: Request) {
   const { courseName, courseSlug, courseDescription, isFree } =
     await request.json();
 
-  const parseData = BasicInfoSchema.safeParse({
+  const parsedData = BasicInfoSchema.safeParse({
     courseName,
     courseSlug,
     courseDescription,
     isFree,
   });
 
-  if (!parseData.success) {
+  if (!parsedData.success) {
     return Response.json(
-      { error: "validation_error", message: parseData.error.format() },
+      { error: "validation_error", message: parsedData.error.format() },
       { status: 400 }
     );
   }
@@ -58,11 +58,11 @@ export async function POST(request: Request) {
     const newCourse = await db
       .insert(course)
       .values({
-        title: parseData.data.courseName,
-        slug: parseData.data.courseSlug,
-        description: parseData.data.courseDescription,
+        title: parsedData.data.courseName,
+        slug: parsedData.data.courseSlug,
+        description: parsedData.data.courseDescription,
         organizationId: userOrgInfo[0].organizationId,
-        isFree: parseData.data.isFree,
+        isFree: parsedData.data.isFree,
       })
       .returning({ id: course.id, slug: course.slug });
 

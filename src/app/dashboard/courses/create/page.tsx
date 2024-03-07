@@ -1,5 +1,6 @@
 import React from "react";
 import BasicInformation from "../../components/basic-info-form";
+import Link from "next/link";
 
 const CreateNewCourse = () => {
   return (
@@ -7,24 +8,24 @@ const CreateNewCourse = () => {
       <h1 className="text-2xl font-bold my-3">Create New Course</h1>
 
       <div className="flex my-5 gap-1 items-center justify-between">
-        <a
+        <Link
           className="flex-1 py-3 rounded-l-md bg-blue-500 text-white w-full flex items-center justify-center"
           href="#"
         >
           Step 1: Basic Information
-        </a>
-        <a
+        </Link>
+        <Link
           className="flex-1 py-3 bg-slate-300 w-full flex items-center justify-center"
           href="#"
         >
           Step 2: Course Modules
-        </a>
-        <a
+        </Link>
+        <Link
           className="flex-1 py-3 rounded-r-md bg-slate-300 w-full flex items-center justify-center"
           href="#"
         >
           Step 3: Other Information
-        </a>
+        </Link>
       </div>
 
       <BasicInformation

@@ -29,12 +29,12 @@ const Courses = async () => {
             placeholder="Search Course"
           />
 
-          <a
+          <Link
             className="bg-blue-600 px-5 py-2 text-white rounded-md"
             href="/dashboard/courses/create"
           >
             Add New Course
-          </a>
+          </Link>
         </div>
       </section>
 

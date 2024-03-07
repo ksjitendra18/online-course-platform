@@ -6,7 +6,7 @@ import { type ZodFormattedError } from "zod";
 
 import slugify from "slugify";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { BasicInfoSchema } from "@/validations/basic-info";
 import { useRouter } from "next/navigation";
 
@@ -103,7 +103,7 @@ const BasicInformation = ({
     }
   };
 
-  function handleNameChange(e: any) {
+  function handleNameChange(e: ChangeEvent<HTMLInputElement>) {
     console.log("change");
     setSlug(slugify(e.target.value, { lower: true }));
   }
@@ -258,19 +258,6 @@ const BasicInformation = ({
                 isLoading ? "bg-blue-500 scale-95" : "bg-blue-600"
               } mt-5 w-full px-10 py-2  border-2 border-solid border-mainbg rounded-md text-white hover:scale-95 duration-100 ease-in `}
             >
-              {/* <Show when={isLoading() && update}>
-                <div className="flex items-center justify-center gap-2">
-                  <Loader2 className={"animate-spin"} />
-                  <p>Updating Course...</p>
-                </div>
-              </Show>
-              <Show when={isLoading() && !update}>
-                <div className="flex items-center justify-center gap-2">
-                  <Loader2 className={"animate-spin"} />
-                  <p>Creating Course...</p>
-                </div>
-              </Show> */}
-
               {isLoading ? (
                 <>
                   <div className="flex items-center justify-center gap-2">

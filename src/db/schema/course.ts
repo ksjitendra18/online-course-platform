@@ -26,6 +26,7 @@ export const course = sqliteTable("course", {
   description: text("description"),
   imageUrl: text("image_url"),
   price: integer("price"),
+  validity: integer("validity").default(0),
   isPublished: integer("is_published", { mode: "boolean" })
     .default(false)
     .notNull(),
