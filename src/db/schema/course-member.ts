@@ -28,7 +28,7 @@ export const courseMember = sqliteTable(
 );
 
 export const courseToUserRelations = relations(courseMember, ({ one }) => ({
-  category: one(user, {
+  user: one(user, {
     fields: [courseMember.userId],
     references: [user.id],
   }),

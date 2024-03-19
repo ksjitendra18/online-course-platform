@@ -2,7 +2,12 @@ import bcrypt from "bcryptjs";
 import slugify from "slugify";
 
 import { eq } from "drizzle-orm";
-import { organization, organizationMember, user } from "@/db/schema";
+import {
+  organization,
+  organizationMember,
+  user,
+  password as dbPassword,
+} from "@/db/schema";
 import { db } from "@/db";
 import { createId } from "@paralleldrive/cuid2";
 import { OrganizationSignupSchema } from "@/validations/organization-signup";
@@ -71,7 +76,10 @@ export async function POST(request: Request) {
         email,
         name: fullName,
         userName,
+      }),
+      db.insert(dbPassword).values({
         password: hashedPassword,
+        userId,
       }),
       db.insert(organizationMember).values({
         organizationId,
@@ -81,7 +89,7 @@ export async function POST(request: Request) {
     ]);
     return Response.json({ success: true }, { status: 201 });
   } catch (error) {
-    console.log(error);
+    console.log("error while organization signup", error);
     return Response.json({ success: false }, { status: 500 });
   }
 }

@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 import { useRouter } from "next/navigation";
+import slugify from "slugify";
 
 const ChapterInformation = ({
   moduleId,
@@ -25,9 +26,11 @@ const ChapterInformation = ({
   isCourseFree,
   update,
   moduleSlug,
+  chapterSlug,
 }: {
   courseSlug?: string;
   isCourseFree?: boolean;
+  chapterSlug?: string;
   courseId: string;
   chapterId?: string;
   moduleId: string;
@@ -39,6 +42,8 @@ const ChapterInformation = ({
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [slug, setSlug] = useState("");
+
   // const [sumbitDisable, setSubmitDisable] = useState(true);
   const [videoUploadError, setVideoUploadError] = useState(false);
   const [isVideoUploading, setIsVideoUploading] = useState(false);
@@ -60,11 +65,13 @@ const ChapterInformation = ({
 
     const chapterName = formData.get("chapterName");
 
+    const chapterSlug = formData.get("chapterSlug");
     const chapterDescription = formData.get("chapterDescription");
 
     try {
       const parseResult = ChapterInfoSchema.safeParse({
         chapterName,
+        chapterSlug,
         chapterDescription,
         moduleId,
         courseId,
@@ -159,6 +166,9 @@ const ChapterInformation = ({
             type="text"
             name="chapterName"
             id="chapterName"
+            onChange={(e) => {
+              setSlug(slugify(e.target.value, { lower: true }));
+            }}
             placeholder="Name of the chapter"
             className={`${
               formErrors?.chapterName || customError
@@ -171,6 +181,35 @@ const ChapterInformation = ({
             <>
               {formErrors.chapterName._errors.map((err) => (
                 <div key={err}>
+                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                    <AlertTriangle />
+                    {err}
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+
+          <label htmlFor="chapterSlug" className=" mt-5 block text-gray-600">
+            Chapter Slug
+          </label>
+          <input
+            type="text"
+            name="chapterSlug"
+            id="chapterSlug"
+            defaultValue={chapterSlug ?? slug}
+            placeholder="Slug of the chapter"
+            className={`${
+              formErrors?.chapterSlug || customError
+                ? "border-red-600"
+                : "border-slate-400"
+            } px-3 w-full  py-2 rounded-md border-2 `}
+          />
+
+          {formErrors?.chapterSlug && (
+            <>
+              {formErrors.chapterSlug._errors.map((err, index) => (
+                <div key={index}>
                   <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
                     <AlertTriangle />
                     {err}

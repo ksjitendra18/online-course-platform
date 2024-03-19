@@ -28,7 +28,7 @@ const Navbar = ({
   };
   return (
     <>
-      <header className="relative text-black bg-white border-b-2 h-[80px]">
+      <header className="relative text-black bg-white  h-[80px]">
         <div className="h-full  mx-auto flex justify-between items-center py-2 px-3 md:px-6">
           <Link
             onClick={() => setMobileNavActive(false)}

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "259a2e5e-a959-440a-86b3-0bfdd694dd10",
+  "id": "f6cdc66c-53ce-4537-8092-a58bc8f7773c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attachment": {
@@ -168,7 +168,7 @@
           "name": "session_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },
@@ -212,6 +212,72 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "oauth_token": {
+      "name": "oauth_token",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "strategy": {
+          "name": "strategy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oauth_token_user_id_user_id_fk": {
+          "name": "oauth_token_user_id_user_id_fk",
+          "tableFrom": "oauth_token",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "organization": {
       "name": "organization",
       "columns": {
@@ -247,6 +313,43 @@
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "password": {
+      "name": "password",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "password_user_id_user_id_fk": {
+          "name": "password_user_id_user_id_fk",
+          "tableFrom": "password",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -363,12 +466,13 @@
           "autoincrement": false,
           "default": false
         },
-        "password": {
-          "name": "password",
-          "type": "text",
+        "is_blocked": {
+          "name": "is_blocked",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -461,6 +565,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "description": {
           "name": "description",
           "type": "text",
@@ -528,6 +639,14 @@
             "module_id"
           ],
           "isUnique": false
+        },
+        "module_id_slug": {
+          "name": "module_id_slug",
+          "columns": [
+            "module_id",
+            "slug"
+          ],
+          "isUnique": true
         }
       },
       "foreignKeys": {
@@ -718,13 +837,6 @@
         }
       },
       "indexes": {
-        "module_module_slug_unique": {
-          "name": "module_module_slug_unique",
-          "columns": [
-            "module_slug"
-          ],
-          "isUnique": true
-        },
         "course_module_slug": {
           "name": "course_module_slug",
           "columns": [
@@ -803,6 +915,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "validity": {
+          "name": "validity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
         },
         "is_published": {
           "name": "is_published",

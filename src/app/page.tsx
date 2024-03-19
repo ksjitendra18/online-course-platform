@@ -15,7 +15,9 @@ export default function Home() {
         </video>
         <div className="h-full w-full z-10 bg-black/50 absolute top-0 left-0 " />
         <div className="absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  text-white z-50">
-          <h2 className="text-6xl font-bold">Learn Valueable skills</h2>
+          <h2 className="text-6xl text-center font-bold">
+            Learn Valueable skills
+          </h2>
           <div className="flex items-center justify-center w-full h-full">
             <Link
               href="/courses"

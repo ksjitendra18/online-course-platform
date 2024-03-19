@@ -7,6 +7,7 @@ import { createId } from "@paralleldrive/cuid2";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import LoginSchema from "@/validations/login";
+import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const {
@@ -35,9 +36,12 @@ export async function POST(request: Request) {
 
     const userExists = await db.query.user.findFirst({
       where: eq(user.email, email),
+      with: {
+        password: true,
+      },
     });
 
-    if (!userExists) {
+    if (!userExists || !userExists.password) {
       return Response.json(
         {
           error: "auth_error",
@@ -49,7 +53,7 @@ export async function POST(request: Request) {
 
     const validPassword = await bcrypt.compare(
       parsedData.data.password,
-      userExists.password
+      userExists.password.password
     );
 
     if (!validPassword) {
@@ -98,26 +102,34 @@ export async function POST(request: Request) {
       loggedIn: true,
     });
 
-    let cookie = `auth-token=${
-      newSession[0].id
-    };Expires=${expiresAt.toUTCString()};Path=/; HttpOnly=${true}; SameSite=Lax`;
+    // let cookie = `auth-token=${
+    //   newSession[0].id
+    // };Expires=${expiresAt.toUTCString()};Path=/; HttpOnly=${true}; SameSite=Lax`;
 
-    if (process.env.NODE_ENV === "production") {
-      cookie = `auth-token=${
-        newSession[0].id
-      };Expires=${expiresAt.toUTCString()};Path=/; HttpOnly=${true}; Secure=${true}; SameSite=Lax`;
-    }
+    // if (process.env.NODE_ENV === "production") {
+    //   cookie = `auth-token=${
+    //     newSession[0].id
+    //   };Expires=${expiresAt.toUTCString()};Path=/; HttpOnly=${true}; Secure=${true}; SameSite=Lax`;
+    // }
 
-    return Response.json(
-      { success: true },
-      {
-        headers: {
-          "Set-Cookie": cookie,
-        },
+    // return Response.json(
+    //   { success: true },
+    //   {
+    //     headers: {
+    //       "Set-Cookie": cookie,
+    //     },
 
-        status: 200,
-      }
-    );
+    //     status: 200,
+    //   }
+    // );
+
+    cookies().set("auth-token", newSession[0].id, {
+      sameSite: "lax",
+      expires: expiresAt,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+    return Response.json({ success: true });
   } catch (error) {
     console.log(`error LOGIN`, error);
     return Response.json({ success: false }, { status: 500 });

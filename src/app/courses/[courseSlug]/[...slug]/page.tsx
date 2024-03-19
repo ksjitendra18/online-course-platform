@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 const ChapterPage = async ({
   params,
 }: {
-  params: { courseSlug: string; chapterId: string };
+  params: { courseSlug: string; slug: string[] };
 }) => {
   const courseData = await db.query.course.findFirst({
     where: eq(course.slug, params.courseSlug),
@@ -28,6 +28,7 @@ const ChapterPage = async ({
     with: {
       courseMember: true,
       courseModule: {
+        where: eq(courseModule.slug, params.slug[0]),
         columns: {
           title: true,
           id: true,
@@ -35,7 +36,7 @@ const ChapterPage = async ({
         orderBy: courseModule.position,
         with: {
           chapter: {
-            where: eq(chapter.slug, params.chapterId),
+            where: eq(chapter.slug, params.slug[1]),
             columns: {
               id: true,
               title: true,
@@ -50,13 +51,14 @@ const ChapterPage = async ({
 
   const userSession = await getUserSessionRedis();
 
-  console.log(
-    "courseData",
-    params.chapterId,
-    courseData?.courseModule[0].chapter
-  );
+  console.log("courseData", params.slug, courseData?.courseModule.length);
 
-  if (!courseData) {
+  if (
+    !courseData ||
+    !courseData.courseModule ||
+    courseData.courseModule.length < 1 ||
+    courseData.courseModule[0].chapter.length < 1
+  ) {
     return redirect("/");
   }
 
@@ -81,7 +83,10 @@ const ChapterPage = async ({
   }
 
   const chapterInfo = await db.query.chapter.findFirst({
-    where: eq(chapter.id, params.chapterId),
+    where: and(
+      eq(chapter.moduleId, courseData.courseModule[0].id),
+      eq(chapter.slug, params.slug[1])
+    ),
     with: {
       courseModule: true,
     },

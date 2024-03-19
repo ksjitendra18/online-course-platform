@@ -1,5 +1,5 @@
 import React from "react";
-import CourseSidebar from "../_components/course-sidebar";
+import CourseSidebar from "../../_components/course-sidebar";
 
 import getUserSession from "@/actions/getUserSession";
 import { getUserSessionRedis } from "@/actions/getUserSessionRedis";
@@ -14,6 +14,12 @@ import {
 } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export type CourseData = {
   id: string;
@@ -28,10 +34,12 @@ export type CourseData = {
   courseModule: {
     id: string;
     title: string;
+    slug: string;
     chapter: {
       id: string;
       title: string;
       isFree: boolean;
+      slug: string;
     }[];
   }[];
 };
@@ -41,7 +49,7 @@ const CourseLayout = async ({
   params,
 }: {
   children: React.ReactNode;
-  params: { courseSlug: string; chapterSlug: string };
+  params: { courseSlug: string; slug: string[] };
 }) => {
   const courseData = await db.query.course.findFirst({
     where: eq(course.slug, params.courseSlug),
@@ -57,7 +65,9 @@ const CourseLayout = async ({
         columns: {
           title: true,
           id: true,
+          slug: true,
         },
+
         orderBy: courseModule.position,
         with: {
           chapter: {
@@ -65,6 +75,7 @@ const CourseLayout = async ({
               id: true,
               title: true,
               isFree: true,
+              slug: true,
             },
             orderBy: chapter.position,
           },
@@ -72,8 +83,6 @@ const CourseLayout = async ({
       },
     },
   });
-
-  console.log("courseData", courseData?.courseModule[0].chapter);
 
   const userSession = await getUserSessionRedis();
 
@@ -102,17 +111,15 @@ const CourseLayout = async ({
   }
 
   return (
-    <div>
-      <main className="flex h-full">
-        <CourseSidebar
-          courseData={courseData}
-          courseSlug={params.courseSlug}
-          isPartOfCourse={isPartOfCourse}
-          purchaseInfo={purchaseInfo}
-          chapterId={params?.chapterSlug}
-        />
-        <div className="pl-64 h-full w-full">{children}</div>
-      </main>
+    <div className="flex lg:flex-row flex-col-reverse">
+      <CourseSidebar
+        courseData={courseData}
+        courseSlug={params.courseSlug}
+        isPartOfCourse={isPartOfCourse}
+        purchaseInfo={purchaseInfo}
+        chapterId={params.slug[1]}
+      />
+      <div className="lg:pl-80 h-full w-full">{children}</div>
     </div>
   );
 };

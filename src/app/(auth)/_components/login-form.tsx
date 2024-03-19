@@ -68,6 +68,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
 
       if (res.status === 200) {
         // window.location.replace("/dashboard");
+        router.refresh();
         router.replace("/dashboard");
       }
     } catch (error) {
@@ -78,7 +79,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
   };
   return (
     <>
-      <div className="flex w-full  items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <form
           onSubmit={handleLogin}
           method="post"

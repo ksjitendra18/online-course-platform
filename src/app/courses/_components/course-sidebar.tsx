@@ -9,12 +9,19 @@ import {
   purchase,
   user,
 } from "@/db/schema";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { LockIcon, PlayCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CourseData } from "../[courseSlug]/layout";
+import { CourseData } from "../[courseSlug]/[chapterId]/layout";
 
 const CourseSidebar = async ({
   courseSlug,
@@ -27,48 +34,53 @@ const CourseSidebar = async ({
   courseData: CourseData;
   purchaseInfo?: Purchase;
   isPartOfCourse: any;
-  chapterId: string;
+  chapterId?: string;
 }) => {
   return (
-    <div className="w-64 h-full fixed top-[80px] border-r-2 border-slate-200">
-      <h1 className="text-center text-xl font-bold mt-5 pb-5 border-b-2 border-slate-300">
+    <div className="lg:w-80 lg:h-full lg:fixed lg:top-[80px] ">
+      <h1 className="text-center text-xl font-bold mt-5 py-5  bg-white mx-3 rounded-md">
         {courseData.title}
       </h1>
 
-      <div className="">
-        {courseData.courseModule.map((module) => (
-          <div key={module.id} className="border-b-2 pb-3">
-            <h3 className="px-3 font-semibold text-center my-2">
-              {module.title}
-            </h3>
-            <div className="flex gap-1 flex-col">
-              {module.chapter.map((chapter) => (
-                <Link
-                  key={chapter.id}
-                  className={cn(
-                    chapter.id === chapterId
-                      ? "text-white bg-blue-500"
-                      : "hover:bg-slate-200 ",
-                    "py-3 px-2 w-full "
-                  )}
-                  href={`/courses/${courseData.slug}/${chapter.id}`}
-                >
-                  <span className="flex items-center gap-2">
-                    {chapter.isFree ||
-                    courseData.isFree ||
-                    purchaseInfo ||
-                    isPartOfCourse ? (
-                      <PlayCircleIcon />
-                    ) : (
-                      <LockIcon />
-                    )}
-                    {chapter.title}
+      <div className="m-3">
+        <Accordion type="single" collapsible>
+          {courseData.courseModule.map((module) => (
+            <div key={module.id} className="pb-3">
+              <AccordionItem value={module.id}>
+                <AccordionTrigger className="bg-white hover:no-underline px-4 py-1 rounded-tl-md rounded-tr-md border-b-2 no-underline">
+                  <span className="px-3 font-semibold  text-center my-2">
+                    {module.title}
                   </span>
-                </Link>
-              ))}
+                </AccordionTrigger>
+
+                <AccordionContent className="px-4 py-1 bg-white">
+                  {module.chapter.map((chapter) => (
+                    <Link
+                      key={chapter.id}
+                      className={cn(
+                        chapter.slug === chapterId ? "" : " ",
+                        " px-1 w-full "
+                      )}
+                      href={`/courses/${courseData.slug}/${module.slug}/${chapter.slug}`}
+                    >
+                      <span className="flex items-center gap-2">
+                        {chapter.isFree ||
+                        courseData.isFree ||
+                        purchaseInfo ||
+                        isPartOfCourse ? (
+                          <PlayCircleIcon />
+                        ) : (
+                          <LockIcon />
+                        )}
+                        {chapter.title}
+                      </span>
+                    </Link>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
             </div>
-          </div>
-        ))}
+          ))}
+        </Accordion>
       </div>
     </div>
   );

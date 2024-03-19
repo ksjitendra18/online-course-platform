@@ -142,7 +142,6 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
             type="text"
             name="userName"
             id="userName"
-            autoComplete="username"
             placeholder="4+ characters"
             required
             className={cn(
@@ -180,8 +179,7 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
             type="email"
             name="email"
             id="email"
-            autoComplete="email"
-            autoSave="email"
+            autoComplete="username"
             required
             className={cn(
               error || validationIssue?.email

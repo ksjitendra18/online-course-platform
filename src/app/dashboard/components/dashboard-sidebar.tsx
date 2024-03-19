@@ -7,7 +7,7 @@ import React from "react";
 const DashboardSidebar = () => {
   const pathName = usePathname();
   return (
-    <div className="w-56 h-full fixed top-[80px] border-r-2 border-slate-200">
+    <div className="lg:w-56 hidden lg:block h-full fixed top-[80px] border-r-2 border-slate-200">
       <div className="flex flex-col items-center">
         {/* <Link
           className={cn(

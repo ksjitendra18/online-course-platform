@@ -17,7 +17,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     <div>
       <main className="flex h-full">
         <DashboardSidebar />
-        <div className="pl-56 h-full w-full">{children}</div>
+        <div className="lg:pl-56 h-full w-full">{children}</div>
       </main>
     </div>
   );

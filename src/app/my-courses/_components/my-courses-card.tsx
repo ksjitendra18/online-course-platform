@@ -28,7 +28,7 @@ const MyCourseCard = ({ courseInfo, purchasedDate, validity }: Props) => {
             </div>
 
             <div>Purchased on : {purchasedDate}</div>
-            {validity && validity > 0 && <div>Purchased on : {validity}</div>}
+            {validity && validity > 0 && <div>Validity on : {validity}</div>}
           </div>
         </div>
       </Link>

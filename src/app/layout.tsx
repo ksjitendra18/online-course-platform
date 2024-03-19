@@ -22,6 +22,7 @@ export default async function RootLayout({
 }>) {
   const userSession = await getUserSessionRedis();
 
+  console.log("mounting", userSession);
   return (
     <html lang="en">
       <body className={inter.className}>

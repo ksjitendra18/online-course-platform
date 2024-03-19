@@ -36,16 +36,53 @@ export const user = sqliteTable("user", {
   emailVerified: integer("email_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
-  password: text("password").notNull(),
+  isBlocked: integer("is_blocked", { mode: "boolean" }).default(false),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at"),
 });
 
-export const usersRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ one, many }) => ({
   session: many(session),
+  password: one(password),
   courseMember: many(courseMember),
   organizationMember: many(organizationMember),
   purchase: many(purchase),
+}));
+
+export const password = sqliteTable("password", {
+  userId: text("user_id")
+    .references(() => user.id, {
+      onDelete: "cascade",
+    })
+    .primaryKey(),
+  password: text("password").notNull(),
+});
+
+export const passwordRelations = relations(password, ({ one }) => ({
+  user: one(user, {
+    fields: [password.userId],
+    references: [user.id],
+  }),
+}));
+
+export const oauthToken = sqliteTable("oauth_token", {
+  id: text("id").$defaultFn(() => createId()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, {
+      onDelete: "cascade",
+    }),
+  strategy: text("strategy", { enum: ["google", "github"] }).notNull(),
+  accessToken: text("access_token").notNull(),
+  refreshToken: text("refresh_token").notNull(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const oauthTokenRelations = relations(oauthToken, ({ one }) => ({
+  user: one(user, {
+    fields: [oauthToken.userId],
+    references: [user.id],
+  }),
 }));
 
 export const session = sqliteTable(
@@ -95,11 +132,9 @@ export const device = sqliteTable(
         onDelete: "cascade",
       }),
     loggedIn: integer("logged_in", { mode: "boolean" }).notNull(),
-    sessionId: text("session_id")
-      .notNull()
-      .references(() => session.id, {
-        onDelete: "set null",
-      }),
+    sessionId: text("session_id").references(() => session.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => {
     return {

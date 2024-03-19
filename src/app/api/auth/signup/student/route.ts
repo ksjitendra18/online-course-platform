@@ -1,9 +1,10 @@
-import bcrypt from "bcryptjs";
-import slugify from "slugify";
 import { db } from "@/db";
-import { eq } from "drizzle-orm";
 import { user } from "@/db/schema";
 import { StudentSignupSchema } from "@/validations/student-signup";
+import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
+import { createId } from "@paralleldrive/cuid2";
+import { password as dbPassword } from "@/db/schema";
 
 export async function POST(request: Request) {
   const {
@@ -25,8 +26,6 @@ export async function POST(request: Request) {
       email,
       password,
     });
-
-    console.log("parsed", parsedData);
 
     if (!parsedData.success) {
       return Response.json({
@@ -52,13 +51,21 @@ export async function POST(request: Request) {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(parsedData.data.password, salt);
+    const userId = createId();
 
-    await db.insert(user).values({
-      name: parsedData.data.fullName,
-      email: parsedData.data.email,
-      password: hashedPassword,
-      userName: parsedData.data.userName,
-    });
+    await db.batch([
+      db.insert(user).values({
+        name: parsedData.data.fullName,
+        email: parsedData.data.email,
+        userName: parsedData.data.userName,
+        id: userId,
+      }),
+
+      db.insert(dbPassword).values({
+        password: hashedPassword,
+        userId,
+      }),
+    ]);
     return Response.json({ success: true }, { status: 201 });
   } catch (error) {
     console.log("Error while student signup", error);

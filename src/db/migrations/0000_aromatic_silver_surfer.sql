@@ -20,15 +20,31 @@ CREATE TABLE `device` (
 	`last_active` integer NOT NULL,
 	`user_id` text NOT NULL,
 	`logged_in` integer NOT NULL,
-	`session_id` text NOT NULL,
+	`session_id` text,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`session_id`) REFERENCES `session`(`id`) ON UPDATE no action ON DELETE set null
+);
+--> statement-breakpoint
+CREATE TABLE `oauth_token` (
+	`id` text,
+	`user_id` text NOT NULL,
+	`strategy` text NOT NULL,
+	`access_token` text NOT NULL,
+	`refresh_token` text NOT NULL,
+	`created_at` text DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `organization` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`slug` text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `password` (
+	`user_id` text PRIMARY KEY NOT NULL,
+	`password` text NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `session` (
@@ -47,7 +63,7 @@ CREATE TABLE `user` (
 	`user_name` text NOT NULL,
 	`email` text NOT NULL,
 	`email_verified` integer DEFAULT false NOT NULL,
-	`password` text NOT NULL,
+	`is_blocked` integer DEFAULT false,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP,
 	`updated_at` text
 );
@@ -61,6 +77,7 @@ CREATE TABLE `category` (
 CREATE TABLE `chapter` (
 	`id` text PRIMARY KEY NOT NULL,
 	`title` text NOT NULL,
+	`slug` text NOT NULL,
 	`description` text,
 	`video_url` text,
 	`position` integer NOT NULL,
@@ -107,6 +124,7 @@ CREATE TABLE `course` (
 	`description` text,
 	`image_url` text,
 	`price` integer,
+	`validity` integer DEFAULT 0,
 	`is_published` integer DEFAULT false NOT NULL,
 	`is_free` integer NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP,
@@ -164,7 +182,7 @@ CREATE UNIQUE INDEX `user_user_name_unique` ON `user` (`user_name`);--> statemen
 CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint
 CREATE UNIQUE INDEX `category_slug_unique` ON `category` (`slug`);--> statement-breakpoint
 CREATE INDEX `chapter_module_id_idx` ON `chapter` (`module_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `module_module_slug_unique` ON `module` (`module_slug`);--> statement-breakpoint
+CREATE UNIQUE INDEX `module_id_slug` ON `chapter` (`module_id`,`slug`);--> statement-breakpoint
 CREATE UNIQUE INDEX `course_module_slug` ON `module` (`course_id`,`module_slug`);--> statement-breakpoint
 CREATE UNIQUE INDEX `course_slug_unique` ON `course` (`slug`);--> statement-breakpoint
 CREATE UNIQUE INDEX `order_user_id_idx` ON `order_data` (`user_id`);--> statement-breakpoint

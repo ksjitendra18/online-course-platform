@@ -9,6 +9,7 @@ export async function POST(request: Request) {
   const {
     moduleId,
     courseId,
+    chapterSlug,
     chapterName,
     chapterDescription,
     videoUrl,
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
     moduleId,
     courseId,
     chapterName,
+    chapterSlug,
     chapterDescription,
     videoUrl,
     isFree,
@@ -89,6 +91,7 @@ export async function POST(request: Request) {
     position: chapterExists.length + 1,
     description: chapterDescription,
     title: chapterName,
+    slug: chapterSlug,
     videoUrl,
     isFree,
   });

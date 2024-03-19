@@ -16,6 +16,7 @@ export const chapter = sqliteTable(
       .$defaultFn(() => createId())
       .primaryKey(),
     title: text("title").notNull(),
+    slug: text("slug").notNull(),
     description: text("description"),
     videoUrl: text("video_url"),
     position: integer("position").notNull(),
@@ -35,6 +36,10 @@ export const chapter = sqliteTable(
   (table) => {
     return {
       moduleIdIdx: index("chapter_module_id_idx").on(table.moduleId),
+      moduleId_Slug: uniqueIndex("module_id_slug").on(
+        table.moduleId,
+        table.slug
+      ),
     };
   }
 );

@@ -11,7 +11,7 @@ import LoginForm from "./login-form";
 const Login = () => {
   const [loading, setLoading] = useState(false);
   return (
-    <div className="flex mt-5 items-center justify-center flex-col">
+    <div className="flex mt-5 px-3 items-center justify-center flex-col">
       <h1 className="text-3xl font-bold">Log in</h1>
       <div className="flex w-full flex-col items-center justify-center">
         <a

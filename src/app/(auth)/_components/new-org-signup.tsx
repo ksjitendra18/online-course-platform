@@ -17,9 +17,20 @@ interface Props {
 }
 
 const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
+  const [userName, setUserName] = useState("");
+  const [orgSlugInfo, setOrgSlugInfo] = useState({
+    isAvailable: false,
+    isChecking: false,
+    hasInteracted: false,
+  });
+  const [userNameInfo, setUserNameInfo] = useState({
+    isAvailable: false,
+    isChecking: false,
+    hasInteracted: false,
+  });
   const [orgName, setOrgName] = useState("");
-  // const [orgSlug, setOrgSlug] = useState("");
-  const [orgSlug, setOrgSlug] = useState(slugify(orgName, { lower: true }));
+  const [orgSlug, setOrgSlug] = useState("");
+  // const [orgSlug, setOrgSlug] = useState(slugify(orgName, { lower: true }));
   const [validationIssue, setValidationIssue] = useState<z.ZodFormattedError<
     z.infer<typeof OrganizationSignupSchema>,
     string
@@ -92,6 +103,60 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
     }
   };
 
+  const handleOrgSlugChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
+    // setOrgSlug(slugify(orgName, { lower: true }));
+
+    setOrgSlug(value);
+
+    console.log("val is", orgSlug);
+
+    if (value.length === 0) {
+      setOrgSlugInfo((prev) => ({
+        ...prev,
+        isChecking: false,
+        hasInteracted: false,
+      }));
+
+      return;
+    }
+
+    checkOrgSlug(value);
+  };
+
+  const checkOrgSlug = useCallback(
+    debounce(async (value) => {
+      setOrgSlugInfo((prev) => ({
+        ...prev,
+        isChecking: true,
+        hasInteracted: true,
+      }));
+
+      console.log("org lsug", orgSlug);
+
+      const res = await fetch("/api/auth/availability/org-slug", {
+        method: "POST",
+        body: JSON.stringify({ slug: orgSlug }),
+      });
+
+      if (res.status === 200) {
+        setOrgSlugInfo((prev) => ({
+          ...prev,
+          isAvailable: true,
+          isChecking: false,
+        }));
+      } else {
+        setOrgSlugInfo((prev) => ({
+          ...prev,
+          isAvailable: false,
+          isChecking: false,
+        }));
+      }
+    }, 500),
+    []
+  );
+
   return (
     <>
       <div className="flex w-full  items-center justify-between">
@@ -117,6 +182,12 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
             id="orgName"
             onChange={(e) => {
               setOrgName(e.target.value);
+
+              console.log("setting.........................");
+              setOrgSlug(slugify(e.target.value, { lower: true }));
+              if (orgSlug.length !== 0) {
+                checkOrgSlug(orgSlug);
+              }
             }}
             required
             className={cn(
@@ -154,7 +225,8 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
             type="text"
             name="orgSlug"
             id="orgSlug"
-            defaultValue={slugify(orgName, { lower: true })}
+            onChange={handleOrgSlugChange}
+            defaultValue={orgSlug}
             required
             className={cn(
               error || validationIssue?.orgSlug
@@ -177,6 +249,26 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
             </div>
           )}
 
+          {orgSlugInfo.isChecking && (
+            <p className="my-5 flex gap-2 items-center bg-fuchsia-700  text-white rounded-md px-3 py-2">
+              <Loader2 className="mr-2 animate-spin" />
+              Checking availability...
+            </p>
+          )}
+          {orgSlugInfo.hasInteracted &&
+            !orgSlugInfo.isChecking &&
+            orgSlugInfo.isAvailable && (
+              <p className="my-5 flex gap-2 items-center bg-green-700  text-white rounded-md px-3 py-2">
+                <Check /> Slug is available
+              </p>
+            )}
+          {orgSlugInfo.hasInteracted &&
+            !orgSlugInfo.isChecking &&
+            !orgSlugInfo.isAvailable && (
+              <p className="my-5 flex gap-2 items-center bg-red-700  text-white rounded-md px-3 py-2">
+                Try another slug
+              </p>
+            )}
           <label
             htmlFor="fullName"
             className={cn(
@@ -252,6 +344,27 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               ))}
             </div>
           )}
+
+          {userNameInfo.isChecking && (
+            <p className="my-5 flex gap-2 items-center bg-fuchsia-700  text-white rounded-md px-3 py-2">
+              <Loader2 className="mr-2 animate-spin" />
+              Checking availability...
+            </p>
+          )}
+          {userNameInfo.hasInteracted &&
+            !userNameInfo.isChecking &&
+            userNameInfo.isAvailable && (
+              <p className="my-5 flex gap-2 items-center bg-green-700  text-white rounded-md px-3 py-2">
+                <Check /> Slug is available
+              </p>
+            )}
+          {userNameInfo.hasInteracted &&
+            !userNameInfo.isChecking &&
+            !userNameInfo.isAvailable && (
+              <p className="my-5 flex gap-2 items-center bg-red-700  text-white rounded-md px-3 py-2">
+                Try another slug
+              </p>
+            )}
 
           <label
             htmlFor="email"

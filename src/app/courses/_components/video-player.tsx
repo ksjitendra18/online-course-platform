@@ -23,7 +23,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId }) => {
         </div>
       ) : (
         <>
-          <div style={{ position: "relative", paddingTop: "56.25%" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "100%",
+              paddingTop: "56.25%",
+            }}
+          >
             <iframe
               src={`https://iframe.mediadelivery.net/embed/185611/${videoId}?autoplay=true&loop=false&muted=false&preload=true`}
               loading="lazy"
@@ -34,7 +41,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId }) => {
                 border: 0,
                 position: "absolute",
                 top: 0,
-                height: "calc(100vh - 90px)",
+                height: "100%",
                 width: "100%",
               }}
               allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"

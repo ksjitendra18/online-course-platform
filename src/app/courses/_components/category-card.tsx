@@ -28,7 +28,7 @@ const iconMap: Record<Category["name"], IconType> = {
   "CS Core": FcMultipleDevices,
   Filming: FcFilmReel,
   Engineering: FcEngineering,
-  Java: FaJava,
+  "Java Programming": FaJava,
   "Web Development": MdWeb,
   Dance: MdEmojiPeople,
 };
