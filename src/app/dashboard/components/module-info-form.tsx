@@ -81,8 +81,8 @@ const ModuleInformation = ({
         }
       }
       if (res.status === 201) {
-        router.refresh();
         router.push(`/dashboard/courses/${courseSlug}/modules`);
+        router.refresh();
       }
     } catch (error) {
       setCustomError(true);

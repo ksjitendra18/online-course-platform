@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Navbar = ({
   currentUser,
@@ -19,6 +19,7 @@ const Navbar = ({
     | null
     | undefined;
 }) => {
+  console.log("mount");
   const [mobileNavActive, setMobileNavActive] = useState(false);
   const router = useRouter();
 
@@ -26,6 +27,8 @@ const Navbar = ({
     await fetch("/api/auth/logout");
     router.refresh();
   };
+
+  // console.log("navbar", currentUser);
   return (
     <>
       <header className="relative text-black bg-white  h-[80px]">
@@ -59,9 +62,11 @@ const Navbar = ({
                     </Li>
                   )}
 
-                  <Li setMobileNavActive={setMobileNavActive}>
-                    <Link href="/my-courses">My Courses</Link>
-                  </Li>
+                  {!currentUser.staff && (
+                    <Li setMobileNavActive={setMobileNavActive}>
+                      <Link href="/my-courses">My Courses</Link>
+                    </Li>
+                  )}
                   <button
                     className="bg-blue-600 px-4 py-2 text-white rounded-md "
                     onClick={handleLogout}

@@ -9,6 +9,7 @@ import { ImSpinner2, ImSpinner8 } from "react-icons/im";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 interface Props {
   loading: boolean;
@@ -67,9 +68,8 @@ const LoginForm = ({ loading, setLoading }: Props) => {
       }
 
       if (res.status === 200) {
-        // window.location.replace("/dashboard");
+        router.push("/");
         router.refresh();
-        router.replace("/dashboard");
       }
     } catch (error) {
       setError("Error while Signup. Please try again later");

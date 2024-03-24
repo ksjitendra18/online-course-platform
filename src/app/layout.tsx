@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   description: "Cloud Native Way of course platform",
 };
 
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -22,13 +25,24 @@ export default async function RootLayout({
 }>) {
   const userSession = await getUserSessionRedis();
 
-  console.log("mounting", userSession);
+  console.log("layout mounting", userSession);
   return (
     <html lang="en">
       <body className={inter.className}>
         <NextTopLoader color="#1d4ed8" />
         <Toaster />
+
         <Navbar currentUser={userSession} />
+        {/* {userSession?.userId ? (
+          <>
+          <Navbar currentUser={userSession} />
+          </>
+        ) : (
+          <>
+            <Navbar currentUser={userSession} />
+          </>
+        )} */}
+        {/* <p>Name:{userSession?.name}</p> */}
         <main>{children}</main>
       </body>
     </html>

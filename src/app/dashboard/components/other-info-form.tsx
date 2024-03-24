@@ -109,7 +109,7 @@ const OtherInformation = ({
     formData.append("image", file!);
 
     try {
-      const imageUpload = await fetch("https://vidserver.jsx18.link/image", {
+      const imageUpload = await fetch("https://apis.courseplatform.xyz/image", {
         method: "POST",
         body: formData,
       });

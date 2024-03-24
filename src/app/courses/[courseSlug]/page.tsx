@@ -121,7 +121,7 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
               ) : (
                 <Link
                   className="bg-blue-500 text-white rounded-md px-7 py-2"
-                  href={`/courses/${courseData.slug}/${courseData.courseModule[0].chapter[0].slug}`}
+                  href={`/courses/${courseData.slug}/${courseData.courseModule[0].slug}/${courseData.courseModule[0].chapter[0].slug}`}
                 >
                   View Course
                 </Link>

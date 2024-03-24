@@ -105,6 +105,7 @@ const ChapterInformation = ({
       }
       if (res.status === 201) {
         router.push(`/dashboard/courses/${courseSlug}/modules/${moduleSlug}`);
+        router.refresh();
       }
     } catch (error) {
       setCustomError(true);
@@ -128,7 +129,7 @@ const ChapterInformation = ({
     formData.append("courseId", courseId!);
 
     try {
-      const vidUpload = await fetch("https://vidserver.jsx18.link/video", {
+      const vidUpload = await fetch("https://apis.courseplatform.xyz/video", {
         // const vidUpload = await fetch("http://localhost:8080/video", {
         method: "POST",
         body: formData,

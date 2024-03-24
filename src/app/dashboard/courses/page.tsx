@@ -1,8 +1,11 @@
 import { getUserSessionRedis } from "@/actions/getUserSessionRedis";
 import { db } from "@/db";
-import { course, courseMember } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { Course, course, courseMember, organization, user } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+
+type CourseData = Pick<Course, "id" | "slug" | "title">;
 
 export const metadata = {
   title: "Manage Course",
@@ -10,13 +13,28 @@ export const metadata = {
 const Courses = async () => {
   const currentUser = await getUserSessionRedis();
 
-  const courses = await db.query.course.findMany({
+  if (!currentUser) {
+    return redirect("/login");
+  }
+
+  const memberCourses = await db.query.courseMember.findMany({
+    where: eq(courseMember.userId, currentUser.userId),
     with: {
-      courseMember: {
-        where: eq(courseMember.userId, currentUser?.userId!),
+      course: {
+        columns: {
+          id: true,
+          title: true,
+          slug: true,
+        },
       },
     },
   });
+
+  const courses: CourseData[] = [];
+  memberCourses.forEach((orgCourse) => courses.push(orgCourse.course));
+
+  console.log(`orgcourses`, courses);
+
   return (
     <>
       <section className="p-6 w-full">
@@ -30,7 +48,7 @@ const Courses = async () => {
           />
 
           <Link
-            className="bg-blue-600 px-5 py-2 text-white rounded-md"
+            className="bg-blue-600 px-5 py-2  text-white rounded-md"
             href="/dashboard/courses/create"
           >
             Add New Course
@@ -39,7 +57,7 @@ const Courses = async () => {
       </section>
 
       <section className="p-6 flex items-center gap-5">
-        {courses.map((course) => (
+        {courses?.map((course) => (
           <div key={course.id} className="border-2 px-5 py-3">
             <h3 className="text-xl font-medium">{course.title}</h3>
             <Link href={`/dashboard/courses/${course.slug}/basic`}>Manage</Link>

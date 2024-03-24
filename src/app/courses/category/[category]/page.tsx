@@ -28,6 +28,7 @@ const CourseCategoryPage = async ({
       },
     },
   });
+
   return (
     <div className="p-6">
       <CategoriesCard currentCategory={params.category} items={categories} />

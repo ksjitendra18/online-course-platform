@@ -91,7 +91,7 @@ export async function POST(request: Request) {
       }),
     ]);
 
-    return Response.json(null, { status: 201 });
+    return Response.json(null, { status: 200 });
   } catch (error) {
     console.log("error while updating other course details", error);
     return Response.json(
