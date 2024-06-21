@@ -1,0 +1,124 @@
+import { Button } from "@/components/ui/button";
+import { db } from "@/db";
+import { course, courseEnrollment, discussion } from "@/db/schema";
+import { formatDate } from "@/lib/utils";
+import { and, eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import React from "react";
+import AddNewReply from "../_components/add-new-reply";
+import UpvoteBtn from "../_components/upvote-btn";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { getCourseInfo } from "@/db/queries/courses";
+
+export const metadata = {
+  title: "Discussion",
+};
+
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
+const DiscussionIdPage = async ({
+  params,
+}: {
+  params: { courseSlug: string; discussionId: string };
+}) => {
+  // const courseData = await db.query.course.findFirst({
+  //   columns: {
+  //     id: true,
+  //   },
+  //   where: eq(course.slug, params.courseSlug),
+  // });
+  const courseData = await getCourseInfo(params.courseSlug);
+
+  const discussionInfo = await db.query.discussion.findFirst({
+    where: eq(discussion.id, params.discussionId),
+    with: {
+      answers: {
+        with: {
+          user: true,
+        },
+      },
+      user: {
+        columns: { name: true },
+      },
+      votes: true,
+    },
+  });
+
+  const userSession = await getUserSessionRedis();
+
+  if (!discussionInfo || !courseData || !userSession) {
+    redirect(`/courses/${params.courseSlug}`);
+  }
+
+  let isInstructor = discussionInfo.courseId === courseData.id;
+
+  let userHasUpvoted = !!discussionInfo?.votes.find(
+    (vote) => vote.userId === userSession?.userId
+  );
+
+  const isEnrolled = await db.query.courseEnrollment.findFirst({
+    where: and(
+      eq(courseEnrollment.courseId, courseData.id),
+      eq(courseEnrollment.userId, userSession.userId)
+    ),
+  });
+
+  if (!isInstructor) {
+    if (!isEnrolled) {
+      return redirect(`/courses/${params.courseSlug}`);
+    }
+  }
+  return (
+    <div className="my-6 px-6">
+      <section>
+        <h2 className="text-3xl font-bold">{discussionInfo.question}</h2>
+        <div className="flex items-center gap-5 mt-1 mb-3">
+          <p>{formatDate(discussionInfo.createdAt!)}</p>
+
+          <span> &#x25CF; By {discussionInfo.user.name}</span>
+          <UpvoteBtn
+            discussionId={discussionInfo.id}
+            userHasVoted={userHasUpvoted}
+            votes={
+              discussionInfo.votes.length > 0
+                ? discussionInfo.votes[0].upvotes
+                : 0
+            }
+          />
+        </div>
+
+        <div className="mb-3 bg-white rounded-md px-3 py-2">
+          {discussionInfo.description}
+        </div>
+      </section>
+
+      <AddNewReply
+        discussionId={discussionInfo.id}
+        numberOfReplies={discussionInfo.answers.length}
+      />
+      {discussionInfo.answers.length > 0 && (
+        <section className="flex flex-col gap-5">
+          {discussionInfo.answers.map((reply) => (
+            <div className="px-3 py-2 rounded-md bg-white" key={reply.id}>
+              <h3>
+                <span className="mr-1 font-semibold">{reply.user.name}</span>
+                {isInstructor && (
+                  <span className="bg-emerald-600 text-sm text-white px-2 rounded-md py-1">
+                    Instructor
+                  </span>
+                )}
+              </h3>
+              <p className="text-gray-600 text-sm  mb-1">
+                {formatDate(reply.createdAt!)}
+              </p>
+              <div className="">{reply.reply}</div>
+            </div>
+          ))}
+        </section>
+      )}
+    </div>
+  );
+};
+
+export default DiscussionIdPage;
