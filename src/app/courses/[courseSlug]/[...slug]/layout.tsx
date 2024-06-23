@@ -37,14 +37,6 @@ export type CourseData = {
       isFree: boolean;
       slug: string;
       type: "quiz" | "video" | "attachment" | "article";
-      progress: {
-        id: string;
-        createdAt: string;
-        courseId: string;
-        chapterId: string;
-        userId: string;
-        isCompleted: boolean;
-      }[];
     }[];
   }[];
 };
@@ -69,6 +61,7 @@ const CourseLayout = async ({
     return redirect("/");
   }
 
+  let completedChapterIds: string[] = [];
   let purchaseInfo: Purchase | undefined;
   let isPartOfCourse;
   let progressCount = -1;
@@ -92,7 +85,11 @@ const CourseLayout = async ({
         eq(courseEnrollment.userId, userSession.userId)
       ),
     });
-    progressCount = await getProgress(userSession.userId, courseData.id);
+    const progressData = await getProgress(userSession.userId, courseData.id);
+    completedChapterIds = progressData.completedChapters.map(
+      (chapter) => chapter.id
+    );
+    progressCount = progressData.progressPercentage ?? 0;
   }
 
   return (
@@ -107,6 +104,7 @@ const CourseLayout = async ({
         userHasEnrolled={!!userHasEnrolled}
         progressCount={progressCount}
         userId={userSession?.userId}
+        completedChapterIds={completedChapterIds}
       />
       <div className="lg:pl-80 h-full w-full">{children}</div>
     </div>

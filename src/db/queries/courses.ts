@@ -83,11 +83,11 @@ export const getCourseData = unstable_cache(
                 slug: true,
                 type: true,
               },
-              with: {
-                progress: {
-                  where: eq(courseProgress.userId, userId ?? ""),
-                },
-              },
+              // with: {
+              //   progress: {
+              //     where: eq(courseProgress.userId, userId ?? ""),
+              //   },
+              // },
               orderBy: chapter.position,
             },
           },

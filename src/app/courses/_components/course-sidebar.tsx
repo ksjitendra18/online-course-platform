@@ -25,6 +25,7 @@ const CourseSidebar = ({
   userHasEnrolled,
   userId,
   progressCount,
+  completedChapterIds,
 }: {
   courseSlug: string;
   courseData: CourseData;
@@ -35,6 +36,7 @@ const CourseSidebar = ({
   userHasEnrolled: boolean;
   progressCount: number;
   userId?: string;
+  completedChapterIds: string[];
 }) => {
   const pathname = usePathname();
   return (
@@ -107,7 +109,7 @@ const CourseSidebar = ({
                         {chapter.title}
                         {userHasEnrolled ? (
                           <>
-                            {chapter.progress.length > 0 ? (
+                            {completedChapterIds.includes(chapter.id) ? (
                               <Check className="fill-green" />
                             ) : null}
                           </>
