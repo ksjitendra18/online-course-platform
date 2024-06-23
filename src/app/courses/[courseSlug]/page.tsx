@@ -77,6 +77,7 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
     }
   );
 
+  let completedChapterIds: string[] = [];
   let purchaseInfo: Purchase | undefined;
   let isPartOfCourse;
   let userHasEnrolled: CourseEnrollment | undefined;
@@ -100,7 +101,11 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
         eq(courseEnrollment.userId, userSession.userId)
       ),
     });
-    progressCount = await getProgress(userSession.userId, courseData.id);
+    const progressData = await getProgress(userSession.userId, courseData.id);
+    completedChapterIds = progressData.completedChapters.map(
+      (chapter) => chapter.chapterId
+    );
+    progressCount = progressData.progressPercentage ?? 0;
   }
 
   const totalDuration = videoDuration.reduce(
@@ -120,6 +125,7 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
           moduleSlug=""
           progressCount={progressCount}
           userHasEnrolled={!!userHasEnrolled}
+          completedChapterIds={completedChapterIds}
         />
       </div>
       <div className="lg:pl-96 my-6 px-6   h-full w-full">

@@ -39,6 +39,7 @@ const CourseSidebar = ({
   completedChapterIds: string[];
 }) => {
   const pathname = usePathname();
+
   return (
     <div className="lg:w-80 lg:h-full lg:fixed lg:top-[80px] ">
       <div className="mt-5 pt-5  bg-white mx-3 rounded-md">
@@ -110,7 +111,13 @@ const CourseSidebar = ({
                         {userHasEnrolled ? (
                           <>
                             {completedChapterIds.includes(chapter.id) ? (
-                              <Check className="fill-green" />
+                              <Check
+                                className={cn(
+                                  chapter.slug === chapterSlug
+                                    ? "text-white"
+                                    : "text-emerald-700 "
+                                )}
+                              />
                             ) : null}
                           </>
                         ) : null}

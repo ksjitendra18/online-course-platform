@@ -87,7 +87,7 @@ const CourseLayout = async ({
     });
     const progressData = await getProgress(userSession.userId, courseData.id);
     completedChapterIds = progressData.completedChapters.map(
-      (chapter) => chapter.id
+      (chapter) => chapter.chapterId
     );
     progressCount = progressData.progressPercentage ?? 0;
   }

@@ -20,7 +20,7 @@ export const getProgress = async (userId: string, courseId: string) => {
         eq(courseProgress.isCompleted, true)
       ),
       columns: {
-        id: true,
+        chapterId: true,
       },
     });
 
