@@ -85,8 +85,8 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
             });
 
             if (res.status === 200) {
-              toast.success("Progress Saved");
               router.refresh();
+              toast.success("Progress Saved");
             }
           }
         });
@@ -103,10 +103,6 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
   }, []);
   return (
     <>
-      {/* <Script
-        strategy="lazyOnload"
-        src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"
-      /> */}
       {isLoading ? (
         <div className="h-full flex items-center justify-center w-full bg-red-800">
           <Loader2 size={30} />

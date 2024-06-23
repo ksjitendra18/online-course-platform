@@ -1,22 +1,42 @@
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { createLoginLog, createSession } from "@/lib/auth";
+import { rateLimit } from "@/lib/ratelimit";
 import LoginSchema from "@/validations/login";
-// import { verify } from "@node-rs/argon2";
+
 import { verify } from "argon2";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
-  const {
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  } = await request.json();
-
   try {
+    const {
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    } = await request.json();
+
+    const userIP = request.headers.get("X-Forwarded-For") ?? "dev";
+
+    const emailRateLimit = rateLimit(`${email}:la`, 100, 86400);
+    const ipRateLimit = rateLimit(`${userIP}:la`, 50, 86400);
+    const ipHourRateLimit = rateLimit(`${userIP}:hla`, 20, 3600);
+
+    const [resp1, resp2, resp3] = await Promise.all([
+      emailRateLimit,
+      ipRateLimit,
+      ipHourRateLimit,
+    ]);
+    if (
+      resp1 instanceof Response ||
+      resp2 instanceof Response ||
+      resp3 instanceof Response
+    ) {
+      return resp1 || resp2 || resp3;
+    }
+
     const parsedData = LoginSchema.safeParse({
       email,
       password,
@@ -46,8 +66,8 @@ export async function POST(request: Request) {
       return Response.json(
         {
           error: {
-            code: "auth_error",
-            message: "Please check email and password",
+            code: "invalid_credentials",
+            message: "Invalid email or password",
           },
         },
         { status: 400 }
@@ -66,24 +86,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // const validPassword = await bcrypt.compare(
-    //   parsedData.data.password,
-    //   userExists.password.password
-    // );
-
-    console.log("okay", userExists.password.password, parsedData.data.password);
-
     const validPassword = await verify(
       userExists.password.password,
       parsedData.data.password
     );
 
     if (!validPassword) {
-      return new Response(
-        JSON.stringify({ message: "Invalid email or password" }),
+      return Response.json(
         {
-          status: 400,
-        }
+          error: {
+            code: "invalid_credentials",
+            message: "Invalid email or password}",
+          },
+        },
+        { status: 400 }
       );
     }
 

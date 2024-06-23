@@ -9,6 +9,7 @@ import { db } from "@/db";
 import { createId } from "@paralleldrive/cuid2";
 import { OrganizationSignupSchema } from "@/validations/organization-signup";
 import { hashPassword, sendVerificationMail } from "@/lib/auth";
+import { rateLimit } from "@/lib/ratelimit";
 
 export async function POST(request: Request) {
   const {
@@ -28,6 +29,24 @@ export async function POST(request: Request) {
   } = await request.json();
 
   try {
+    const userIP = request.headers.get("X-Forwarded-For") ?? "dev";
+
+    const emailRateLimit = rateLimit(`${email}:sa`, 20, 86400);
+    const ipRateLimit = rateLimit(`${userIP}:sa`, 50, 86400);
+    const ipHourRateLimit = rateLimit(`${userIP}:sa`, 20, 3600);
+
+    const [resp1, resp2, resp3] = await Promise.all([
+      emailRateLimit,
+      ipRateLimit,
+      ipHourRateLimit,
+    ]);
+    if (
+      resp1 instanceof Response ||
+      resp2 instanceof Response ||
+      resp3 instanceof Response
+    ) {
+      return resp1 || resp2 || resp3;
+    }
     const parsedData = OrganizationSignupSchema.safeParse({
       orgName,
       orgSlug,

@@ -83,7 +83,7 @@ const ModuleInformation = ({
       const resData = await res.json();
       if (res.status === 400) {
         if (resData.error.code === "validation_error") {
-          setFormErrors(resData.message);
+          setFormErrors(resData.error.message);
         }
       }
 

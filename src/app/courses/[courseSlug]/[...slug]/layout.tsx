@@ -49,6 +49,9 @@ export type CourseData = {
   }[];
 };
 
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
 const CourseLayout = async ({
   children,
   params,

@@ -64,7 +64,7 @@ const ProfileForm = ({ email, name, userName }: Props) => {
       const resData = await res.json();
 
       if (res.status !== 200) {
-        setError(resData.message);
+        setError(resData.error.message);
       }
 
       if (res.status === 200) {

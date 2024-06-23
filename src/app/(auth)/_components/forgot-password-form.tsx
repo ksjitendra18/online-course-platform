@@ -32,7 +32,7 @@ const ForgotPasswordForm = () => {
       if (res.status === 200) {
         setVerificationMsg(resData.data.message);
       } else {
-        setVerificationErr(resData.message);
+        setVerificationErr(resData.error.message);
         return;
       }
     } catch (error) {

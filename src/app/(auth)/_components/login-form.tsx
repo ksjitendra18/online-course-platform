@@ -67,7 +67,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
           setUnverifiedEmail(true);
           return;
         }
-        setError(resData.message);
+        setError(resData.error.message);
       }
 
       if (res.status === 200) {
@@ -75,7 +75,8 @@ const LoginForm = ({ loading, setLoading }: Props) => {
         router.refresh();
       }
     } catch (error) {
-      setError("Error while Signup. Please try again later");
+      console.log("caught error", error);
+      setError("Error while login. Please try again later");
     } finally {
       setLoading(false);
     }

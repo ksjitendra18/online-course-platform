@@ -87,7 +87,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
       const resData = await res.json();
 
       if (res.status !== 200) {
-        setError(resData.message);
+        setError(resData.error.message);
       }
 
       if (res.status === 201) {

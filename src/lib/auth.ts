@@ -260,7 +260,7 @@ const generateVerificationId = customAlphabet(
 
 export const sendVerificationMail = async ({ email }: { email: string }) => {
   const token = generateTokenId();
-  const verificationId = generateVerificationId(32);
+  const verificationId = generateVerificationId(64);
 
   try {
     const lastEmailSentTime: string | null = await redis.get(`${email}:sent`);

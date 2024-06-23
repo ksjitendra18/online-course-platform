@@ -75,7 +75,7 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
         if (resData.error.code === "email_unverified") {
           setUnverifiedEmail(true);
         }
-        setError(resData.message);
+        setError(resData.error.message);
       }
 
       if (res.status === 201) {

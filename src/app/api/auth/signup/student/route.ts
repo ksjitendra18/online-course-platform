@@ -2,10 +2,11 @@ import { db } from "@/db";
 import { user } from "@/db/schema";
 import { StudentSignupSchema } from "@/validations/student-signup";
 
-import { eq } from "drizzle-orm";
-import { createId } from "@paralleldrive/cuid2";
 import { password as dbPassword } from "@/db/schema";
-import { sendVerificationMail, createPassword, hashPassword } from "@/lib/auth";
+import { hashPassword, sendVerificationMail } from "@/lib/auth";
+import { createId } from "@paralleldrive/cuid2";
+import { eq } from "drizzle-orm";
+import { rateLimit } from "@/lib/ratelimit";
 
 export async function POST(request: Request) {
   const {
@@ -19,8 +20,26 @@ export async function POST(request: Request) {
     email: string;
     password: string;
   } = await request.json();
-
   try {
+    const userIP = request.headers.get("X-Forwarded-For") ?? "dev";
+
+    const emailRateLimit = rateLimit(`${email}:sa`, 20, 86400);
+    const ipRateLimit = rateLimit(`${userIP}:sa`, 50, 86400);
+    const ipHourRateLimit = rateLimit(`${userIP}:sa`, 20, 3600);
+
+    const [resp1, resp2, resp3] = await Promise.all([
+      emailRateLimit,
+      ipRateLimit,
+      ipHourRateLimit,
+    ]);
+    if (
+      resp1 instanceof Response ||
+      resp2 instanceof Response ||
+      resp3 instanceof Response
+    ) {
+      return resp1 || resp2 || resp3;
+    }
+
     const parsedData = StudentSignupSchema.safeParse({
       fullName,
       userName,
@@ -81,7 +100,6 @@ export async function POST(request: Request) {
         { status: 201 }
       );
     } else {
-      console.log("error while sending the mail");
       await db.delete(user).where(eq(user.email, email));
       return Response.json(
         {
@@ -90,7 +108,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    // return Response.json({ success: true }, { status: 201 });
   } catch (error) {
     console.log("Error while student signup", error);
     await db.delete(user).where(eq(user.email, email));

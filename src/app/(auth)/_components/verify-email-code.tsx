@@ -40,7 +40,7 @@ const VerifyEmailCode = ({ verificationId }: { verificationId: string }) => {
       const resData = await res.json();
 
       if (res.status !== 200) {
-        setVerificationErr(resData.message);
+        setVerificationErr(resData.error.message);
         return;
       }
 
