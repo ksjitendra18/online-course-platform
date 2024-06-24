@@ -34,6 +34,7 @@ const DiscussionLayout = async ({
 
   let purchaseInfo: Purchase | undefined;
   let isPartOfCourse;
+  let completedChapterIds: string[] = [];
 
   let progressCount = -1;
   let userHasEnrolled: CourseEnrollment | undefined;
@@ -56,10 +57,13 @@ const DiscussionLayout = async ({
         eq(courseEnrollment.userId, userSession.userId)
       ),
     });
-    progressCount = await getProgress(userSession.userId, courseData.id);
-  }
 
-  console.log("mount...");
+    const progressData = await getProgress(userSession.userId, courseData.id);
+    completedChapterIds = progressData.completedChapters.map(
+      (chapter) => chapter.chapterId
+    );
+    progressCount = progressData.progressPercentage ?? 0;
+  }
 
   return (
     <div className="flex lg:flex-row flex-col-reverse">
@@ -72,6 +76,7 @@ const DiscussionLayout = async ({
         moduleSlug=""
         progressCount={progressCount}
         userHasEnrolled={!!userHasEnrolled}
+        completedChapterIds={completedChapterIds}
       />
       <div className="lg:pl-80 h-full w-full">{children}</div>
     </div>

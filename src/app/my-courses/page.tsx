@@ -33,7 +33,7 @@ const MyCourses = async () => {
 
   for (let course of courses) {
     const progress = await getProgress(userSession.userId, course.id);
-    course["progress"] = progress;
+    course["progress"] = progress.progressPercentage ?? 0;
   }
 
   return (
