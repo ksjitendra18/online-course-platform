@@ -1,8 +1,8 @@
-import { getUserSessionRedis } from "@/db/queries/auth";
 import Navbar from "@/components/navbar";
+import ToasterTopLoader from "@/components/toaster-toploader";
+import { getUserSessionRedis } from "@/db/queries/auth";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
@@ -26,21 +26,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NextTopLoader color="#1d4ed8" />
         <Toaster />
-
+        <ToasterTopLoader />
         <Navbar currentUser={userSession} />
-        {/* {userSession?.userId ? (
-          <>
-          <Navbar currentUser={userSession} />
-          </>
-        ) : (
-          <>
-            <Navbar currentUser={userSession} />
-          </>
-        )} */}
-        {/* <p>Name:{userSession?.name}</p> */}
-        <main className="h-full w-full">{children}</main>
+
+        {/* <main className="h-full w-full">{children}</main> */}
+        <main>{children}</main>
       </body>
     </html>
   );

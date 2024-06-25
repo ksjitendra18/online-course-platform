@@ -167,8 +167,8 @@ const ChapterInformation = ({
       );
       const vidUploadRes = await vidUpload.json();
 
-      setVideoId(vidUploadRes.videoId);
-      setVideoDuration(vidUploadRes.duration);
+      setVideoId(vidUploadRes.data.videoId);
+      setVideoDuration(vidUploadRes.data.duration);
 
       toast.success("Video Uploaded. Please wait while we process the video.");
     } catch (error) {
@@ -227,7 +227,7 @@ const ChapterInformation = ({
           "/" +
           originalUrl.join("/") +
           `/chapters/${resData.data.chapterSlug}/edit`;
-        console.log("edit url", editUrl);
+
         router.push(editUrl);
       }
     } catch (error) {

@@ -59,7 +59,7 @@ const NewChapter = async ({
           >
             {courseModuleInfo.courseModule[0].title} &gt;
           </Link>
-          <p className="border-b-2 border-black">New Module</p>
+          <p className="border-b-2 border-black">New Chapter</p>
         </div>
 
         <div className="flex justify-between md:justify-start gap-x-3 items-center">

@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
+/* html,
 body,
 :root {
   @apply h-full w-full;
-}
+} */
 
 @layer base {
   :root {

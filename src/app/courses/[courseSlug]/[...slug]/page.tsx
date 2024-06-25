@@ -141,9 +141,9 @@ const ChapterPage = async ({
   return (
     <section className="h-full">
       <div className="flex items-center justify-start gap-5 px-3">
-        <h2 className="my-5 text-center text-2xl font-bold">
+        {/* <h2 className="my-5 text-center text-2xl font-bold">
           {chapterInfo?.title}
-        </h2>
+        </h2> */}
         {chapterInfo.type === "quiz" && (
           <>
             {userSession?.userId ? (
@@ -168,18 +168,25 @@ const ChapterPage = async ({
         chapterInfo.isFree ||
         purchaseInfo ||
         isPartOfCourse ? (
-          <div className="px-3 fill mx-auto rounded-t-md ">
+          <div className="fill mx-auto rounded-t-md ">
             {chapterInfo.type === "video" && (
-              <div className="flex items-center justify-center mx-auto max-w-[900px]">
-                <VideoPlayerWithProgress
-                  userId={userSession?.userId}
-                  chapterId={chapterInfo.id}
-                  autoPlay
-                  playbackId={chapterInfo.videoData[0].playbackId!}
-                  isEnrolled={!!isEnrolled}
-                  courseId={courseData.id}
-                />
-              </div>
+              // <div className="flex items-center justify-center mx-auto max-w-[900px]">
+              <>
+                <div className="flex items-center justify-center mx-auto ">
+                  <VideoPlayerWithProgress
+                    userId={userSession?.userId}
+                    chapterId={chapterInfo.id}
+                    autoPlay
+                    playbackId={chapterInfo.videoData[0].playbackId!}
+                    isEnrolled={!!isEnrolled}
+                    courseId={courseData.id}
+                  />
+                </div>
+
+                <h2 className="my-5 px-4 text-3xl font-semibold">
+                  {chapterInfo?.title}
+                </h2>
+              </>
             )}
 
             {/* {chapterInfo.type === "quiz" && (

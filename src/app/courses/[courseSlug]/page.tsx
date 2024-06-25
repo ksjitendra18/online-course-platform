@@ -114,21 +114,20 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
   );
 
   return (
-    <main className="flex h-full">
-      <div className="hidden md:flex">
-        <CourseSidebar
-          courseData={courseData}
-          courseSlug={params.courseSlug}
-          isPartOfCourse={isPartOfCourse}
-          purchaseInfo={purchaseInfo}
-          chapterSlug=""
-          moduleSlug=""
-          progressCount={progressCount}
-          userHasEnrolled={!!userHasEnrolled}
-          completedChapterIds={completedChapterIds}
-        />
-      </div>
-      <div className="lg:pl-96 my-6 px-6   h-full w-full">
+    <div className="flex ">
+      <CourseSidebar
+        courseData={courseData}
+        courseSlug={params.courseSlug}
+        isPartOfCourse={isPartOfCourse}
+        purchaseInfo={purchaseInfo}
+        chapterSlug=""
+        moduleSlug=""
+        progressCount={progressCount}
+        userHasEnrolled={!!userHasEnrolled}
+        completedChapterIds={completedChapterIds}
+      />
+
+      <div className="mx-auto mt-5 w-full">
         <div className="bg-[#213147]  rounded-md text-white px-7 py-5">
           <h2 className="text-3xl">{courseData.title}</h2>
           <p className="my-2">{courseData.description}</p>
@@ -195,7 +194,7 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 };
 

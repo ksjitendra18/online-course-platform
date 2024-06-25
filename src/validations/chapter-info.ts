@@ -14,7 +14,8 @@ export const ChapterInfoSchema = z.object({
     .string({ required_error: "Chapter Slug is required" })
     .min(1, { message: "Chapter Slug is required" })
     .max(50, { message: "Chapter Slug should be less than 50 characters" })
-    .regex(/^[a-z]+\w*(?:-[a-zA-Z]+\w*)*$/, {
+    // .regex(/^[a-z]+\w*(?:-[a-zA-Z]+\w*)*$/, {
+    .regex(/^[a-z]+\w*(?:-[a-zA-Z0-9]+\w*)*$/, {
       message:
         "Chapter Slug should contain only alphabets(lowercase), dash and numbers.",
     })

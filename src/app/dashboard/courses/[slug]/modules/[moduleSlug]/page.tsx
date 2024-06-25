@@ -20,21 +20,6 @@ const ModuleSlugPage = async ({
 }: {
   params: { slug: string; moduleSlug: string };
 }) => {
-  // const courseModuleWithChapters = await db.query.courseModule.findFirst({
-  //   where: eq(courseModule.slug, params.moduleSlug),
-  //   with: {
-  //     course: {
-  //       where: eq(course.slug, params.slug),
-  //       columns: {
-  //         id: true,
-  //         title: true,
-  //         slug: true,
-  //       },
-  //     },
-
-  //     chapter: true,
-  //   },
-  // });
   const courseModuleWithChapters = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),
     columns: {

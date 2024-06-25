@@ -24,55 +24,22 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
   courseId,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const handleStartLoad = () => {
-    setIsLoading(true);
-  };
+
   const router = useRouter();
-  const handleOnLoad = () => {
-    setIsLoading(false);
-  };
-
-  // useEffect(() => {
-  //   const player = new (window as any).playerjs.Player(
-  //     document.getElementById("bunny-stream-embed")
-  //   );
-
-  //   player.on("ready", () => {
-  //     player.on("ended", async () => {
-  //       if (isEnrolled) {
-  //         const res = await fetch("/api/progress", {
-  //           method: "POST",
-  //           body: JSON.stringify({
-  //             courseId,
-  //             chapterId,
-  //             isCompleted: true,
-  //           }),
-  //         });
-
-  //         if (res.status === 200) {
-  //           toast.success("Progess Saved");
-  //           router.refresh();
-  //         }
-  //       }
-  //     });
-  //   });
-  // }, []);
 
   useEffect(() => {
-    // Dynamically load the playerjs script
     const script = document.createElement("script");
     script.src =
       "https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js";
     script.async = true;
 
     script.onload = () => {
-      // Once the script is loaded, create the player
       const player = new (window as any).playerjs.Player(
         document.getElementById("bunny-stream-embed")
       );
 
       player.on("ready", () => {
-        setIsLoading(false); // Set loading to false once player is ready
+        setIsLoading(false);
         player.on("ended", async () => {
           if (isEnrolled) {
             const res = await fetch("/api/progress", {
@@ -93,10 +60,8 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
       });
     };
 
-    // Append the script to the document body
     document.body.appendChild(script);
 
-    // Clean up: remove the script when the component unmounts
     return () => {
       document.body.removeChild(script);
     };
@@ -121,9 +86,6 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
               src={`https://iframe.mediadelivery.net/embed/185611/${playbackId}?autoplay=${autoPlay}&loop=false&muted=false&preload=true`}
               loading="lazy"
               id="bunny-stream-embed"
-              onLoadStart={handleStartLoad}
-              onLoadedData={handleStartLoad}
-              onLoad={handleOnLoad}
               style={{
                 border: 0,
                 position: "absolute",

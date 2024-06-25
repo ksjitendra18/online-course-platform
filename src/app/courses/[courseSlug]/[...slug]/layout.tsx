@@ -106,7 +106,7 @@ const CourseLayout = async ({
         userId={userSession?.userId}
         completedChapterIds={completedChapterIds}
       />
-      <div className="lg:pl-80 h-full w-full">{children}</div>
+      <div className="mx-auto mt-3 w-full">{children}</div>
     </div>
   );
 };

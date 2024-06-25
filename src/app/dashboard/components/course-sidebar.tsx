@@ -20,7 +20,8 @@ const CourseSidebar = ({
   const pathName = usePathname();
   return (
     // <div className="lg:w-72 hidden lg:block h-full fixed top-[80px] border-r-2 border-slate-200">
-    <div className="lg:w-72 h-full  top-[80px] border-r-2 border-slate-200">
+    // <div className="lg:w-72 h-full  top-[80px] border-r-2 border-slate-200">
+    <div className="relative w-full max-w-60 min-h-[calc(100vh-5rem)] border-r-2  flex-shrink-0  hidden lg:blocklay">
       <h1 className="mt-5 text-center p-3  border-b-2 pb-2 truncate font-semibold">
         <Link href={`/courses/${slug}`}>{title}</Link>
       </h1>
