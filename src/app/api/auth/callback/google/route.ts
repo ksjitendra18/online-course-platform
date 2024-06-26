@@ -8,6 +8,7 @@ import {
   updateOauthToken,
 } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { encryptCookie } from "@/lib/cookies";
 
 export async function GET(request: NextRequest) {
   const code = new URL(request.url).searchParams?.get("code");
@@ -97,7 +98,9 @@ export async function GET(request: NextRequest) {
       cookies().delete("google_oauth_state");
       cookies().delete("google_code_challenge");
 
-      cookies().set("auth-token", sessionId, {
+      const encryptedSessionId = await encryptCookie(sessionId);
+
+      cookies().set("auth-token", encryptedSessionId, {
         sameSite: "lax",
         expires: expiresAt,
         httpOnly: true,
@@ -110,7 +113,6 @@ export async function GET(request: NextRequest) {
 
       const redirectLocation =
         signupType === "organization" ? "/organization-setup" : "/dashboard";
-      console.log("signup", signupType, redirectLocation);
 
       return new Response(null, {
         status: 302,
@@ -119,7 +121,6 @@ export async function GET(request: NextRequest) {
         },
       });
     } else {
-      console.log("in else");
       if (userExists.oauthToken.length > 0) {
         // oauth strategy exists
         // update token
@@ -155,7 +156,9 @@ export async function GET(request: NextRequest) {
       cookies().delete("google_oauth_state");
       cookies().delete("google_code_challenge");
 
-      cookies().set("auth-token", sessionId, {
+      const encryptedSessionId = await encryptCookie(sessionId);
+
+      cookies().set("auth-token", encryptedSessionId, {
         sameSite: "lax",
         expires: expiresAt,
         httpOnly: true,

@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { createLoginLog, createSession } from "@/lib/auth";
+import { encryptCookie } from "@/lib/cookies";
 import { rateLimit } from "@/lib/ratelimit";
 import LoginSchema from "@/validations/login";
 
@@ -120,7 +121,9 @@ export async function POST(request: Request) {
       ip: userIp,
     });
 
-    cookies().set("auth-token", sessionId, {
+    const encryptedSessionId = await encryptCookie(sessionId);
+
+    cookies().set("auth-token", encryptedSessionId, {
       sameSite: "lax",
       expires: expiresAt,
       httpOnly: true,

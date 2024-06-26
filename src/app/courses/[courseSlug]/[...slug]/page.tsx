@@ -147,7 +147,7 @@ const ChapterPage = async ({
         {chapterInfo.type === "quiz" && (
           <>
             {userSession?.userId ? (
-              <div className="flex items-center gap-5">
+              <div className="flex mt-3 items-center gap-5">
                 {chapterInfo?.quiz[0].response.length > 0 ? (
                   <>
                     <p className="px-4 rounded-md text-white bg-blue-600 py-2">

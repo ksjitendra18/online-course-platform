@@ -102,7 +102,7 @@ const ChapterQuizQuestion = ({
   };
 
   return (
-    <div className="flex  gap-5 flex-col">
+    <div className="flex px-4 my-5 w-full gap-5 flex-col">
       {chapterQuiz.questions.map((question, index) => (
         <div
           key={question.id}
@@ -123,7 +123,7 @@ const ChapterQuizQuestion = ({
                     selected.find((s) => s.answerId === answer.id)
                       ? "bg-blue-600 text-white"
                       : "bg-slate-200",
-                    " rounded-md transition-all duration-100  flex items-center px-3 py-3"
+                    " rounded-md transition-all truncate text duration-100  flex items-center px-3 py-3"
                   )}
                   key={answer.id}
                 >

@@ -46,7 +46,7 @@ const ChapterQuizResponseNew = ({
   const qNo = ["a", "b", "c", "d"];
 
   return (
-    <div className="flex  gap-5 flex-col">
+    <div className="flex px-4 mt-5 gap-5 flex-col">
       {chapterQuizResponse!.questions.map((question, index) => (
         <div
           key={question.id}
@@ -76,11 +76,12 @@ const ChapterQuizResponseNew = ({
                           (r) => r.questionId === question.id
                         )?.answerId &&
                       "bg-[#fdb9b9]",
-                    " rounded-md transition-all duration-100  flex items-center px-3 py-3"
+                    " rounded-md transition-all duration-100  flex items-center px-3 py-3 "
                   )}
                   key={answer.id}
                 >
-                  {qNo[index]}. {answer.answerText}
+                  {qNo[index]}.
+                  <span className="truncate">{answer.answerText}</span>
                   {answer.isCorrect && (
                     <div className="text-sm ml-2  rounded-md px-2 py-1 bg-green-600 text-white">
                       Correct Answer

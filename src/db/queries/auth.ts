@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { session } from "@/db/schema";
+import { decryptCookie } from "@/lib/cookies";
 import redis from "@/lib/redis";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -32,10 +33,13 @@ export async function getUserSessionRedis() {
     return null;
   }
 
+  // EXPERIMENTAL
+  const decryptedAuthToken = await decryptCookie(authToken);
+
   let cachedUserInfo = null;
 
   try {
-    cachedUserInfo = await redis.get(authToken);
+    cachedUserInfo = await redis.get(decryptedAuthToken);
   } catch (error) {}
 
   if (cachedUserInfo) {
@@ -46,7 +50,7 @@ export async function getUserSessionRedis() {
     let sessionExists: SessionExists | undefined = undefined;
     try {
       sessionExists = await db.query.session.findFirst({
-        where: eq(session.id, authToken),
+        where: eq(session.id, decryptedAuthToken),
         columns: { id: true, active: true },
         with: {
           user: {
@@ -68,7 +72,7 @@ export async function getUserSessionRedis() {
 
     try {
       await redis.set(
-        authToken,
+        decryptedAuthToken,
         JSON.stringify({
           userId: sessionExists.user.id,
           name: sessionExists.user.name,
