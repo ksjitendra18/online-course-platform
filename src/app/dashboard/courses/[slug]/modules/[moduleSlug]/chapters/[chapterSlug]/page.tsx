@@ -49,6 +49,8 @@ const ViewChapter = async ({
     return redirect("/dashboard");
   }
 
+  console.log("params", params.chapterSlug, courseExists.id);
+
   const chapterInfo = await db.query.chapter.findFirst({
     where: and(
       eq(chapter.slug, params.chapterSlug),

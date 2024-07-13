@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { session, user } from "@/db/schema";
+import { decryptCookie } from "@/lib/cookies";
 import { ProfileSchema } from "@/validations/profile";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -12,17 +13,19 @@ export async function POST(request: Request) {
   } = await request.json();
 
   try {
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const authToken = cookies().get("auth-token")?.value;
+    if (!authToken) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
         { status: 403 }
       );
     }
 
+    const decryptedAuthToken = await decryptCookie(authToken);
+
     const sessionExists = await db.query.session.findFirst({
       columns: { id: true },
-      where: eq(session.id, token),
+      where: eq(session.id, decryptedAuthToken),
       with: {
         user: {
           columns: { id: true },

@@ -18,6 +18,13 @@ export const metadata = {
 const BasicPage = async ({ params }: { params: { slug: string } }) => {
   const courseInfo = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),
+    columns: {
+      id: true,
+      slug: true,
+      title: true,
+      description: true,
+      isFree: true,
+    },
   });
 
   if (!courseInfo) {
@@ -25,29 +32,6 @@ const BasicPage = async ({ params }: { params: { slug: string } }) => {
   }
   return (
     <section className="px-6 py-3 w-full">
-      {/* <div className="flex my-5 gap-1 items-center justify-between">
-        <Link
-          className={cn(
-            "flex-1 py-3 rounded-l-md bg-blue-500 text-white w-full flex items-center justify-center"
-          )}
-          href={`#`}
-        >
-          Step 1: Basic Information
-        </Link>
-        <Link
-          className="flex-1 py-3 bg-slate-300 w-full flex items-center justify-center"
-          href={`/dashboard/courses/${courseInfo?.slug}/modules`}
-        >
-          Step 2: Course Modules
-        </Link>
-        <Link
-          className="flex-1 py-3 rounded-r-md bg-slate-300 w-full flex items-center justify-center"
-          href={`/dashboard/courses/${courseInfo?.slug}/other`}
-        >
-          Step 3: Other Information
-        </Link>
-      </div> */}
-
       <div className="flex items-center my-5 gap-2">
         <Link className="flex  ease-in items-center gap-3" href="/dashboard">
           <FaHome />
