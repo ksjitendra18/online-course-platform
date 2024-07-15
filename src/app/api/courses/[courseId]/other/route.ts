@@ -6,6 +6,7 @@ import {
   courseModule,
   session,
 } from "@/db/schema";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
 import { OtherInfoSchema } from "@/validations/other-info";
 import { and, eq } from "drizzle-orm";
@@ -48,47 +49,21 @@ export async function PATCH(
       );
     }
 
-    // check authentication
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: params.courseId,
+      userId: userInfo.id,
     });
 
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check authorization
-
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, params.courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
-      with: {
-        course: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }
@@ -114,7 +89,7 @@ export async function PATCH(
         price: parsedData.data.coursePrice,
         isPublished: true,
       })
-      .where(eq(course.id, courseMemberInfo.course.id));
+      .where(eq(course.id, params.courseId));
 
     revalidateTag("get-course-info");
     return Response.json({ success: true });

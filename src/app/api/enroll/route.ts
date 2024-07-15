@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { courseEnrollment, session } from "@/db/schema";
 import { courseProgress } from "@/db/schema/course-progress";
+import { checkAuth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
@@ -10,38 +11,20 @@ export async function POST(request: NextRequest) {
   try {
     const { courseId } = await request.json();
 
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check enrollment status
 
     const userHasEnrolled = await db.query.courseEnrollment.findFirst({
       columns: { id: true },
       where: and(
         eq(courseEnrollment.courseId, courseId),
-        eq(courseEnrollment.userId, sessionExists.user.id)
+        eq(courseEnrollment.userId, userInfo.id)
       ),
     });
 
@@ -58,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
     await db.insert(courseEnrollment).values({
       courseId,
-      userId: sessionExists.user.id,
+      userId: userInfo.id,
     });
 
     revalidateTag("get-enrolled-course");

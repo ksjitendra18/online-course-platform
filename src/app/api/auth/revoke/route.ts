@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { session, user } from "@/db/schema";
+import { checkAuth } from "@/lib/auth";
 import { decryptCookie } from "@/lib/cookies";
 import { ProfileSchema } from "@/validations/profile";
 import { eq } from "drizzle-orm";
@@ -13,33 +14,13 @@ export async function POST(request: Request) {
   } = await request.json();
 
   try {
-    const authToken = cookies().get("auth-token")?.value;
-    if (!authToken) {
+    const { isAuth, userInfo } = await checkAuth();
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
-
-    const decryptedAuthToken = await decryptCookie(authToken);
-
-    const sessionExists = await db.query.session.findFirst({
-      columns: { id: true },
-      where: eq(session.id, decryptedAuthToken),
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
     await db.delete(session).where(eq(session.id, id));
 
     return Response.json({ success: true });

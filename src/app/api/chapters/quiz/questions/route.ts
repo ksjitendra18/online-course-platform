@@ -1,69 +1,66 @@
 import { db } from "@/db";
 import { chapter, courseMember, quiz, session } from "@/db/schema";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 
 import { and, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
+import { z } from "zod";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
+
+const GetQuestionsSchema = z.object({
+  courseId: z
+    .string({ required_error: "Course ID is required" })
+    .cuid2({ message: "Not a valid Course ID" }),
+  moduleId: z
+    .string({ required_error: "Module ID is required" })
+    .cuid2({ message: "Not a valid Module ID" }),
+  chapterSlug: z
+    .string({ required_error: "Chapter Slug is required" })
+    .regex(/^[a-zA-Z0-9-_]+$/, { message: "Invalid Chapter Slug" }),
+});
 
 export async function GET(request: NextRequest) {
   try {
     const params = request.nextUrl.searchParams;
 
-    const courseId = params.get("courseId");
-    const moduleId = params.get("moduleId");
-    const chapterSlug = params.get("chapterSlug");
+    const parsedData = GetQuestionsSchema.safeParse({
+      courseId: params.get("courseId"),
+      moduleId: params.get("moduleId"),
+      chapterSlug: params.get("chapterSlug"),
+    });
 
-    // check if user is valid
-    const token = cookies().get("auth-token")?.value;
-    if (!token || !courseId || !moduleId || !chapterSlug) {
+    if (!parsedData.success) {
       return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-          with: {
-            organizationMember: {
-              columns: { id: true },
-            },
+        {
+          error: {
+            code: "validation_error",
+            message: parsedData.error.format(),
           },
         },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 400 }
       );
     }
 
-    // const userOrgInfo = sessionExists.user.organizationMember.filter(
-    //   (org) => org.role === "owner"
-    // );
+    const { courseId, moduleId, chapterSlug } = parsedData.data;
 
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
-      with: {
-        course: {
-          columns: { id: true },
-        },
-      },
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
+      return Response.json(
+        { error: { code: "unauthenticated", message: "Login" } },
+        { status: 401 }
+      );
+    }
+
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId,
+      userId: userInfo.id,
     });
 
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }
