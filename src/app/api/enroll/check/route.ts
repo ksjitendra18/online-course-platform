@@ -1,7 +1,7 @@
 import { db } from "@/db";
-import { courseEnrollment, session } from "@/db/schema";
+import { courseEnrollment } from "@/db/schema";
+import { checkAuth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -22,38 +22,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check enrollment status
 
     const userHasEnrolled = await db.query.courseEnrollment.findFirst({
       where: and(
         eq(courseEnrollment.courseId, courseId),
-        eq(courseEnrollment.userId, sessionExists.user.id)
+        eq(courseEnrollment.userId, userInfo.id)
       ),
     });
 

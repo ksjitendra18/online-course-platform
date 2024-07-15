@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { course, session } from "@/db/schema";
 import { discussion } from "@/db/schema/discussion";
+import { checkAuth } from "@/lib/auth";
 import DiscussionSchema from "@/validations/discussion";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -26,28 +27,12 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
@@ -72,7 +57,7 @@ export async function POST(request: Request) {
       courseId: parsedData.data.courseId,
       question: parsedData.data.question,
       description: parsedData.data.description,
-      userId: sessionExists.user.id,
+      userId: userInfo.id,
     });
     return Response.json({ success: true }, { status: 201 });
   } catch (error) {

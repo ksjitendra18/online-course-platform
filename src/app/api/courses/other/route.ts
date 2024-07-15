@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { course, courseCategory, courseMember, session } from "@/db/schema";
 import { cookies } from "next/headers";
 import { OtherInfoSchema } from "@/validations/other-info";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -15,53 +16,6 @@ export async function POST(request: Request) {
       courseValidity,
       courseImg,
     } = await request.json();
-
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.userId, sessionExists.user.id),
-        eq(courseMember.courseId, courseId)
-      ),
-      with: {
-        course: {
-          columns: {
-            id: true,
-          },
-        },
-      },
-    });
-
-    if (!courseMemberInfo) {
-      return Response.json(
-        { error: { code: "unauthorized", message: "Forbidden" } },
-        { status: 403 }
-      );
-    }
 
     const parsedResult = OtherInfoSchema.safeParse({
       teacherName,
@@ -80,6 +34,27 @@ export async function POST(request: Request) {
           },
         },
         { status: 400 }
+      );
+    }
+
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
+      return Response.json(
+        { error: { code: "unauthenticated", message: "Login" } },
+        { status: 401 }
+      );
+    }
+
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: courseId,
+      userId: userInfo.id,
+    });
+
+    if (!isAuthorized) {
+      return Response.json(
+        { error: { code: "unauthorized", message: "Forbidden" } },
+        { status: 403 }
       );
     }
 

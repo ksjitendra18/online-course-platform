@@ -3,6 +3,7 @@ import { course, courseMember, session } from "@/db/schema";
 import { BasicInfoSchema } from "@/validations/basic-info";
 import { cookies } from "next/headers";
 import { db } from "@/db";
+import { decryptCookie } from "@/lib/cookies";
 
 export async function POST(request: Request) {
   try {
@@ -39,8 +40,9 @@ export async function POST(request: Request) {
       );
     }
 
+    const decryptedToken = await decryptCookie(token);
     const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
+      where: eq(session.id, decryptedToken),
       columns: { id: true },
       with: {
         user: {
@@ -55,7 +57,7 @@ export async function POST(request: Request) {
     if (!sessionExists) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 

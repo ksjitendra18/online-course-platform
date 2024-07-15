@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { course, session } from "@/db/schema";
+import { checkAuth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import Razorpay from "razorpay";
@@ -26,28 +27,12 @@ export async function POST(request: Request) {
   }
 
   try {
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
         { status: 401 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
       );
     }
 
@@ -78,7 +63,7 @@ export async function POST(request: Request) {
       payment_capture,
       notes: {
         courseId: courseId,
-        userId: sessionExists.user.id,
+        userId: userInfo.id,
       },
     };
     const response = await razorpay.orders.create(options);

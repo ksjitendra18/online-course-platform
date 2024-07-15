@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { session, user } from "@/db/schema";
+import { checkAuth } from "@/lib/auth";
 import { ProfileSchema } from "@/validations/profile";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -28,28 +29,12 @@ export async function POST(request: Request) {
       });
     }
 
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
@@ -77,7 +62,7 @@ export async function POST(request: Request) {
         name: parsedData.data.fullName,
         userName: parsedData.data.userName,
       })
-      .where(eq(user.id, sessionExists.user.id));
+      .where(eq(user.id, userInfo.id));
 
     return Response.json({ success: true });
   } catch (error) {

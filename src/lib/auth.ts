@@ -11,6 +11,7 @@ import { hash } from "@node-rs/argon2";
 import redis from "./redis";
 
 import {
+  courseMember,
   device,
   loginLog,
   oauthToken,
@@ -19,6 +20,8 @@ import {
   user,
 } from "@/db/schema";
 import { createId } from "@paralleldrive/cuid2";
+import { cookies } from "next/headers";
+import { decryptCookie } from "./cookies";
 // import getPlanData from "@/db/queries/plans/get-plan-data";
 
 type NewUserArgs = {
@@ -455,5 +458,59 @@ export const sendPasswordResetMail = async ({
   } catch (error) {
     console.log("error while sending mail", error);
     throw new Error("Error while sending mail");
+  }
+};
+
+export const checkAuth = async () => {
+  try {
+    const token = cookies().get("auth-token")?.value;
+
+    if (!token) {
+      return { isAuth: false, userInfo: null };
+    }
+
+    const decryptedToken = await decryptCookie(token);
+
+    const sessionExists = await db.query.session.findFirst({
+      columns: { id: true, active: true },
+      where: eq(session.id, decryptedToken),
+      with: {
+        user: {
+          columns: { id: true, name: true, email: true },
+        },
+      },
+    });
+
+    if (!sessionExists) {
+      return { isAuth: false, userInfo: null };
+    }
+
+    return { isAuth: true, userInfo: sessionExists.user };
+  } catch (error) {
+    throw new Error("Error while checking auth");
+  }
+};
+
+export const checkAuthorizationOfCourse = async ({
+  courseId,
+  userId,
+}: {
+  courseId: string;
+  userId: string;
+}) => {
+  try {
+    const courseMemberInfo = await db.query.courseMember.findFirst({
+      where: and(
+        eq(courseMember.courseId, courseId),
+        eq(courseMember.userId, userId)
+      ),
+    });
+
+    if (!courseMemberInfo) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    throw new Error("Error while checking authorization");
   }
 };

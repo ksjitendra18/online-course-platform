@@ -4,6 +4,7 @@ import { createId } from "@paralleldrive/cuid2";
 
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { checkAuth } from "@/lib/auth";
 
 export async function POST(request: Request) {
   const {
@@ -19,50 +20,35 @@ export async function POST(request: Request) {
   } = await request.json();
 
   try {
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
         { status: 401 }
       );
     }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
     await db.insert(purchase).values({
       courseId: courseId,
       coursePrice,
-      userId: sessionExists.user.id,
+      userId: userInfo.id,
       razorpayOrderId,
       razorpayPaymentId,
     });
 
     await db.insert(courseEnrollment).values({
       courseId,
-      userId: sessionExists.user.id,
+      userId: userInfo.id,
     });
 
     return Response.json({ success: true }, { status: 201 });
   } catch (error) {
     console.log("error while checkout", error);
-    return Response.json({
-      error: { code: "server_error", message: "Server Error" },
-    });
+    return Response.json(
+      {
+        error: { code: "server_error", message: "Server Error" },
+      },
+      { status: 500 }
+    );
   }
 }

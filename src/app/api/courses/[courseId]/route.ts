@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { chapter, course, courseMember, session } from "@/db/schema";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { BasicInfoSchema } from "@/validations/basic-info";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
@@ -34,46 +35,29 @@ export async function PATCH(
       );
     }
 
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: params.courseId,
+      userId: userInfo.id,
+    });
+
+    const courseInfo = await db.query.course.findFirst({
+      where: eq(course.id, params.courseId),
+      columns: {
+        id: true,
+        isFree: true,
       },
     });
 
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check authorization
-
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, params.courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
-      with: {
-        course: {
-          columns: { id: true, isFree: true },
-        },
-      },
-    });
-
-    if (!courseMemberInfo) {
+    if (!isAuthorized || !courseInfo) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }
@@ -82,22 +66,22 @@ export async function PATCH(
 
     // if course is already free
     // make every chapter paid
-    if (courseMemberInfo.course.isFree && !parsedData.data.isFree) {
+    if (courseInfo.isFree && !parsedData.data.isFree) {
       await db
         .update(chapter)
         .set({
           isFree: false,
         })
-        .where(eq(chapter.courseId, courseMemberInfo.course.id));
+        .where(eq(chapter.courseId, courseInfo.id));
     }
 
-    if (!courseMemberInfo.course.isFree && parsedData.data.isFree) {
+    if (!courseInfo.isFree && parsedData.data.isFree) {
       await db
         .update(chapter)
         .set({
           isFree: true,
         })
-        .where(eq(chapter.courseId, courseMemberInfo.course.id));
+        .where(eq(chapter.courseId, courseInfo.id));
     }
 
     await db
@@ -109,16 +93,19 @@ export async function PATCH(
         isFree: parsedData.data.isFree,
         level: parsedData.data.level,
       })
-      .where(eq(course.id, courseMemberInfo.course.id));
+      .where(eq(course.id, courseInfo.id));
 
     revalidatePath("/dashboard/courses");
     revalidatePath("/courses");
     return Response.json({ success: true });
   } catch (error) {
     console.log("Error while updating course", error);
-    return Response.json({
-      error: { code: "server_error", message: "Internal server Error" },
-    });
+    return Response.json(
+      {
+        error: { code: "server_error", message: "Internal server Error" },
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -127,53 +114,26 @@ export async function DELETE(
   { params }: { params: { courseId: string } }
 ) {
   try {
-    // check authentication
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: params.courseId,
+      userId: userInfo.id,
     });
 
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check authorization
-
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, params.courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
-      with: {
-        course: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }
       );
     }
-
     //! FIX ME: DELETE VIDEOS
     await db.delete(course).where(eq(course.id, params.courseId));
     return Response.json({ success: true });

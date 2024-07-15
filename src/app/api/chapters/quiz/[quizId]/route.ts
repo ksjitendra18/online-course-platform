@@ -7,6 +7,7 @@ import {
   quizQuestion,
   session,
 } from "@/db/schema";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
@@ -16,52 +17,21 @@ export async function DELETE(
   { params }: { params: { courseId: string; quizId: string } }
 ) {
   try {
-    // check authentication
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-          with: {
-            organizationMember: {
-              columns: { id: true },
-            },
-          },
-        },
-      },
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: params.courseId,
+      userId: userInfo.id,
     });
 
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check authorization
-
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, params.courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
-      with: {
-        course: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }
@@ -71,7 +41,7 @@ export async function DELETE(
     const quizExists = await db.query.quiz.findFirst({
       where: and(
         eq(quiz.id, params.quizId),
-        eq(quiz.courseId, courseMemberInfo.course.id)
+        eq(quiz.courseId, params.courseId)
       ),
       columns: { id: true },
     });

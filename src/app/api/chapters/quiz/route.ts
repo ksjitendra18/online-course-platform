@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { chapter, courseMember, session, videoData } from "@/db/schema";
 import { quiz, quizAnswer, quizQuestion } from "@/db/schema/quiz";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 import { QuizSchema } from "@/validations/quiz-question";
 
@@ -32,49 +33,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // check if user is valid
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
-    const sessionExists = await db.query.session.findFirst({
-      columns: { id: true, active: true },
-      where: eq(session.id, token),
-      with: {
-        user: {
-          columns: { id: true, name: true, email: true },
-        },
-      },
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId,
+      userId: userInfo.id,
     });
 
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // const userOrgInfo = sessionExists.user.organizationMember.filter(
-    //   (org) => org.role === "owner"
-    // );
-
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
-      with: {
-        course: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }

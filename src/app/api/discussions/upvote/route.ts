@@ -1,35 +1,19 @@
 import { db } from "@/db";
-import { discussion, discussionVote, session } from "@/db/schema";
+import { discussion, discussionVote } from "@/db/schema";
+import { checkAuth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { discussionId } = await request.json();
 
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
+        { status: 401 }
       );
     }
 
@@ -58,7 +42,7 @@ export async function POST(request: NextRequest) {
     const userExistingVotes = await db.query.discussionVote.findFirst({
       where: and(
         eq(discussionVote.discussionId, discussionId),
-        eq(discussionVote.userId, sessionExists.user.id)
+        eq(discussionVote.userId, userInfo.id)
       ),
     });
 
@@ -69,14 +53,14 @@ export async function POST(request: NextRequest) {
     if (existingVotes) {
       await db.insert(discussionVote).values({
         discussionId,
-        userId: sessionExists.user.id,
+        userId: userInfo.id,
         upvotes: existingVotes.upvotes + 1,
       });
       return Response.json({ success: true }, { status: 201 });
     } else {
       await db.insert(discussionVote).values({
         discussionId,
-        userId: sessionExists.user.id,
+        userId: userInfo.id,
         upvotes: 1,
       });
       return Response.json({ success: true }, { status: 201 });

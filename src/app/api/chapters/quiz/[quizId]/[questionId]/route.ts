@@ -8,6 +8,7 @@ import {
   quizQuestion,
   session,
 } from "@/db/schema";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { QuizEditSchema } from "@/validations/quiz-question";
 import { and, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -38,34 +39,6 @@ export async function PATCH(
       );
     }
 
-    // check authentication
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check authorization
-
     const quizExists = await db.query.quiz.findFirst({
       where: eq(quiz.id, params.quizId),
       columns: { id: true, courseId: true },
@@ -83,14 +56,21 @@ export async function PATCH(
       );
     }
 
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, quizExists.courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
+      return Response.json(
+        { error: { code: "unauthenticated", message: "Login" } },
+        { status: 401 }
+      );
+    }
+
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: quizExists.courseId,
+      userId: userInfo.id,
     });
 
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }
@@ -145,34 +125,6 @@ export async function DELETE(
   { params }: { params: { quizId: string; questionId: string } }
 ) {
   try {
-    // check authentication
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    const sessionExists = await db.query.session.findFirst({
-      where: eq(session.id, token),
-      columns: { id: true },
-      with: {
-        user: {
-          columns: { id: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
-
-    // check authorization
-
     const quizExists = await db.query.quiz.findFirst({
       where: eq(quiz.id, params.quizId),
       columns: { id: true, courseId: true },
@@ -190,14 +142,21 @@ export async function DELETE(
       );
     }
 
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, quizExists.courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
+    const { isAuth, userInfo } = await checkAuth();
+
+    if (!isAuth || !userInfo) {
+      return Response.json(
+        { error: { code: "unauthenticated", message: "Login" } },
+        { status: 401 }
+      );
+    }
+
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: quizExists.courseId,
+      userId: userInfo.id,
     });
 
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }

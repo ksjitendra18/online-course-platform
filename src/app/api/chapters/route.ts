@@ -1,9 +1,9 @@
 import { db } from "@/db";
-import { chapter, courseMember, session, videoData } from "@/db/schema";
+import { chapter, courseMember, videoData } from "@/db/schema";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 
 import { and, count, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const {
@@ -42,45 +42,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // check if user is valid
-    const token = cookies().get("auth-token")?.value;
-    if (!token) {
-      return Response.json(
-        { error: { code: "unauthenticated", message: "Login" } },
-        { status: 403 }
-      );
-    }
+    const { isAuth, userInfo } = await checkAuth();
 
-    const sessionExists = await db.query.session.findFirst({
-      columns: { id: true, active: true },
-      where: eq(session.id, token),
-      with: {
-        user: {
-          columns: { id: true, name: true, email: true },
-        },
-      },
-    });
-
-    if (!sessionExists) {
+    if (!isAuth || !userInfo) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
         { status: 401 }
       );
     }
 
-    const courseMemberInfo = await db.query.courseMember.findFirst({
-      where: and(
-        eq(courseMember.courseId, courseId),
-        eq(courseMember.userId, sessionExists.user.id)
-      ),
-      with: {
-        course: {
-          columns: { id: true },
-        },
-      },
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId,
+      userId: userInfo.id,
     });
 
-    if (!courseMemberInfo) {
+    if (!isAuthorized) {
       return Response.json(
         { error: { code: "unauthorized", message: "Forbidden" } },
         { status: 403 }
