@@ -81,3 +81,21 @@ export const courseModuleRelations = relations(
     logs: many(courseModuleLogs),
   })
 );
+
+export const courseModuleLogsRelations = relations(
+  courseModuleLogs,
+  ({ one, many }) => ({
+    module: one(courseModule, {
+      fields: [courseModuleLogs.moduleId],
+      references: [courseModule.id],
+    }),
+    course: one(course, {
+      fields: [courseModuleLogs.courseId],
+      references: [course.id],
+    }),
+    user: one(user, {
+      fields: [courseModuleLogs.userId],
+      references: [user.id],
+    }),
+  })
+);

@@ -8,7 +8,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { category } from "./category";
-import { courseModule } from "./course-modules";
+import { courseModule, courseModuleLogs } from "./course-modules";
 import { courseCategory } from "./course-category";
 import { courseMember } from "./course-member";
 import {
@@ -21,6 +21,7 @@ import {
   quizResponse,
   videoData,
   user,
+  chapterLogs,
 } from ".";
 import { discussion } from "./discussion";
 import { review } from "./review";
@@ -107,6 +108,19 @@ export const courseRelations = relations(course, ({ many, one }) => ({
   quiz: many(quiz),
   quizResponse: many(quizResponse),
   logs: many(courseLogs),
+  moduleLogs: many(courseModuleLogs),
+  chapterLogs: many(chapterLogs),
+}));
+
+export const courseLogsRelations = relations(courseLogs, ({ one, many }) => ({
+  course: one(course, {
+    fields: [courseLogs.courseId],
+    references: [course.id],
+  }),
+  user: one(user, {
+    fields: [courseLogs.userId],
+    references: [user.id],
+  }),
 }));
 
 export type Course = typeof course.$inferSelect;

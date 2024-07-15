@@ -15,6 +15,7 @@ import { attachment } from "./attachment";
 import { course } from "./course";
 import { courseProgress } from "./course-progress";
 import { user } from "./auth";
+import { logs } from "./logs";
 
 export const chapter = sqliteTable(
   "chapter",
@@ -62,6 +63,23 @@ export const chapter = sqliteTable(
   }
 );
 
+export const chapterRelations = relations(chapter, ({ one, many }) => ({
+  courseModule: one(courseModule, {
+    fields: [chapter.moduleId],
+    references: [courseModule.id],
+  }),
+  course: one(course, {
+    fields: [chapter.courseId],
+    references: [course.id],
+  }),
+  videoData: many(videoData),
+  article: many(article),
+  quiz: many(quiz),
+  attachment: many(attachment),
+  progress: many(courseProgress),
+  logs: many(chapterLogs),
+}));
+
 export const chapterLogs = sqliteTable("chapter_logs", {
   id: text("id")
     .$defaultFn(() => createId())
@@ -84,22 +102,20 @@ export const chapterLogs = sqliteTable("chapter_logs", {
     onDelete: "set null",
     onUpdate: "set null",
   }),
-  createdAt: text("created_at"),
+  createdAt: text("created_at").$defaultFn(() => sql`(unixepoch())`),
 });
 
-export const chapterRelations = relations(chapter, ({ one, many }) => ({
-  courseModule: one(courseModule, {
-    fields: [chapter.moduleId],
-    references: [courseModule.id],
+export const chapterLogsRelations = relations(chapterLogs, ({ one, many }) => ({
+  chapter: one(chapter, {
+    fields: [chapterLogs.chapterId],
+    references: [chapter.id],
   }),
   course: one(course, {
-    fields: [chapter.courseId],
+    fields: [chapterLogs.courseId],
     references: [course.id],
   }),
-  videoData: many(videoData),
-  article: many(article),
-  quiz: many(quiz),
-  attachment: many(attachment),
-  progress: many(courseProgress),
-  logs: many(chapterLogs),
+  user: one(user, {
+    fields: [chapterLogs.userId],
+    references: [user.id],
+  }),
 }));

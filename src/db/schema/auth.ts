@@ -10,10 +10,13 @@ import {
 import { createId } from "@paralleldrive/cuid2";
 import { courseMember } from "./course-member";
 import { organizationMember } from "./organization-member";
-import { course } from "./course";
+import { course, courseLogs } from "./course";
 import { purchase } from "./purchase";
 import { courseEnrollment } from "./enrollment";
 import { courseProgress } from "./course-progress";
+import { chapterLogs } from "./chapter";
+import { courseModuleLogs } from "./course-modules";
+import { discussionReply, discussionVote } from "./discussion";
 
 export const organization = sqliteTable("organization", {
   id: text("id")
@@ -55,6 +58,11 @@ export const userRelations = relations(user, ({ one, many }) => ({
   loginLog: many(loginLog),
   enrollment: many(courseEnrollment),
   progress: many(courseProgress),
+  courseLogs: many(courseLogs),
+  moduleLogs: many(courseModuleLogs),
+  chapterLogs: many(chapterLogs),
+  discussionVotes: many(discussionVote),
+  discussionReplies: many(discussionReply),
 }));
 
 export const password = sqliteTable("password", {
