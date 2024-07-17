@@ -1,3 +1,4 @@
+import ChapterStatus from "@/app/dashboard/components/chapter-status";
 import DeleteChapter from "@/app/dashboard/components/delete-chapter";
 import { db } from "@/db";
 import { chapter, course, courseModule } from "@/db/schema";
@@ -32,6 +33,7 @@ const ModuleSlugPage = async ({
       courseModule: {
         where: eq(courseModule.slug, params.moduleSlug),
         columns: {
+          id: true,
           slug: true,
           title: true,
         },
@@ -44,6 +46,7 @@ const ModuleSlugPage = async ({
               isFree: true,
               title: true,
               position: true,
+              isPublished: true,
               modulePosition: true,
               type: true,
             },
@@ -133,6 +136,14 @@ const ModuleSlugPage = async ({
                 <h3 className="font-semibold ">
                   Chapter {chapter.modulePosition}: {chapter.title}
                 </h3>
+                <div
+                  className={cn(
+                    chapter.isPublished ? "bg-green-600" : "bg-fuchsia-600",
+                    " rounded-full px-2 py-1 text-white text-sm"
+                  )}
+                >
+                  {chapter.isPublished ? "Published" : "Unpublished"}
+                </div>
                 <div className="text-sm flex items-center gap-4">
                   {!courseModuleWithChapters.isFree ? (
                     <>
@@ -176,7 +187,14 @@ const ModuleSlugPage = async ({
                 >
                   Edit
                 </Link>
-
+                {!chapter.isPublished && (
+                  <ChapterStatus
+                    chapterId={chapter.id}
+                    courseId={courseModuleWithChapters.id}
+                    moduleId={courseModuleWithChapters.courseModule[0].id}
+                    status={chapter.isPublished}
+                  />
+                )}
                 <DeleteChapter
                   chapterId={chapter.id}
                   courseId={courseModuleWithChapters.id}

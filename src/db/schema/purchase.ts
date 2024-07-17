@@ -32,8 +32,8 @@ export const purchase = sqliteTable(
     discountCode: text("discount_code"),
     razorpayOrderId: text("razorpay_order_id").notNull(),
     razorpayPaymentId: text("razorpay_payment_id").notNull(),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => {

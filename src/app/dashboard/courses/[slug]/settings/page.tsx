@@ -3,6 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
 import DeleteCourse from "./_components/delete-course";
+import { getUserSessionRedis } from "@/db/queries/auth";
 
 export const metadata = {
   title: "Settings",
@@ -12,7 +13,12 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 const SettingsPage = async ({ params }: { params: { slug: string } }) => {
-  const courseData = await getCourseInfo(params.slug);
+  const userInfo = await getUserSessionRedis();
+
+  if (!userInfo) {
+    return redirect("/dashboard");
+  }
+  const courseData = await getCourseInfo(params.slug, userInfo.userId);
   if (!courseData) {
     return redirect("/dashboard");
   }

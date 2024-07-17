@@ -61,6 +61,8 @@ export const ChapterInfoSchema = z.object({
 
   duration: z.number({ required_error: "duration is required" }),
 
+  isPublished: z.boolean().optional().default(false),
+
   type: z.enum(["quiz", "video", "attachment", "article"]),
 });
 

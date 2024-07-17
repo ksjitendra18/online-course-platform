@@ -20,6 +20,9 @@ export const courseModule = sqliteTable(
     title: text("title").notNull(),
     description: text("description"),
     slug: text("module_slug").notNull(),
+    isPublished: integer("is_published", { mode: "boolean" })
+      .default(false)
+      .notNull(),
     courseId: text("course_id")
       .notNull()
       .references(() => course.id, {
@@ -27,16 +30,22 @@ export const courseModule = sqliteTable(
         onUpdate: "cascade",
       }),
     position: integer("position").notNull(),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: text("updated_at").$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => {
     return {
       courseModuleSlug: uniqueIndex("course_module_slug").on(
         table.courseId,
         table.slug
+      ),
+      courseModuleCourseIdx: index("course_module_course_idx").on(
+        table.courseId
       ),
     };
   }
@@ -46,9 +55,11 @@ export const courseModuleLogs = sqliteTable("course_module_logs", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
+
   action: text("action", {
-    enum: ["create", "update", "delete"],
+    enum: ["create", "update", "delete", "publish", "unpublish"],
   }),
+
   description: text("description"),
   moduleId: text("module_id").references(() => courseModule.id, {
     onDelete: "cascade",
@@ -65,8 +76,8 @@ export const courseModuleLogs = sqliteTable("course_module_logs", {
     onDelete: "set null",
     onUpdate: "set null",
   }),
-  createdAt: text("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
     .notNull(),
 });
 

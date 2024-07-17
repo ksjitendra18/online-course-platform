@@ -1,33 +1,12 @@
 {
-  "version": "5",
+  "version": "7",
   "dialect": "sqlite",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1715059722355,
-      "tag": "0000_legal_namorita",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
       "version": "6",
-      "when": 1715446708685,
-      "tag": "0001_old_valkyrie",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1715505673378,
-      "tag": "0002_salty_hobgoblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1718721901684,
-      "tag": "0003_lying_the_initiative",
+      "when": 1721112964831,
+      "tag": "0000_mighty_catseye",
       "breakpoints": true
     }
   ]

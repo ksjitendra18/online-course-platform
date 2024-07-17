@@ -32,8 +32,12 @@ export const videoData = sqliteTable(
       .unique(),
     isFlagged: integer("is_flagged", { mode: "boolean" }).default(false),
     isDeleted: integer("is_deleted", { mode: "boolean" }).default(false),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
       .notNull(),
   },
   (table) => {

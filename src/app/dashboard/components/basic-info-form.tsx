@@ -106,26 +106,28 @@ const BasicInformation = ({
         }
       }
 
-      if (resData.error.code === "server_error") {
+      if (res.status === 500) {
         setCustomError(true);
       }
+
       if (res.status === 409) {
         setSlugExists(true);
       }
       if (res.status === 201) {
-        await clearTagCache("get-all-courses");
+        await clearTagCache("get-all-courses-admin");
         await clearTagCache("get-course-data");
-        await clearTagCacheByUserId(`get-all-courses-userId`);
+        await clearTagCacheByUserId(`get-all-courses-admin-userId`);
         router.push(`/dashboard/courses/${resData.data.courseSlug}/modules`);
       }
 
       if (res.status === 200) {
-        await clearTagCache("get-all-courses");
+        await clearTagCache("get-all-courses-admin");
         await clearTagCache("get-course-data");
-        await clearTagCacheByUserId(`get-all-courses-userId`);
+        await clearTagCacheByUserId(`get-all-courses-admin-userId`);
         router.refresh();
       }
     } catch (error) {
+      console.log("Caught error", error);
       setCustomError(true);
     } finally {
       setIsLoading(false);

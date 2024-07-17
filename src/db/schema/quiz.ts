@@ -18,6 +18,18 @@ export const quiz = sqliteTable(
       .$defaultFn(() => createId())
       .primaryKey(),
 
+    instructions: text("instructions").notNull(),
+    allowMultipleAttempts: integer("allow_multiple_attempts", {
+      mode: "boolean",
+    }).default(false),
+    isTimeLimited: integer("is_time_limited", { mode: "boolean" }).default(
+      false
+    ),
+    startDate: integer("start_date"),
+    endDate: integer("end_date"),
+    duration: integer("duration").notNull(),
+    isPublished: integer("is_published", { mode: "boolean" }).default(false),
+
     chapterId: text("chapter_id")
       .notNull()
       .references(() => chapter.id, {
@@ -32,11 +44,13 @@ export const quiz = sqliteTable(
         onUpdate: "cascade",
       }),
 
-    duration: integer("duration").notNull(),
-
-    isPublished: integer("is_published", { mode: "boolean" }).default(false),
     createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+      .default(sql`(unixepoch())`)
+      .notNull(),
+
+    updatedAt: text("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({

@@ -42,8 +42,8 @@ export const quizResponse = sqliteTable(
         onUpdate: "cascade",
       }),
 
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({

@@ -1,23 +1,20 @@
 import { db } from "@/db";
-import { courseMember, courseModule, session } from "@/db/schema";
+import { courseModule } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
-import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
+
+const PartialModuleInfoSchema = ModuleInfoSchema.partial();
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { courseId: string; moduleId: string } }
 ) {
   try {
-    const { moduleName, moduleDescription, moduleSlug } = await request.json();
+    const reqBody = await request.json();
 
-    const parsedData = ModuleInfoSchema.safeParse({
-      moduleName,
-      moduleSlug,
-      moduleDescription,
-    });
+    const parsedData = PartialModuleInfoSchema.safeParse(reqBody);
 
     if (!parsedData.success) {
       return Response.json(
@@ -68,15 +65,12 @@ export async function PATCH(
 
     await db
       .update(courseModule)
-      .set({
-        title: parsedData.data.moduleName,
-        slug: parsedData.data.moduleSlug,
-        description: parsedData.data.moduleDescription,
-      })
+      .set(parsedData.data)
       .where(eq(courseModule.id, moduleExists.id));
+
     return Response.json({ success: true });
   } catch (error) {
-    console.log("Error while updting module", params.moduleId, error);
+    console.log("Error while updating module", params.moduleId, error);
 
     return Response.json(
       {

@@ -33,8 +33,8 @@ export const discussion = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({
@@ -75,7 +75,9 @@ export const discussionReply = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => ({
     disc__id_idx: index("disc__id_idx").on(table.discussionId),

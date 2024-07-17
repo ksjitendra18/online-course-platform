@@ -24,6 +24,12 @@ export const organization = sqliteTable("organization", {
     .primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: integer("updated_at")
+    .$onUpdate(() => sql`(unixepoch())`)
+    .notNull(),
 });
 
 export const organizationRelations = relations(organization, ({ many }) => ({
@@ -41,11 +47,19 @@ export const user = sqliteTable("user", {
   emailVerified: integer("email_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
-  isBlocked: integer("is_blocked", { mode: "boolean" }).default(false),
-  createdAt: text("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+  isBlocked: integer("is_blocked", { mode: "boolean" })
+    .default(false)
     .notNull(),
-  updatedAt: text("updated_at").$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+  isDeleted: integer("is_deleted", { mode: "boolean" })
+    .default(false)
+    .notNull(),
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: integer("updated_at")
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => sql`(unixepoch())`)
+    .notNull(),
 });
 
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -73,10 +87,10 @@ export const password = sqliteTable("password", {
     })
     .primaryKey(),
   password: text("password").notNull(),
-  createdAt: text("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: text("updated_at").$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer("updated_at").$onUpdate(() => sql`(unixepoch())`),
 });
 
 export const passwordRelations = relations(password, ({ one }) => ({
@@ -89,7 +103,9 @@ export const passwordRelations = relations(password, ({ one }) => ({
 export const oauthToken = sqliteTable(
   "oauth_token",
   {
-    id: text("id").$defaultFn(() => createId()),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, {
@@ -100,7 +116,7 @@ export const oauthToken = sqliteTable(
     accessToken: text("access_token").notNull(),
     refreshToken: text("refresh_token").notNull(),
     createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({
@@ -132,7 +148,7 @@ export const session = sqliteTable(
     userIp: text("user_ip").notNull(),
     deviceId: text("device_id").notNull(),
     createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => {
@@ -166,8 +182,8 @@ export const loginLog = sqliteTable("login_log", {
   device: text("device").notNull(),
   os: text("os").notNull(),
   ip: text("ip").notNull(),
-  loggedInAt: text("logged_in_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
     .notNull(),
 });
 
@@ -202,8 +218,8 @@ export const device = sqliteTable(
     sessionId: text("session_id").references(() => session.id, {
       onDelete: "set null",
     }),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => {
@@ -220,5 +236,5 @@ export const deviceSessRelations = relations(device, ({ one }) => ({
   }),
 }));
 
-export type User = typeof user.$inferSelect; // return type when queried
+export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;

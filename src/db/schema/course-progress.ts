@@ -38,8 +38,8 @@ export const courseProgress = sqliteTable(
         onUpdate: "cascade",
       }),
     isCompleted: integer("is_completed", { mode: "boolean" }).notNull(),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({

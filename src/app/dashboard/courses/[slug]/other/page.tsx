@@ -46,7 +46,7 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
       <div className="flex items-center my-5 gap-2">
         <Link className="flex  ease-in items-center gap-3" href="/dashboard">
           <FaHome />
-          Homes &gt;
+          Home &gt;
         </Link>
 
         <div>

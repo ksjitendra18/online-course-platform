@@ -1,6 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
+  integer,
   primaryKey,
   sqliteTable,
   text,
@@ -24,7 +25,17 @@ export const courseMember = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    role: text("role", { enum: ["owner", "admin", "teacher"] }).notNull(),
+    role: text("role", {
+      enum: ["owner", "admin", "auditor", "teacher"],
+    }).notNull(),
+
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => {
     return {

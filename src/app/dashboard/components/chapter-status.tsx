@@ -1,6 +1,5 @@
 "use client";
-
-import { clearTagCache } from "@/actions/clear-tag-cache";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,58 +11,77 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
-const DeleteCourse = ({ courseId }: { courseId: string }) => {
-  let closeBtnRef = useRef<HTMLButtonElement>(null);
+const ChapterStatus = ({
+  status,
+  courseId,
+  chapterId,
+  moduleId,
+}: {
+  status: boolean;
+  courseId: string;
+  chapterId: string;
+  moduleId: string;
+}) => {
   const router = useRouter();
+  let closeBtnRef = useRef<HTMLButtonElement>(null);
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/courses/${courseId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `/api/courses/${courseId}/chapters/${chapterId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            isPublished: true,
+          }),
+        }
+      );
 
       if (res.status === 200) {
-        await clearTagCache("get-all-courses-admin");
-        toast.success("Course Deleted Successfully");
-        router.push("/dashboard/courses");
+        closeBtnRef.current?.click();
+        toast.success("Chapter published successfully");
+        router.refresh();
       }
     } catch (error) {
-      toast.error("Error while deleting course");
+      toast.error("Error while publishing chapter");
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="destructive">Delete</Button>
+          <Button variant="app">Publish</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
-              This will delete all the chapters and their associated data.
+              This will publish the chapter and its associated data.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex items-center">
             <DialogClose asChild>
-              <Button ref={closeBtnRef}>Cancel</Button>
+              <Button ref={closeBtnRef} variant={"outline"}>
+                Cancel
+              </Button>
             </DialogClose>
 
-            <Button onClick={handleClick} variant="destructive">
+            <Button onClick={handleClick} variant="default">
               {loading ? (
                 <Loader2 className="animate-spin mx-auto" />
               ) : (
-                <>Delete</>
+                <>Publish</>
               )}
             </Button>
           </DialogFooter>
@@ -73,4 +91,4 @@ const DeleteCourse = ({ courseId }: { courseId: string }) => {
   );
 };
 
-export default DeleteCourse;
+export default ChapterStatus;

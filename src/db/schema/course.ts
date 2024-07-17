@@ -51,10 +51,13 @@ export const course = sqliteTable("course", {
     enum: ["beginner", "intermediate", "advanced"],
   }).notNull(),
   isFree: integer("is_free", { mode: "boolean" }).notNull(),
-  createdAt: text("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: text("updated_at").$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer("updated_at")
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => sql`(unixepoch())`)
+    .notNull(),
 });
 
 export const courseLogs = sqliteTable("course_logs", {
@@ -85,7 +88,7 @@ export const courseLogs = sqliteTable("course_logs", {
     onDelete: "set null",
     onUpdate: "set null",
   }),
-  createdAt: text("created_at")
+  createdAt: integer("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
