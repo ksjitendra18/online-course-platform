@@ -138,7 +138,9 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
                     <TableCell>{enrollment.user.email}</TableCell>
 
                     <TableCell className="text-right">
-                      {enrollment.createdAt}
+                      {dayjs(enrollment.createdAt * 1000).format(
+                        "DD-MM-YYYY:HH:mm"
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -169,7 +171,9 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
                     <TableCell>{coursePurchase.user.email}</TableCell>
                     <TableCell>{coursePurchase.coursePrice}</TableCell>
                     <TableCell className="text-right">
-                      {coursePurchase.createdAt}
+                      {dayjs(coursePurchase.createdAt * 1000).format(
+                        "DD-MM-YYYY:HH:mm"
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

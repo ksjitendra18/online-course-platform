@@ -47,7 +47,10 @@ const ChapterPage = async ({
     with: {
       courseMember: true,
       courseModule: {
-        where: eq(courseModule.slug, params.slug[0]),
+        where: and(
+          eq(courseModule.slug, params.slug[0]),
+          eq(courseModule.isPublished, true)
+        ),
         columns: {
           title: true,
           id: true,
@@ -55,7 +58,10 @@ const ChapterPage = async ({
         orderBy: courseModule.position,
         with: {
           chapter: {
-            where: eq(chapter.slug, params.slug[1]),
+            where: and(
+              eq(chapter.slug, params.slug[1]),
+              eq(chapter.isPublished, true)
+            ),
             columns: {
               id: true,
               title: true,

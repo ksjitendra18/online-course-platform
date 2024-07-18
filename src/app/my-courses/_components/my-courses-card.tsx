@@ -38,7 +38,7 @@ const MyCourseCard = ({ courseInfo, purchasedDate, validity }: Props) => {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
-              }).format(new Date(purchasedDate))}
+              }).format(new Date(purchasedDate * 1000))}
             </div>
             {Number(validity) > 0 && <div>Validity on : {validity}</div>}
 
