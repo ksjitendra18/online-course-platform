@@ -1,14 +1,12 @@
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
-import { course, courseEnrollment, discussion } from "@/db/schema";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { getCourseData } from "@/db/queries/courses";
+import { courseEnrollment, discussion } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import React from "react";
 import AddNewReply from "../_components/add-new-reply";
 import UpvoteBtn from "../_components/upvote-btn";
-import { getUserSessionRedis } from "@/db/queries/auth";
-import { getCourseInfo } from "@/db/queries/courses";
 
 export const metadata = {
   title: "Discussion",
@@ -28,7 +26,7 @@ const DiscussionIdPage = async ({
   //   },
   //   where: eq(course.slug, params.courseSlug),
   // });
-  const courseData = await getCourseInfo(params.courseSlug);
+  const courseData = await getCourseData({ courseSlug: params.courseSlug });
 
   const discussionInfo = await db.query.discussion.findFirst({
     where: eq(discussion.id, params.discussionId),

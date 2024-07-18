@@ -3,17 +3,11 @@ import React from "react";
 
 type Props =
   | {
-      courseId: string;
-      chapterId: string;
-      id: string;
-      isPublished: boolean | null;
-      duration: number;
-      createdAt: string;
       response: {
         courseId: string;
         id: string;
         duration: number;
-        createdAt: string;
+        createdAt: number;
         userId: string;
         quizId: string;
         quizUserResponse: {

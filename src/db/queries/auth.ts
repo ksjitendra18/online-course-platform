@@ -21,7 +21,7 @@ type SessionExists = {
     name: string;
     email: string;
     organizationMember: {
-      role: "owner" | "admin" | "teacher";
+      role: "owner" | "admin" | "teacher" | "auditor";
     }[];
   };
 };

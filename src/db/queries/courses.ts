@@ -46,7 +46,7 @@ type GetCourseDataParams = {
 };
 
 export const getCourseData = unstable_cache(
-  async ({ courseSlug, userId }: GetCourseDataParams) => {
+  async ({ courseSlug }: GetCourseDataParams) => {
     return await db.query.course.findFirst({
       where: eq(course.slug, courseSlug),
       columns: {

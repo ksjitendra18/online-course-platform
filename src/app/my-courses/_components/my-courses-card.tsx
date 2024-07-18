@@ -7,7 +7,7 @@ import Image from "next/image";
 
 interface Props {
   courseInfo: CourseWithProgress;
-  purchasedDate: string;
+  purchasedDate: number;
   validity: number | undefined;
 }
 

@@ -82,6 +82,7 @@ export async function POST(request: Request) {
           chapterId,
           duration: 30,
           courseId,
+          instructions: "Please answer all the question correctly",
         })
         .returning({ id: quiz.id });
 

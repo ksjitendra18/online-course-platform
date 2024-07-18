@@ -12,9 +12,21 @@ export function formatPrice(price: number) {
   }).format(price);
 }
 
-export function formatDate(date: string) {
-  const createdAtUTC = new Date(date + " UTC");
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// export function formatDate(date: string | number) {
+//   const createdAtUTC = new Date(date + " UTC");
+//   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+//   const createdAtLocal = createdAtUTC.toLocaleString("en-IN", {
+//     day: "numeric",
+//     month: "long",
+//     year: "2-digit",
+//     timeZone: "Asia/Calcutta",
+//   });
+
+//   return createdAtLocal;
+// }
+export function formatDate(date: number) {
+  const createdAtUTC = new Date(date);
 
   const createdAtLocal = createdAtUTC.toLocaleString("en-IN", {
     day: "numeric",
@@ -25,9 +37,9 @@ export function formatDate(date: string) {
 
   return createdAtLocal;
 }
-export function formatDateTime(date: string) {
-  const createdAtUTC = new Date(date + " UTC");
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+export function formatDateTime(date: number) {
+  const createdAtUTC = new Date(date);
+  // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const createdAtLocal = createdAtUTC.toLocaleString("en-IN", {
     day: "numeric",

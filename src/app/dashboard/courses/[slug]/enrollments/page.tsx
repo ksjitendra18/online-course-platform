@@ -63,13 +63,18 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
     return redirect("/dashboard");
   }
 
-  const gmtDate = dayjs().utc().startOf("day").format("YYYY-MM-DD HH:mm:ss");
+  // const gmtDate = dayjs().utc().startOf("day").format("YYYY-MM-DD HH:mm:ss");
 
-  const nextGmtDate = dayjs()
-    .utc()
-    .startOf("day")
-    .add(1, "day")
-    .format("YYYY-MM-DD HH:mm:ss");
+  // const nextGmtDate = dayjs()
+  //   .utc()
+  //   .startOf("day")
+  //   .add(1, "day")
+
+  //   .format("YYYY-MM-DD HH:mm:ss");
+
+  const gmtDate = dayjs().utc().startOf("day").unix();
+
+  const nextGmtDate = dayjs().utc().startOf("day").add(1, "day").unix();
 
   const todayEnrollment = await db
     .select({

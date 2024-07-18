@@ -18,7 +18,6 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 const OtherPage = async ({ params }: { params: { slug: string } }) => {
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   const userSession = await getUserSessionRedis();
   if (!userSession) {
     return redirect("/");

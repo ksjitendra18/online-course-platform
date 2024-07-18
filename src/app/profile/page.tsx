@@ -33,11 +33,11 @@ const ProfilePage = async () => {
           os: true,
           browser: true,
           device: true,
-          loggedInAt: true,
+          createdAt: true,
           ip: true,
           sessionId: true,
         },
-        orderBy: desc(loginLog.loggedInAt),
+        orderBy: desc(loginLog.createdAt),
       },
       oauthToken: true,
     },
@@ -122,7 +122,7 @@ const ProfilePage = async () => {
               </div>
               <div className="flex md:gap-5 gap-3 w-full lg:w-auto mt-2 flex-col md:flex-row flex-wrap">
                 <div>IP: {log.ip}</div>
-                <div>Logged in at: {formatDateTime(log.loggedInAt!)}</div>
+                <div>Logged in at: {formatDateTime(log.createdAt * 1000)}</div>
                 {sessionToken !== log.sessionId && (
                   <RevokeAcess id={log.sessionId!} />
                 )}
