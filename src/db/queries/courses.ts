@@ -62,6 +62,7 @@ export const getCourseData = unstable_cache(
       with: {
         courseMember: true,
         courseModule: {
+          where: eq(courseModule.isPublished, true),
           columns: {
             title: true,
             id: true,
@@ -70,6 +71,7 @@ export const getCourseData = unstable_cache(
           orderBy: courseModule.position,
           with: {
             chapter: {
+              where: eq(chapter.isPublished, true),
               columns: {
                 id: true,
                 title: true,
@@ -235,6 +237,6 @@ export const getTotalEnrollments = unstable_cache(
       ),
     });
   },
-  [`get-total-enrollments`],
-  { revalidate: 7200, tags: [`get-total-enrollments`] }
+  ["get-total-enrollments"],
+  { revalidate: 7200, tags: ["get-total-enrollments"] }
 );
