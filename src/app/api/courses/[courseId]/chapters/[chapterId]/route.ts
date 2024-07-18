@@ -1,46 +1,19 @@
 import { db } from "@/db";
-import {
-  chapter,
-  courseMember,
-  courseModule,
-  session,
-  videoData,
-} from "@/db/schema";
+import { chapter, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
-import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
+
+const PartialChapterSchema = ChapterInfoSchema.partial();
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { courseId: string; chapterId: string } }
 ) {
   try {
-    const {
-      chapterName,
-      chapterDescription,
-      chapterSlug,
-      isFree,
-      resourceData,
-      moduleId,
-      duration,
-      type,
-      updateVideo,
-    } = await request.json();
-
-    const parsedData = ChapterInfoSchema.safeParse({
-      chapterName,
-      chapterSlug,
-      chapterDescription,
-      isFree,
-      resourceData,
-      moduleId,
-      courseId: params.courseId,
-      duration,
-      type,
-    });
-
+    const reqBody = await request.json();
+    const parsedData = PartialChapterSchema.safeParse(reqBody);
     if (!parsedData.success) {
       return Response.json(
         {
@@ -89,16 +62,21 @@ export async function PATCH(
 
     await db
       .update(chapter)
-      .set({
-        title: parsedData.data.chapterName,
-        description: parsedData.data.chapterDescription,
-        slug: parsedData.data.chapterSlug,
-        isFree: parsedData.data.isFree,
-        type: parsedData.data.type,
-      })
+      .set(parsedData.data)
       .where(eq(chapter.id, params.chapterId));
 
-    if (updateVideo) {
+    if (reqBody.updateVideo) {
+      if (!parsedData.data.resourceData || !parsedData.data.duration) {
+        return Response.json(
+          {
+            error: {
+              code: "invalid_resource_data",
+              message: "Please enter a valid resourceData and duration",
+            },
+          },
+          { status: 400 }
+        );
+      }
       await db
         .update(videoData)
         .set({
@@ -124,6 +102,7 @@ export async function PATCH(
     );
   }
 }
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { courseId: string; chapterId: string } }

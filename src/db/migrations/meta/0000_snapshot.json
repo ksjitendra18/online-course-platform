@@ -1,6 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
+  "id": "3613eeb9-5800-46c5-993b-396671b64218",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "article": {
       "name": "article",
@@ -25,6 +27,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -40,15 +50,15 @@
         "article_chapter_id_chapter_id_fk": {
           "name": "article_chapter_id_chapter_id_fk",
           "tableFrom": "article",
+          "tableTo": "chapter",
           "columnsFrom": [
             "chapter_id"
           ],
-          "tableTo": "chapter",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -94,18 +104,19 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -121,15 +132,15 @@
         "attachment_chapter_id_chapter_id_fk": {
           "name": "attachment_chapter_id_chapter_id_fk",
           "tableFrom": "attachment",
+          "tableTo": "chapter",
           "columnsFrom": [
             "chapter_id"
           ],
-          "tableTo": "chapter",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -175,17 +186,17 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -202,15 +213,15 @@
         "video_attachment_video_id_video_data_id_fk": {
           "name": "video_attachment_video_id_video_data_id_fk",
           "tableFrom": "video_attachment",
+          "tableTo": "video_data",
           "columnsFrom": [
             "video_id"
           ],
-          "tableTo": "video_data",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -284,11 +295,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -304,28 +315,28 @@
         "device_user_id_user_id_fk": {
           "name": "device_user_id_user_id_fk",
           "tableFrom": "device",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "device_session_id_session_id_fk": {
           "name": "device_session_id_session_id_fk",
           "tableFrom": "device",
+          "tableTo": "session",
           "columnsFrom": [
             "session_id"
           ],
-          "tableTo": "session",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -383,13 +394,13 @@
           "notNull": true,
           "autoincrement": false
         },
-        "logged_in_at": {
-          "name": "logged_in_at",
-          "type": "text",
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {},
@@ -397,28 +408,28 @@
         "login_log_session_id_session_id_fk": {
           "name": "login_log_session_id_session_id_fk",
           "tableFrom": "login_log",
+          "tableTo": "session",
           "columnsFrom": [
             "session_id"
           ],
-          "tableTo": "session",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "login_log_user_id_user_id_fk": {
           "name": "login_log_user_id_user_id_fk",
           "tableFrom": "login_log",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -430,8 +441,8 @@
         "id": {
           "name": "id",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "autoincrement": false
         },
         "user_id": {
@@ -468,7 +479,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -484,15 +495,15 @@
         "oauth_token_user_id_user_id_fk": {
           "name": "oauth_token_user_id_user_id_fk",
           "tableFrom": "oauth_token",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -518,6 +529,21 @@
         "slug": {
           "name": "slug",
           "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -555,15 +581,15 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -574,15 +600,15 @@
         "password_user_id_user_id_fk": {
           "name": "password_user_id_user_id_fk",
           "tableFrom": "password",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -640,7 +666,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -656,15 +682,15 @@
         "session_user_id_user_id_fk": {
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -713,24 +739,33 @@
           "name": "is_blocked",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "is_deleted": {
+          "name": "is_deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false,
           "default": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -776,6 +811,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "is_featured": {
+          "name": "is_featured",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
         }
       },
       "indexes": {
@@ -875,18 +918,19 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -910,28 +954,28 @@
         "chapter_module_id_module_id_fk": {
           "name": "chapter_module_id_module_id_fk",
           "tableFrom": "chapter",
+          "tableTo": "module",
           "columnsFrom": [
             "module_id"
           ],
-          "tableTo": "module",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "chapter_course_id_course_id_fk": {
           "name": "chapter_course_id_course_id_fk",
           "tableFrom": "chapter",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -984,52 +1028,61 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "cl_course_idx": {
+          "name": "cl_course_idx",
+          "columns": [
+            "course_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "chapter_logs_chapter_id_chapter_id_fk": {
           "name": "chapter_logs_chapter_id_chapter_id_fk",
           "tableFrom": "chapter_logs",
+          "tableTo": "chapter",
           "columnsFrom": [
             "chapter_id"
           ],
-          "tableTo": "chapter",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "chapter_logs_course_id_course_id_fk": {
           "name": "chapter_logs_course_id_course_id_fk",
           "tableFrom": "chapter_logs",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "chapter_logs_user_id_user_id_fk": {
           "name": "chapter_logs_user_id_user_id_fk",
           "tableFrom": "chapter_logs",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "set null",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "set null"
         }
       },
       "compositePrimaryKeys": {},
@@ -1058,28 +1111,28 @@
         "course_category_course_id_course_id_fk": {
           "name": "course_category_course_id_course_id_fk",
           "tableFrom": "course_category",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_category_category_id_category_id_fk": {
           "name": "course_category_category_id_category_id_fk",
           "tableFrom": "course_category",
+          "tableTo": "category",
           "columnsFrom": [
             "category_id"
           ],
-          "tableTo": "category",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -1116,6 +1169,22 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {},
@@ -1123,28 +1192,28 @@
         "course_member_course_id_course_id_fk": {
           "name": "course_member_course_id_course_id_fk",
           "tableFrom": "course_member",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_member_user_id_user_id_fk": {
           "name": "course_member_user_id_user_id_fk",
           "tableFrom": "course_member",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -1189,6 +1258,14 @@
           "notNull": true,
           "autoincrement": false
         },
+        "is_published": {
+          "name": "is_published",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
         "course_id": {
           "name": "course_id",
           "type": "text",
@@ -1205,18 +1282,19 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -1227,21 +1305,28 @@
             "module_slug"
           ],
           "isUnique": true
+        },
+        "course_module_course_idx": {
+          "name": "course_module_course_idx",
+          "columns": [
+            "course_id"
+          ],
+          "isUnique": false
         }
       },
       "foreignKeys": {
         "module_course_id_course_id_fk": {
           "name": "module_course_id_course_id_fk",
           "tableFrom": "module",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1294,11 +1379,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {},
@@ -1306,41 +1391,41 @@
         "course_module_logs_module_id_module_id_fk": {
           "name": "course_module_logs_module_id_module_id_fk",
           "tableFrom": "course_module_logs",
+          "tableTo": "module",
           "columnsFrom": [
             "module_id"
           ],
-          "tableTo": "module",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_module_logs_course_id_course_id_fk": {
           "name": "course_module_logs_course_id_course_id_fk",
           "tableFrom": "course_module_logs",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_module_logs_user_id_user_id_fk": {
           "name": "course_module_logs_user_id_user_id_fk",
           "tableFrom": "course_module_logs",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "set null",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "set null"
         }
       },
       "compositePrimaryKeys": {},
@@ -1386,11 +1471,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -1407,41 +1492,41 @@
         "course_progress_chapter_id_chapter_id_fk": {
           "name": "course_progress_chapter_id_chapter_id_fk",
           "tableFrom": "course_progress",
+          "tableTo": "chapter",
           "columnsFrom": [
             "chapter_id"
           ],
-          "tableTo": "chapter",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_progress_course_id_course_id_fk": {
           "name": "course_progress_course_id_course_id_fk",
           "tableFrom": "course_progress",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_progress_user_id_user_id_fk": {
           "name": "course_progress_user_id_user_id_fk",
           "tableFrom": "course_progress",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1538,18 +1623,19 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -1565,15 +1651,15 @@
         "course_organization_id_organization_id_fk": {
           "name": "course_organization_id_organization_id_fk",
           "tableFrom": "course",
+          "tableTo": "organization",
           "columnsFrom": [
             "organization_id"
           ],
-          "tableTo": "organization",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1619,7 +1705,7 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -1631,28 +1717,28 @@
         "course_logs_course_id_course_id_fk": {
           "name": "course_logs_course_id_course_id_fk",
           "tableFrom": "course_logs",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_logs_user_id_user_id_fk": {
           "name": "course_logs_user_id_user_id_fk",
           "tableFrom": "course_logs",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "set null",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "set null"
         }
       },
       "compositePrimaryKeys": {},
@@ -1712,11 +1798,19 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -1726,21 +1820,28 @@
             "code"
           ],
           "isUnique": true
+        },
+        "dis_course_id_idx": {
+          "name": "dis_course_id_idx",
+          "columns": [
+            "course_id"
+          ],
+          "isUnique": false
         }
       },
       "foreignKeys": {
         "discount_course_id_course_id_fk": {
           "name": "discount_course_id_course_id_fk",
           "tableFrom": "discount",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1786,11 +1887,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -1806,28 +1907,28 @@
         "discussion_course_id_course_id_fk": {
           "name": "discussion_course_id_course_id_fk",
           "tableFrom": "discussion",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "discussion_user_id_user_id_fk": {
           "name": "discussion_user_id_user_id_fk",
           "tableFrom": "discussion",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1866,11 +1967,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -1886,28 +1987,28 @@
         "discussion-reply_discussion_id_discussion_id_fk": {
           "name": "discussion-reply_discussion_id_discussion_id_fk",
           "tableFrom": "discussion-reply",
+          "tableTo": "discussion",
           "columnsFrom": [
             "discussion_id"
           ],
-          "tableTo": "discussion",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "discussion-reply_user_id_user_id_fk": {
           "name": "discussion-reply_user_id_user_id_fk",
           "tableFrom": "discussion-reply",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1960,28 +2061,28 @@
         "discussion_vote_discussion_id_discussion_id_fk": {
           "name": "discussion_vote_discussion_id_discussion_id_fk",
           "tableFrom": "discussion_vote",
+          "tableTo": "discussion",
           "columnsFrom": [
             "discussion_id"
           ],
-          "tableTo": "discussion",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "discussion_vote_user_id_user_id_fk": {
           "name": "discussion_vote_user_id_user_id_fk",
           "tableFrom": "discussion_vote",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -2021,49 +2122,63 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
-        "course_enrollment_user_id_idx": {
-          "name": "course_enrollment_user_id_idx",
+        "course_enrollment_user_course_id_idx": {
+          "name": "course_enrollment_user_course_id_idx",
           "columns": [
             "course_id",
             "user_id"
           ],
           "isUnique": true
+        },
+        "course_enrollment_user_id_idx": {
+          "name": "course_enrollment_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        },
+        "course_enrollment_course_id_idx": {
+          "name": "course_enrollment_course_id_idx",
+          "columns": [
+            "course_id"
+          ],
+          "isUnique": false
         }
       },
       "foreignKeys": {
         "course_enrollment_course_id_course_id_fk": {
           "name": "course_enrollment_course_id_course_id_fk",
           "tableFrom": "course_enrollment",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "course_enrollment_user_id_user_id_fk": {
           "name": "course_enrollment_user_id_user_id_fk",
           "tableFrom": "course_enrollment",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2109,11 +2224,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {},
@@ -2191,11 +2306,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -2219,15 +2334,15 @@
         "purchase_course_id_course_id_fk": {
           "name": "purchase_course_id_course_id_fk",
           "tableFrom": "purchase",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2289,11 +2404,19 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -2303,34 +2426,56 @@
             "chapter_id"
           ],
           "isUnique": true
+        },
+        "video_course_id_idx": {
+          "name": "video_course_id_idx",
+          "columns": [
+            "course_id"
+          ],
+          "isUnique": false
+        },
+        "video_chapter_id_idx": {
+          "name": "video_chapter_id_idx",
+          "columns": [
+            "chapter_id"
+          ],
+          "isUnique": false
+        },
+        "video_course_chap_idx": {
+          "name": "video_course_chap_idx",
+          "columns": [
+            "course_id",
+            "chapter_id"
+          ],
+          "isUnique": true
         }
       },
       "foreignKeys": {
         "video_data_course_id_course_id_fk": {
           "name": "video_data_course_id_course_id_fk",
           "tableFrom": "video_data",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "video_data_chapter_id_chapter_id_fk": {
           "name": "video_data_chapter_id_chapter_id_fk",
           "tableFrom": "video_data",
+          "tableTo": "chapter",
           "columnsFrom": [
             "chapter_id"
           ],
-          "tableTo": "chapter",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2360,12 +2505,28 @@
           "notNull": true,
           "autoincrement": false
         },
+        "is_blocked": {
+          "name": "is_blocked",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
         "role": {
           "name": "role",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {},
@@ -2373,28 +2534,28 @@
         "organization_member_organization_id_organization_id_fk": {
           "name": "organization_member_organization_id_organization_id_fk",
           "tableFrom": "organization_member",
+          "tableTo": "organization",
           "columnsFrom": [
             "organization_id"
           ],
-          "tableTo": "organization",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "organization_member_user_id_user_id_fk": {
           "name": "organization_member_user_id_user_id_fk",
           "tableFrom": "organization_member",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2410,18 +2571,41 @@
           "notNull": true,
           "autoincrement": false
         },
-        "chapter_id": {
-          "name": "chapter_id",
+        "instructions": {
+          "name": "instructions",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "course_id": {
-          "name": "course_id",
-          "type": "text",
+        "allow_multiple_attempts": {
+          "name": "allow_multiple_attempts",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "is_time_limited": {
+          "name": "is_time_limited",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "duration": {
@@ -2439,13 +2623,35 @@
           "autoincrement": false,
           "default": false
         },
+        "chapter_id": {
+          "name": "chapter_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "course_id": {
+          "name": "course_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -2455,34 +2661,42 @@
             "chapter_id"
           ],
           "isUnique": false
+        },
+        "quiz_course_chap_idx": {
+          "name": "quiz_course_chap_idx",
+          "columns": [
+            "course_id",
+            "chapter_id"
+          ],
+          "isUnique": true
         }
       },
       "foreignKeys": {
         "quiz_chapter_id_chapter_id_fk": {
           "name": "quiz_chapter_id_chapter_id_fk",
           "tableFrom": "quiz",
+          "tableTo": "chapter",
           "columnsFrom": [
             "chapter_id"
           ],
-          "tableTo": "chapter",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "quiz_course_id_course_id_fk": {
           "name": "quiz_course_id_course_id_fk",
           "tableFrom": "quiz",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2533,15 +2747,15 @@
         "quiz_answer_question_id_quiz_question_id_fk": {
           "name": "quiz_answer_question_id_quiz_question_id_fk",
           "tableFrom": "quiz_answer",
+          "tableTo": "quiz_question",
           "columnsFrom": [
             "question_id"
           ],
-          "tableTo": "quiz_question",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2592,15 +2806,15 @@
         "quiz_question_quiz_id_quiz_id_fk": {
           "name": "quiz_question_quiz_id_quiz_id_fk",
           "tableFrom": "quiz_question",
+          "tableTo": "quiz",
           "columnsFrom": [
             "quiz_id"
           ],
-          "tableTo": "quiz",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2646,11 +2860,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -2674,41 +2888,41 @@
         "quiz_response_quiz_id_quiz_id_fk": {
           "name": "quiz_response_quiz_id_quiz_id_fk",
           "tableFrom": "quiz_response",
+          "tableTo": "quiz",
           "columnsFrom": [
             "quiz_id"
           ],
-          "tableTo": "quiz",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "quiz_response_course_id_course_id_fk": {
           "name": "quiz_response_course_id_course_id_fk",
           "tableFrom": "quiz_response",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "quiz_response_user_id_user_id_fk": {
           "name": "quiz_response_user_id_user_id_fk",
           "tableFrom": "quiz_response",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2760,41 +2974,41 @@
         "quiz_user_response_quiz_response_id_quiz_response_id_fk": {
           "name": "quiz_user_response_quiz_response_id_quiz_response_id_fk",
           "tableFrom": "quiz_user_response",
+          "tableTo": "quiz_response",
           "columnsFrom": [
             "quiz_response_id"
           ],
-          "tableTo": "quiz_response",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "quiz_user_response_question_id_quiz_question_id_fk": {
           "name": "quiz_user_response_question_id_quiz_question_id_fk",
           "tableFrom": "quiz_user_response",
+          "tableTo": "quiz_question",
           "columnsFrom": [
             "question_id"
           ],
-          "tableTo": "quiz_question",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "quiz_user_response_answer_id_quiz_answer_id_fk": {
           "name": "quiz_user_response_answer_id_quiz_answer_id_fk",
           "tableFrom": "quiz_user_response",
+          "tableTo": "quiz_answer",
           "columnsFrom": [
             "answer_id"
           ],
-          "tableTo": "quiz_answer",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2856,11 +3070,11 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         }
       },
       "indexes": {
@@ -2884,28 +3098,28 @@
         "review_course_id_course_id_fk": {
           "name": "review_course_id_course_id_fk",
           "tableFrom": "review",
+          "tableTo": "course",
           "columnsFrom": [
             "course_id"
           ],
-          "tableTo": "course",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "review_user_id_user_id_fk": {
           "name": "review_user_id_user_id_fk",
           "tableFrom": "review",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -2914,9 +3128,11 @@
   },
   "enums": {},
   "_meta": {
+    "schemas": {},
     "tables": {},
     "columns": {}
   },
-  "id": "27c4196c-04f8-4ec6-a0b5-9c52d678b25f",
-  "prevId": "00000000-0000-0000-0000-000000000000"
+  "internal": {
+    "indexes": {}
+  }
 }

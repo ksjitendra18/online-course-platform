@@ -2,6 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-export async function clearTagCache(path: string) {
+export async function clearPathCache(path: string) {
   revalidatePath(path);
 }

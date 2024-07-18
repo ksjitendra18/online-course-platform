@@ -27,6 +27,8 @@ export const ModuleInfoSchema = z.object({
       message: "Module Description should be less than 300 characters",
     })
     .trim(),
+
+  isPublished: z.boolean().optional(),
 });
 
 export type ModuleInfoSchema = z.infer<typeof ModuleInfoSchema>;

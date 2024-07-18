@@ -33,14 +33,27 @@ export const discussion = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({
     disc_course_id_idx: index("disc_course_id_idx").on(table.courseId),
   })
 );
+
+export const discussionRelations = relations(discussion, ({ one, many }) => ({
+  user: one(user, {
+    fields: [discussion.userId],
+    references: [user.id],
+  }),
+  course: one(course, {
+    fields: [discussion.courseId],
+    references: [course.id],
+  }),
+  answers: many(discussionReply),
+  votes: many(discussionVote),
+}));
 
 export const discussionReply = sqliteTable(
   "discussion-reply",
@@ -62,10 +75,28 @@ export const discussionReply = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => ({
     disc__id_idx: index("disc__id_idx").on(table.discussionId),
+  })
+);
+
+export const discussionReplyRelations = relations(
+  discussionReply,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [discussionReply.userId],
+      references: [user.id],
+    }),
+    discussion: one(discussion, {
+      fields: [discussionReply.discussionId],
+      references: [discussion.id],
+    }),
+
+    votes: many(discussionVote),
   })
 );
 
@@ -107,34 +138,9 @@ export const discussionVoteRelations = relations(
       fields: [discussionVote.discussionId],
       references: [discussion.id],
     }),
-  })
-);
-
-export const discussionRelations = relations(discussion, ({ one, many }) => ({
-  user: one(user, {
-    fields: [discussion.userId],
-    references: [user.id],
-  }),
-  course: one(course, {
-    fields: [discussion.courseId],
-    references: [course.id],
-  }),
-  answers: many(discussionReply),
-  votes: many(discussionVote),
-}));
-
-export const discussionReplyRelations = relations(
-  discussionReply,
-  ({ one, many }) => ({
-    user: one(user, {
-      fields: [discussionReply.userId],
-      references: [user.id],
+    discussionReply: one(discussionReply, {
+      fields: [discussionVote.discussionId],
+      references: [discussionReply.id],
     }),
-    discussion: one(discussion, {
-      fields: [discussionReply.discussionId],
-      references: [discussion.id],
-    }),
-
-    votes: many(discussionVote),
   })
 );

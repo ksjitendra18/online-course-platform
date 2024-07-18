@@ -18,7 +18,6 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 const OtherPage = async ({ params }: { params: { slug: string } }) => {
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   const userSession = await getUserSessionRedis();
   if (!userSession) {
     return redirect("/");
@@ -46,7 +45,7 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
       <div className="flex items-center my-5 gap-2">
         <Link className="flex  ease-in items-center gap-3" href="/dashboard">
           <FaHome />
-          Homes &gt;
+          Home &gt;
         </Link>
 
         <div>

@@ -15,6 +15,7 @@ import { attachment } from "./attachment";
 import { course } from "./course";
 import { courseProgress } from "./course-progress";
 import { user } from "./auth";
+import { logs } from "./logs";
 
 export const chapter = sqliteTable(
   "chapter",
@@ -46,10 +47,13 @@ export const chapter = sqliteTable(
     type: text("type", {
       enum: ["quiz", "video", "attachment", "article"],
     }).notNull(),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: text("updated_at").$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => {
     return {
@@ -61,31 +65,6 @@ export const chapter = sqliteTable(
     };
   }
 );
-
-export const chapterLogs = sqliteTable("chapter_logs", {
-  id: text("id")
-    .$defaultFn(() => createId())
-    .primaryKey(),
-  action: text("action", {
-    enum: ["create", "update", "delete", "upload_video", "create_quiz"],
-  }),
-  description: text("description"),
-  chapterId: text("chapter_id").references(() => chapter.id, {
-    onDelete: "cascade",
-    onUpdate: "cascade",
-  }),
-  courseId: text("course_id")
-    .notNull()
-    .references(() => course.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
-  userId: text("user_id").references(() => user.id, {
-    onDelete: "set null",
-    onUpdate: "set null",
-  }),
-  createdAt: text("created_at"),
-});
 
 export const chapterRelations = relations(chapter, ({ one, many }) => ({
   courseModule: one(courseModule, {
@@ -102,4 +81,60 @@ export const chapterRelations = relations(chapter, ({ one, many }) => ({
   attachment: many(attachment),
   progress: many(courseProgress),
   logs: many(chapterLogs),
+}));
+
+export const chapterLogs = sqliteTable(
+  "chapter_logs",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    action: text("action", {
+      enum: [
+        "create",
+        "update",
+        "delete",
+        "upload_video",
+        "create_quiz",
+        "publish",
+        "unpublish",
+      ],
+    }),
+    description: text("description"),
+    chapterId: text("chapter_id").references(() => chapter.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+    courseId: text("course_id")
+      .notNull()
+      .references(() => course.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+      onUpdate: "set null",
+    }),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+  },
+  (table) => ({
+    chapterCourseIdx: index("cl_course_idx").on(table.courseId),
+  })
+);
+
+export const chapterLogsRelations = relations(chapterLogs, ({ one, many }) => ({
+  chapter: one(chapter, {
+    fields: [chapterLogs.chapterId],
+    references: [chapter.id],
+  }),
+  course: one(course, {
+    fields: [chapterLogs.courseId],
+    references: [course.id],
+  }),
+  user: one(user, {
+    fields: [chapterLogs.userId],
+    references: [user.id],
+  }),
 }));

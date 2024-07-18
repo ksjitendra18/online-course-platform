@@ -1,8 +1,10 @@
 import DeleteModule from "@/app/dashboard/components/delete-module";
+import ModuleStatus from "@/app/dashboard/components/module-status";
+import { Button } from "@/components/ui/button";
 import { db } from "@/db";
-import { course, courseModule } from "@/db/schema";
+import { chapter, course, courseModule } from "@/db/schema";
 import { cn } from "@/lib/utils";
-import { eq } from "drizzle-orm";
+import { eq, and, count, inArray, sql } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -23,6 +25,7 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
       slug: true,
       title: true,
     },
+
     with: {
       courseModule: {
         columns: {
@@ -30,11 +33,27 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
           title: true,
           slug: true,
           position: true,
+          isPublished: true,
         },
         orderBy: courseModule.position,
       },
     },
   });
+
+  // const moduleIds = courseInfo.courseModule.map((module) => module.id);
+
+  const publishableModules = await db
+    .select({ id: courseModule.id })
+    .from(courseModule)
+    .where(
+      inArray(
+        courseModule.id,
+        db
+          .select({ moduleId: chapter.moduleId })
+          .from(chapter)
+          .where(eq(chapter.isPublished, true))
+      )
+    );
 
   if (!courseInfo) {
     redirect("/dashboard");
@@ -80,8 +99,16 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
             key={courseModule.id}
             className="px-3 py-2 flex bg-slate-100  items-center justify-between rounded-md"
           >
-            <div className=" ">
+            <div className=" flex items-center gap-x-3">
               Module {courseModule.position}: {courseModule.title}
+              <div
+                className={cn(
+                  courseModule.isPublished ? "bg-green-600" : "bg-fuchsia-600",
+                  " rounded-full px-2 py-1 text-white text-sm"
+                )}
+              >
+                {courseModule.isPublished ? "Published" : "Unpublished"}
+              </div>
             </div>
             <div className="flex items-center gap-x-5">
               <Link
@@ -94,6 +121,17 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
               >
                 Edit
               </Link>
+              {!courseModule.isPublished &&
+                publishableModules.some(
+                  (module) => module.id === courseModule.id
+                ) && (
+                  <ModuleStatus
+                    status={courseModule.isPublished}
+                    courseId={courseInfo.id}
+                    moduleId={courseModule.id}
+                  />
+                )}
+
               <DeleteModule
                 courseId={courseInfo.id}
                 moduleId={courseModule.id}

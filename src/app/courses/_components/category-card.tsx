@@ -19,23 +19,18 @@ import {
 import { FaJava } from "react-icons/fa";
 import { MdEmojiPeople, MdWeb } from "react-icons/md";
 import { type IconType } from "react-icons";
-import { FaC, FaDatabase, FaNodeJs, FaPython } from "react-icons/fa6";
+import { FaC, FaDatabase, FaNodeJs, FaPython, FaReact } from "react-icons/fa6";
 
 const iconMap: Record<Category["name"], IconType> = {
-  Music: FcMusic,
-  Photography: FcOldTimeCamera,
-  Fitness: FcSportsMode,
-  Accounting: FcSalesPerformance,
   "CS Core": FcMultipleDevices,
-  Filming: FcFilmReel,
   Engineering: FcEngineering,
-  "Java Programming": FaJava,
+  Java: FaJava,
   "Web Development": MdWeb,
   Python: FaPython,
   "C / C++": FaC,
+  React: FaReact,
   SQL: FaDatabase,
   "Node.js": FaNodeJs,
-  Dance: MdEmojiPeople,
 };
 
 const CategoriesCard = ({ items, currentCategory }: CategoriesCardProps) => {

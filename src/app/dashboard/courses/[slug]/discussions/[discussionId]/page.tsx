@@ -22,7 +22,12 @@ const DiscussionIdPage = async ({
 }: {
   params: { slug: string; discussionId: string };
 }) => {
-  const courseData = await getCourseInfo(params.slug);
+  const userSession = await getUserSessionRedis();
+
+  if (!userSession) {
+    return redirect(`/dashboard/courses`);
+  }
+  const courseData = await getCourseInfo(params.slug, userSession.userId);
   const discussionInfo = await db.query.discussion.findFirst({
     where: eq(discussion.id, params.discussionId),
     with: {
@@ -42,8 +47,6 @@ const DiscussionIdPage = async ({
       votes: true,
     },
   });
-
-  const userSession = await getUserSessionRedis();
 
   if (!discussionInfo || !courseData || !userSession) {
     redirect("/");

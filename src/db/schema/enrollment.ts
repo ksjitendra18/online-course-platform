@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
-import { index, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { user } from "./auth";
 import { course } from "./course";
 
@@ -23,8 +23,8 @@ export const courseEnrollment = sqliteTable(
         onUpdate: "cascade",
       }),
 
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({

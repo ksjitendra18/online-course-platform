@@ -20,8 +20,13 @@ export const attachment = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: text("updated_at").$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => ({
     attachChapIdIdx: index("attach_chap_id_idx").on(table.chapterId),
@@ -43,10 +48,12 @@ export const videoAttachment = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    createdAt: text("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: text("updated_at").$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+    updatedAt: integer("updated_at")
+      .$onUpdate(() => sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => ({
     vidAttVidIdIdx: index("vidattc_vid_id_idx").on(table.videoId),

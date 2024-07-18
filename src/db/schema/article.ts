@@ -17,6 +17,9 @@ export const article = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => ({
     articleChapIdIdx: index("chap_id_idx").on(table.chapterId),

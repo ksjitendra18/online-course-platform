@@ -302,7 +302,7 @@ export const sendVerificationMail = async ({ email }: { email: string }) => {
           <div>The code is valid for only 1 hour</div>
           <div>You have received this email because you or someone tried to signup on the website </div>
           <div>If you didn't signup, kindly ignore this email.</div>
-          <div>For support contact us at support[at]optimizeandserve.com</div>
+          <div>For support contact us at support[at]learningapp.link</div>
           `,
         }),
       });
@@ -410,7 +410,7 @@ export const sendPasswordResetMail = async ({
           <div>The link is valid for only 1 hour</div>
           <div>You have received this email because you or someone tried to reset the password. </div>
           <div>If you didn't send this, firstly reset your password and contact support.</div>
-          <div>For support contact us at support[at]optimizeandserve.com</div>
+          <div>For support contact us at support[at]learningapp.link</div>
           `,
         }),
       });

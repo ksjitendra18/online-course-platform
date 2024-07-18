@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       userId: userInfo.id,
     });
 
-    revalidateTag("get-enrolled-course");
+    revalidateTag("get-enrolled-courses");
     revalidateTag("get-total-enrollments");
     return Response.json({ success: true }, { status: 201 });
   } catch (error) {

@@ -25,7 +25,7 @@ export type CourseData = {
   courseMember: {
     courseId: string;
     userId: string;
-    role: "owner" | "admin" | "teacher";
+    role: "owner" | "admin" | "teacher" | "auditor";
   }[];
   courseModule: {
     id: string;

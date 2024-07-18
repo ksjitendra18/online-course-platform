@@ -56,6 +56,7 @@ const ChapterQuiz = async ({
 
   const chapterQuizResponse = await db.query.quiz.findFirst({
     where: eq(quiz.id, quizInfo.id),
+    columns: {},
     with: {
       questions: {
         with: { answers: true },

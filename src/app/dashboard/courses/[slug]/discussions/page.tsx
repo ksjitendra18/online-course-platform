@@ -16,11 +16,15 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 const DiscussionsPage = async ({ params }: { params: { slug: string } }) => {
-  const courseData = await getCourseInfo(params.slug);
   const userSession = await getUserSessionRedis();
 
-  if (!courseData || !userSession) {
-    return redirect(`/courses/${params.slug}`);
+  if (!userSession) {
+    return redirect(`/dashboard/courses`);
+  }
+  const courseData = await getCourseInfo(params.slug, userSession.userId);
+
+  if (!courseData) {
+    return redirect(`/dashboard/courses`);
   }
   const allDiscussions = await getDiscussions(courseData.id);
 

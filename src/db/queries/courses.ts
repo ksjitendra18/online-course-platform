@@ -15,13 +15,7 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 
 export const getCourseInfo = unstable_cache(
-  async (slug: string) => {
-    const userInfo = await getUserSessionRedis();
-
-    if (!userInfo) {
-      return null;
-    }
-
+  async (slug: string, userId: string) => {
     return await db.query.course.findFirst({
       columns: {
         id: true,
@@ -37,7 +31,7 @@ export const getCourseInfo = unstable_cache(
           db
             .select({ id: courseMember.courseId })
             .from(courseMember)
-            .where(eq(courseMember.userId, userInfo.userId))
+            .where(eq(courseMember.userId, userId))
         )
       ),
     });
@@ -52,7 +46,7 @@ type GetCourseDataParams = {
 };
 
 export const getCourseData = unstable_cache(
-  async ({ courseSlug, userId }: GetCourseDataParams) => {
+  async ({ courseSlug }: GetCourseDataParams) => {
     return await db.query.course.findFirst({
       where: eq(course.slug, courseSlug),
       columns: {
@@ -134,8 +128,8 @@ export const getAllCoursesByUserId = unstable_cache(
       },
     });
   },
-  [`get-all-courses`],
-  { revalidate: 7200, tags: [`get-all-courses`] }
+  [`get-all-courses-admin`],
+  { revalidate: 7200, tags: [`get-all-courses-admin`] }
 );
 export const getDynamicCoursesByUserId = async (
   userId: string,
@@ -176,8 +170,8 @@ export const getDynamicCoursesByUserId = async (
         },
       });
     },
-    [`get-all-courses-${userId}`],
-    { revalidate: 7200, tags: [`get-all-courses-${userId}`] }
+    [`get-all-courses-admin-${userId}`],
+    { revalidate: 7200, tags: [`get-all-courses-admin-${userId}`] }
   );
 };
 
