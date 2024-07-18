@@ -1,10 +1,7 @@
 import { db } from "@/db";
-import { session, user } from "@/db/schema";
+import { session } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
-import { decryptCookie } from "@/lib/cookies";
-import { ProfileSchema } from "@/validations/profile";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const {
@@ -25,7 +22,7 @@ export async function POST(request: Request) {
 
     return Response.json({ success: true });
   } catch (error) {
-    console.log("Error while updating profile", error);
+    console.error("Error while updating profile", error);
 
     return Response.json(
       { error: { code: "server_error", message: "Server Error" } },
