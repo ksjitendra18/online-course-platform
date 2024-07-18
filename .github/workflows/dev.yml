@@ -32,6 +32,8 @@ jobs:
         run: |
           echo "DB_URL=${{ secrets.DB_URL }}" >> .env
           echo "DB_AUTH_TOKEN=${{ secrets.DB_AUTH_TOKEN }}" >> .env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
 
       - name: Build application
         run: pnpm run build
