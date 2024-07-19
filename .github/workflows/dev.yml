@@ -45,6 +45,9 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./.next/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/learningapp-dev/.next/
+
           ssh -o StrictHostKeyChecking=no "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" << 'EOF'
             cd ~/learningapp-dev
             export NVM_DIR="$HOME/.nvm"
@@ -53,6 +56,5 @@ jobs:
             echo "NPM version: $(npm --version)"
             git pull origin dev
             pnpm install
-            pnpm run build
             pm2 restart learningapp-dev   # Or the command you use to restart your app
           EOF
