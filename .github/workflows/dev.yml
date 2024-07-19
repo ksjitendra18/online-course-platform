@@ -30,10 +30,29 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DB_URL=${{ secrets.DB_URL }}" >> .env
-          echo "DB_AUTH_TOKEN=${{ secrets.DB_AUTH_TOKEN }}" >> .env
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+          echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Build application
         run: pnpm run build
+
+      - name: Deploy
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          ssh -o StrictHostKeyChecking=no "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" << 'EOF'
+            cd ~/learningapp-dev
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            echo "Node version: $(node --version)"
+            echo "NPM version: $(npm --version)"
+            git pull origin dev
+            pnpm install
+            pnpm run build
+            pm2 restart learningapp-dev   # Or the command you use to restart your app
+          EOF
