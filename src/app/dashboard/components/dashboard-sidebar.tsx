@@ -37,18 +37,7 @@ const DashboardSidebar = () => {
             <MdLibraryBooks />
             Courses
           </Link>
-          <Link
-            className={cn(
-              pathName.includes("categories")
-                ? "bg-blue-500/20 text-blue-500 font-semibold"
-                : "text-slate-700 hover:text-black hover:bg-gray-200",
-              "px-2 flex items-center  gap-2 py-2 w-full rounded-md transition-all duration-100 ease-in cursor-pointer "
-            )}
-            href="/dashboard/categories"
-          >
-            <MdCategory />
-            Categories
-          </Link>
+
           <Link
             className={cn(
               pathName === "/dashboard/analytics"
