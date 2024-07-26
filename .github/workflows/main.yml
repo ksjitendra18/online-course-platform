@@ -3,7 +3,7 @@ name: Main CI/CD
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build-and-deploy:
