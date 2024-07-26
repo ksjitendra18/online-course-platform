@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clickhouse/client": "^1.4.0",
     "@libsql/client": "^0.7.0",
     "@next/bundle-analyzer": "^14.2.5",
     "@node-rs/argon2": "^1.8.3",
