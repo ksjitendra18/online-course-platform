@@ -87,12 +87,10 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
       }
       const resData = await res.json();
 
-      if (res.status !== 200) {
-        setError(resData.error.message);
-      }
-
       if (res.status === 201) {
         return router.replace(`/verify/${resData.data.id}`);
+      } else {
+        setError(resData.error.message);
       }
     } catch (error) {
       setError("Error while Signup. Please try again later");

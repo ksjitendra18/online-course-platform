@@ -71,15 +71,13 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
       }
       const resData = await res.json();
 
-      if (res.status !== 200) {
+      if (res.status === 201) {
+        router.replace(`/verify/${resData.data.id}`);
+      } else {
         if (resData.error.code === "email_unverified") {
           setUnverifiedEmail(true);
         }
         setError(resData.error.message);
-      }
-
-      if (res.status === 201) {
-        return router.replace(`/verify/${resData.data.id}`);
       }
     } catch (error) {
       setError("Error while Signup. Please try again later");
