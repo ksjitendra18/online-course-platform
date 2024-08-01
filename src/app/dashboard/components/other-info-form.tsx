@@ -125,6 +125,7 @@ const OtherInformation = ({
         {
           method: "POST",
           body: formData,
+          credentials: "include",
         }
       );
       const imageUploadRes = await imageUpload.json();

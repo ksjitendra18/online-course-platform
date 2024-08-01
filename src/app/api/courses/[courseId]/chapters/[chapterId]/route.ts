@@ -1,6 +1,8 @@
+import { clearTagCache } from "@/actions/clear-tag-cache";
 import { db } from "@/db";
 import { chapter, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
+import redis from "@/lib/redis";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
@@ -132,6 +134,9 @@ export async function DELETE(
     const chapterExists = await db.query.chapter.findFirst({
       where: eq(chapter.id, params.chapterId),
       columns: { id: true },
+      with: {
+        videoData: true,
+      },
     });
 
     if (!chapterExists) {
@@ -143,9 +148,11 @@ export async function DELETE(
       });
     }
 
-    //! FIX ME: DELETE VIDEOS
+    await redis.sadd("delete_videos", chapterExists.videoData[0].playbackId);
 
     await db.delete(chapter).where(eq(chapter.id, params.chapterId));
+
+    clearTagCache("get-course-data");
     return Response.json({ success: true });
   } catch (error) {
     console.log(
