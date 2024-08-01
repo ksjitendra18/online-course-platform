@@ -34,12 +34,7 @@ const Courses = async ({
   }
 
   const memberCourses = await getAllCoursesByUserId(currentUser.userId, search);
-  // const fetchMemberCourses = await getDynamicCoursesByUserId(
-  //   currentUser.userId,
-  //   search
-  // );
-  // const memberCourses = await fetchMemberCourses();
-  // console.log(memberCourses);
+
   return (
     <>
       <section className="p-6 w-full">
@@ -67,7 +62,10 @@ const Courses = async ({
             <div className=" w-full aspect-video rounded-md overflow-hidden">
               <img
                 alt="Course Image"
-                src={memberCourse.course.imageUrl!}
+                src={
+                  memberCourse.course.imageUrl ??
+                  "https://cdn.learningapp.link/images/default-course-image.png"
+                }
                 className="object-cover rounded-t-md"
               />
             </div>

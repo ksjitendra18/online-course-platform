@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { chapter, course, courseMember, session } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
+import redis from "@/lib/redis";
 import { BasicInfoSchema } from "@/validations/basic-info";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
@@ -134,13 +135,45 @@ export async function DELETE(
         { status: 403 }
       );
     }
-    //! FIX ME: DELETE VIDEOS
+
+    const courseData = await db.query.course.findFirst({
+      where: eq(course.id, params.courseId),
+      columns: {
+        id: true,
+      },
+      with: {
+        videos: {
+          columns: {
+            playbackId: true,
+          },
+        },
+      },
+    });
+
+    if (!courseData) {
+      return Response.json(
+        {
+          error: {
+            code: "course_not_found",
+            message: "Course not found",
+          },
+        },
+        { status: 404 }
+      );
+    }
+
+    const videoIds = courseData.videos.map((video) => video.playbackId);
+
+    await redis.sadd("delete_videos", ...videoIds);
     await db.delete(course).where(eq(course.id, params.courseId));
     return Response.json({ success: true });
   } catch (error) {
     console.log("Error while deleting module", params.courseId, error);
-    return Response.json({
-      error: { code: "server_error", message: "Internal server Error" },
-    });
+    return Response.json(
+      {
+        error: { code: "server_error", message: "Internal server Error" },
+      },
+      { status: 500 }
+    );
   }
 }

@@ -163,6 +163,7 @@ const ChapterInformation = ({
         {
           method: "POST",
           body: formData,
+          credentials: "include",
         }
       );
       const vidUploadRes = await vidUpload.json();

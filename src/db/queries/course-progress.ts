@@ -1,17 +1,33 @@
 import { db } from "@/db";
-import { chapter, course, courseProgress } from "@/db/schema";
+import { chapter, course, courseModule, courseProgress } from "@/db/schema";
 import { and, count, eq, inArray } from "drizzle-orm";
 
 export const getProgress = async (userId: string, courseId: string) => {
   try {
-    const publishedChapters = await db.query.chapter.findMany({
-      where: eq(chapter.courseId, courseId),
+    const publishedModulesWithChapters = await db.query.courseModule.findMany({
+      where: and(
+        eq(courseModule.isPublished, true),
+        eq(courseModule.courseId, courseId)
+      ),
       columns: {
         id: true,
       },
+      with: {
+        chapter: {
+          where: eq(chapter.isPublished, true),
+          columns: {
+            id: true,
+          },
+        },
+      },
     });
 
-    const publishedChapterIds = publishedChapters.map((chapter) => chapter.id);
+    const publishedChapterIds = publishedModulesWithChapters.reduce(
+      (acc, module) => {
+        return acc.concat(module.chapter.map((chapter) => chapter.id));
+      },
+      [] as string[]
+    );
 
     const completedChapters = await db.query.courseProgress.findMany({
       where: and(

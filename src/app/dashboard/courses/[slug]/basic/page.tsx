@@ -1,11 +1,9 @@
 import BasicInformation from "@/app/dashboard/components/basic-info-form";
 import { db } from "@/db";
 import { course } from "@/db/schema";
-import { cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 import { FaHome } from "react-icons/fa";
 
 export const revalidate = 0;

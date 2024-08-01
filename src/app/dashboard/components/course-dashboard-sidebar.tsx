@@ -8,7 +8,7 @@ import { FaGear, FaUsers } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { RiFolderVideoFill, RiQuestionAnswerLine } from "react-icons/ri";
 
-const CourseSidebar = ({
+const CourseDashboardSidebar = ({
   slug,
   title,
   isPublished,
@@ -135,4 +135,4 @@ const CourseSidebar = ({
   );
 };
 
-export default CourseSidebar;
+export default CourseDashboardSidebar;

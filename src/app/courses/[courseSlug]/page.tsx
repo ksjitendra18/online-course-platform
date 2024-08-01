@@ -126,7 +126,6 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
         userHasEnrolled={!!userHasEnrolled}
         completedChapterIds={completedChapterIds}
       />
-
       <div className="mx-auto mt-5 w-full">
         <div className="bg-[#213147]  rounded-md text-white px-7 py-5">
           <h2 className="text-3xl">{courseData.title}</h2>

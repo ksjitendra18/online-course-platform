@@ -90,6 +90,21 @@ const ChapterPage = async ({
   let isEnrolled: CourseEnrollment | undefined;
 
   if (userSession) {
+    [purchaseInfo, isEnrolled] = await Promise.all([
+      db.query.purchase.findFirst({
+        where: and(
+          eq(purchase.courseId, courseData.id),
+          eq(purchase.userId, userSession.userId)
+        ),
+      }),
+
+      db.query.courseEnrollment.findFirst({
+        where: and(
+          eq(courseEnrollment.courseId, courseData.id),
+          eq(courseEnrollment.userId, userSession.userId)
+        ),
+      }),
+    ]);
     purchaseInfo = await db.query.purchase.findFirst({
       where: and(
         eq(purchase.courseId, courseData.id),
@@ -97,16 +112,16 @@ const ChapterPage = async ({
       ),
     });
 
-    isPartOfCourse = courseData.courseMember.find(
-      (mem) => mem.userId === userSession.userId
-    );
+    // isPartOfCourse = courseData.courseMember.find(
+    //   (mem) => mem.userId === userSession.userId
+    // );
 
-    isEnrolled = await db.query.courseEnrollment.findFirst({
-      where: and(
-        eq(courseEnrollment.courseId, courseData.id),
-        eq(courseEnrollment.userId, userSession.userId)
-      ),
-    });
+    // isEnrolled = await db.query.courseEnrollment.findFirst({
+    //   where: and(
+    //     eq(courseEnrollment.courseId, courseData.id),
+    //     eq(courseEnrollment.userId, userSession.userId)
+    //   ),
+    // });
   }
 
   const chapterInfo = await db.query.chapter.findFirst({
