@@ -1,3 +1,4 @@
+import { clearTagCache } from "@/actions/clear-tag-cache";
 import { db } from "@/db";
 import { courseModule } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
@@ -68,6 +69,8 @@ export async function PATCH(
       .set(parsedData.data)
       .where(eq(courseModule.id, moduleExists.id));
 
+    await clearTagCache("get-course-data");
+
     return Response.json({ success: true });
   } catch (error) {
     console.log("Error while updating module", params.moduleId, error);
@@ -124,6 +127,9 @@ export async function DELETE(
     //! FIX ME: DELETE VIDEOS
 
     await db.delete(courseModule).where(eq(courseModule.id, params.moduleId));
+
+    await clearTagCache("get-course-data");
+
     return Response.json({ success: true });
   } catch (error) {
     console.log("Error while deleting module", params.moduleId, error);
