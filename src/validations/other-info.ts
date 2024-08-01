@@ -7,7 +7,12 @@ export const OtherInfoSchema = z
     teacherName: z
       .string({ required_error: "Teacher Name is required" })
       .min(1, { message: "Teacher name is required" }),
-    courseCategoryId: z.string({ required_error: "Category is required" }),
+    courseCategories: z.array(
+      z.string({ required_error: "Invalid category" }),
+      {
+        required_error: "Category is required",
+      }
+    ),
     courseImg: z.string({ required_error: "Image is required" }).url(),
   })
   .superRefine((val, ctx) => {

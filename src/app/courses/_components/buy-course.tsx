@@ -37,11 +37,7 @@ const BuyCourse = ({
 
   const onPayment = async () => {
     setButtonLoading(true);
-    // const orderData = {
-    //   userId,
-    //   courseId,
-    //   coursePrice: coursePrice!,
-    // };
+
     const orderData = {
       courseId,
     };

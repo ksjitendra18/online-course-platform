@@ -1,17 +1,9 @@
 import { db } from "@/db";
-import {
-  course,
-  courseCategory,
-  courseMember,
-  courseModule,
-  session,
-} from "@/db/schema";
+import { course, courseCategory } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
-import { ModuleInfoSchema } from "@/validations/module-info";
 import { OtherInfoSchema } from "@/validations/other-info";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function PATCH(
@@ -20,11 +12,10 @@ export async function PATCH(
 ) {
   try {
     const {
-      courseId,
       teacherName,
       courseIsFree,
       coursePrice,
-      courseCategoryId,
+      courseCategories,
       courseValidity,
       courseImg,
     } = await request.json();
@@ -33,7 +24,7 @@ export async function PATCH(
       teacherName,
       courseIsFree,
       coursePrice,
-      courseCategoryId,
+      courseCategories,
       courseImg,
     });
 
@@ -70,15 +61,18 @@ export async function PATCH(
       );
     }
 
-    // !MULTI CATEGORY NEED FIX
+    const categoryData = parsedData.data.courseCategories.map((categoryId) => ({
+      courseId: params.courseId,
+      categoryId,
+    }));
 
-    await db
-      .delete(courseCategory)
-      .where(eq(courseCategory.courseId, params.courseId));
+    // before inserting categories delete all categories of the course
+    await db.transaction(async (trx) => {
+      await trx
+        .delete(courseCategory)
+        .where(eq(courseCategory.courseId, params.courseId));
 
-    await db.insert(courseCategory).values({
-      courseId,
-      categoryId: parsedData.data.courseCategoryId,
+      await trx.insert(courseCategory).values(categoryData);
     });
 
     await db

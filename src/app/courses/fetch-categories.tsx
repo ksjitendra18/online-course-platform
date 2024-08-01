@@ -10,6 +10,8 @@ const FetchCategories = async ({
 }) => {
   const categories = await db.query.category.findMany({});
 
+  console.log("categories", categories);
+
   return <CategoryCard currentCategory={currentCategory} items={categories} />;
 };
 

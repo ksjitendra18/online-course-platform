@@ -2,7 +2,7 @@ import React from "react";
 import DashboardSidebar from "../../components/dashboard-sidebar";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { redirect } from "next/navigation";
-import CourseSidebar from "../../components/course-sidebar";
+import CourseDashboardSidebar from "../../components/course-dashboard-sidebar";
 import { getCourseData } from "@/db/queries/courses";
 import { db } from "@/db";
 import { course, courseMember } from "@/db/schema";
@@ -52,7 +52,7 @@ const DashboardLayout = async ({
   }
   return (
     <div className="flex h-full">
-      <CourseSidebar
+      <CourseDashboardSidebar
         isPublished={courseData.isPublished}
         title={courseData.title}
         slug={params.slug}

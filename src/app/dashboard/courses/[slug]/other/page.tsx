@@ -74,7 +74,9 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
         teacherName={userInfo?.name}
         currentCategory={courseInfo.courseCategory}
         validity={courseInfo.validity}
-        update
+        existingCategories={courseInfo.courseCategory.map(
+          (category) => category.categoryId
+        )}
       />
     </section>
   );

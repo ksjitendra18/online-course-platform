@@ -2,39 +2,39 @@
 import { AlertTriangle, Loader2, Upload } from "lucide-react";
 import { type ZodFormattedError } from "zod";
 
+import { MultiSelect } from "@/components/multi-select";
 import { Button } from "@/components/ui/button";
 import { Category } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { OtherInfoSchema } from "@/validations/other-info";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import Image from "next/image";
 
 const OtherInformation = ({
   courseId,
-  courseSlug,
   coursePrice,
-  update,
   categories,
   isFree,
   exisitingImage,
   teacherName,
-  currentCategory,
   validity,
+  currentCategory,
+  existingCategories,
 }: {
   courseSlug?: string;
   teacherName?: string;
   categories?: Category[];
   isFree?: boolean;
   courseId?: string;
-  update?: boolean;
   exisitingImage?: string | null;
   coursePrice?: number | null;
   currentCategory: {
     courseId: string;
     categoryId: string;
   }[];
+  existingCategories: string[];
   validity: number | null;
 }) => {
   let imageRef = useRef<HTMLInputElement | null>(null);
@@ -43,7 +43,10 @@ const OtherInformation = ({
   const [imageUrl, setImageUrl] = useState(exisitingImage ?? "");
   const [imageUploading, setImageUploading] = useState(false);
   const [customError, setCustomError] = useState(false);
-  const [slug, setSlug] = useState("");
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    existingCategories ?? []
+  );
 
   const [formErrors, setFormErrors] = useState<ZodFormattedError<
     OtherInfoSchema,
@@ -60,7 +63,7 @@ const OtherInformation = ({
 
     const coursePrice = formData.get("coursePrice");
     const teacherName = formData.get("teacherName");
-    const courseCategoryId = formData.get("courseCategoryId");
+    // const courseCategoryId = formData.get("courseCategoryId");
     const courseValidity = formData.get("courseValidity");
 
     try {
@@ -69,7 +72,7 @@ const OtherInformation = ({
         courseIsFree: isFree,
         courseValidity: Number(courseValidity),
         teacherName,
-        courseCategoryId,
+        courseCategories: selectedCategories,
         courseImg: imageUrl,
       });
 
@@ -79,15 +82,9 @@ const OtherInformation = ({
         return;
       }
 
-      const reqMethod = update ? "PATCH" : "POST";
-
-      const reqUrl = update
-        ? `/api/courses/${courseId}/other`
-        : "/api/courses/other";
-
-      const res = await fetch(reqUrl, {
-        method: reqMethod,
-        body: JSON.stringify({ courseId, ...parsedResult.data }),
+      const res = await fetch(`/api/courses/${courseId}/other`, {
+        method: "PATCH",
+        body: JSON.stringify(parsedResult.data),
       });
 
       const resData = await res.json();
@@ -173,10 +170,7 @@ const OtherInformation = ({
         >
           {!isFree && (
             <>
-              <label
-                htmlFor="coursePrice"
-                className=" mt-5 block text-gray-600"
-              >
+              <label htmlFor="coursePrice" className=" mt-5 block ">
                 Course Price
               </label>
               <input
@@ -205,7 +199,7 @@ const OtherInformation = ({
               )}
             </>
           )}
-          <label htmlFor="teacherName" className=" mt-5 block text-gray-600">
+          <label htmlFor="teacherName" className=" mt-5 block ">
             Teacher(s) Name
           </label>
           <input
@@ -237,22 +231,21 @@ const OtherInformation = ({
           <label htmlFor="courseCategoryId" className="mt-5 block">
             Course Category
           </label>
-          <select
-            name="courseCategoryId"
-            className="w-full rounded-md border-slate-400 border-2 px-3 py-2"
-            defaultValue={currentCategory[0]?.categoryId}
-            id="category"
-          >
-            {categories?.map((category) => (
-              <option
-                className="border-2"
-                key={category.id}
-                value={category.id}
-              >
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <MultiSelect
+            className="border-2 border-slate-400 rounded-md"
+            options={categories!.map((category) => ({
+              label: category.name,
+              value: category.id,
+            }))}
+            onValueChange={(value) => {
+              setSelectedCategories(value);
+            }}
+            defaultValue={selectedCategories}
+            placeholder="Select options"
+            variant="inverted"
+            animation={2}
+            maxCount={4}
+          />
 
           <label htmlFor="courseValidity" className="mt-5 block">
             Course Validity
@@ -351,7 +344,7 @@ const OtherInformation = ({
               {isLoading ? (
                 <Loader2 className="animate-spin mx-auto" />
               ) : (
-                <>{update ? "Update Course" : "Create Course"}</>
+                "Update Course"
               )}
             </Button>
           </div>

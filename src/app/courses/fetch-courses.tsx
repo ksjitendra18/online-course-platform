@@ -11,8 +11,6 @@ type Props = {
   };
 };
 const FetchCourse = async ({ searchParams }: Props) => {
-  await new Promise((r) => setTimeout(r, 1000));
-
   const search =
     typeof searchParams.query === "string" ? searchParams.query : undefined;
 
