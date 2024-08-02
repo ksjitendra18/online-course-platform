@@ -126,6 +126,7 @@ export async function POST(request: Request) {
     cookies().set("auth-token", encryptedSessionId, {
       sameSite: "lax",
       expires: expiresAt,
+      domain: ".learningapp.link",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
     });
