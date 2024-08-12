@@ -1,14 +1,13 @@
 import { db } from "@/db";
-import { courseEnrollment, session } from "@/db/schema";
+import { courseEnrollment } from "@/db/schema";
 import { courseProgress } from "@/db/schema/course-progress";
 import { checkAuth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { chapterId, isCompleted, courseId } = await request.json();
+    const { chapterId, courseId } = await request.json();
 
     const { isAuth, userInfo } = await checkAuth();
 
@@ -50,7 +49,6 @@ export async function POST(request: NextRequest) {
     }
     await db.insert(courseProgress).values({
       chapterId,
-      isCompleted,
       courseId,
       userId: userInfo.id,
     });

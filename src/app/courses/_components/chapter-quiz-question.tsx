@@ -4,15 +4,13 @@ import { cn } from "@/lib/utils";
 import useQuizStore from "@/store/quiz";
 import { Loader2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
-
-// FIX THIS QUIZ THING
 
 interface Props {
   chapterQuiz: {
     id: string;
-    isPublished: boolean | null;
+    status: "draft" | "published" | "archived" | "deleted";
     createdAt: string | null;
     courseId: string;
     chapterId: string;

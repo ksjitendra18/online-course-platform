@@ -1,12 +1,12 @@
 import { db } from "@/db";
-import { chapter, course, courseModule, courseProgress } from "@/db/schema";
-import { and, count, eq, inArray } from "drizzle-orm";
+import { chapter, courseModule, courseProgress } from "@/db/schema";
+import { and, eq, inArray } from "drizzle-orm";
 
 export const getProgress = async (userId: string, courseId: string) => {
   try {
     const publishedModulesWithChapters = await db.query.courseModule.findMany({
       where: and(
-        eq(courseModule.isPublished, true),
+        eq(courseModule.status, "published"),
         eq(courseModule.courseId, courseId)
       ),
       columns: {
@@ -14,7 +14,7 @@ export const getProgress = async (userId: string, courseId: string) => {
       },
       with: {
         chapter: {
-          where: eq(chapter.isPublished, true),
+          where: eq(chapter.status, "published"),
           columns: {
             id: true,
           },
@@ -32,8 +32,7 @@ export const getProgress = async (userId: string, courseId: string) => {
     const completedChapters = await db.query.courseProgress.findMany({
       where: and(
         eq(courseProgress.userId, userId),
-        inArray(courseProgress.chapterId, publishedChapterIds),
-        eq(courseProgress.isCompleted, true)
+        inArray(courseProgress.chapterId, publishedChapterIds)
       ),
       columns: {
         chapterId: true,

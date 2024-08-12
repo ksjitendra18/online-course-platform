@@ -3,10 +3,9 @@ import DeleteChapter from "@/app/dashboard/components/delete-chapter";
 import { db } from "@/db";
 import { chapter, course, courseModule } from "@/db/schema";
 import { cn, formatDuration } from "@/lib/utils";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 import { FaHome } from "react-icons/fa";
 
 export const revalidate = 0;
@@ -46,7 +45,7 @@ const ModuleSlugPage = async ({
               isFree: true,
               title: true,
               position: true,
-              isPublished: true,
+              status: true,
               modulePosition: true,
               type: true,
             },
@@ -138,11 +137,13 @@ const ModuleSlugPage = async ({
                 </h3>
                 <div
                   className={cn(
-                    chapter.isPublished ? "bg-green-600" : "bg-fuchsia-600",
+                    chapter.status === "published"
+                      ? "bg-green-600"
+                      : "bg-fuchsia-600",
                     " rounded-full px-2 py-1 text-white text-sm"
                   )}
                 >
-                  {chapter.isPublished ? "Published" : "Unpublished"}
+                  {chapter.status === "published" ? "Published" : "Unpublished"}
                 </div>
                 <div className="text-sm flex items-center gap-4">
                   {!courseModuleWithChapters.isFree ? (
@@ -187,12 +188,12 @@ const ModuleSlugPage = async ({
                 >
                   Edit
                 </Link>
-                {!chapter.isPublished && (
+                {chapter.status !== "published" && (
                   <ChapterStatus
                     chapterId={chapter.id}
                     courseId={courseModuleWithChapters.id}
                     moduleId={courseModuleWithChapters.courseModule[0].id}
-                    status={chapter.isPublished}
+                    status={chapter.status}
                   />
                 )}
                 <DeleteChapter

@@ -28,7 +28,7 @@ export const ModuleInfoSchema = z.object({
     })
     .trim(),
 
-  isPublished: z.boolean().optional(),
+  status: z.enum(["draft", "published", "archived", "deleted"]).optional(),
 });
 
 export type ModuleInfoSchema = z.infer<typeof ModuleInfoSchema>;

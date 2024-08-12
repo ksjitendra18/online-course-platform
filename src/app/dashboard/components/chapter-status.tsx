@@ -1,5 +1,4 @@
 "use client";
-import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,9 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const ChapterStatus = ({
   status,
@@ -21,7 +21,7 @@ const ChapterStatus = ({
   chapterId,
   moduleId,
 }: {
-  status: boolean;
+  status: "draft" | "published" | "archived" | "deleted";
   courseId: string;
   chapterId: string;
   moduleId: string;
@@ -41,7 +41,7 @@ const ChapterStatus = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            isPublished: true,
+            status: "published",
           }),
         }
       );

@@ -5,12 +5,10 @@ import {
   quiz,
   quizResponse,
   quizUserResponse,
-  session,
 } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { QuizResponsesSchema } from "@/validations/quiz-response";
 import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -100,7 +98,6 @@ export async function POST(request: NextRequest) {
     }
 
     await db.insert(courseProgress).values({
-      isCompleted: true,
       chapterId: parsedData.data.chapterId,
       courseId: parsedData.data.courseId,
       userId: userInfo.id,

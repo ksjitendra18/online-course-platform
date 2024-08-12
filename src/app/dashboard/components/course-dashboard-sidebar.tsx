@@ -7,15 +7,18 @@ import { BsInfoCircle, BsQuestionSquare } from "react-icons/bs";
 import { FaGear, FaUsers } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { RiFolderVideoFill, RiQuestionAnswerLine } from "react-icons/ri";
+import PublishCourse from "./publish-course";
 
 const CourseDashboardSidebar = ({
   slug,
   title,
-  isPublished,
+  status,
+  courseId,
 }: {
   slug: string;
   title: string;
-  isPublished: boolean;
+  status: "draft" | "published" | "archived" | "deleted";
+  courseId: string;
 }) => {
   const pathName = usePathname();
   return (
@@ -25,14 +28,20 @@ const CourseDashboardSidebar = ({
       </h1>
 
       <div className="flex gap-3 flex-col px-5 py-2 items-center">
-        {isPublished ? (
-          <div className="rounded-full my-3 text-white bg-blue-500 px-6 py-1 text-sm">
-            PUBLISHED
+        {status === "published" ? (
+          <div className="flex items-center gap-2">
+            <div className="bg-blue-700 uppercase text-sm px-3 py-1 rounded-md text-white">
+              Published
+            </div>
           </div>
         ) : (
-          <div className="rounded-full my-3 bg-gray-200 px-6 py-1 text-sm">
-            DRAFT
-          </div>
+          <>
+            <PublishCourse
+              triggerMsg="Draft"
+              courseId={courseId}
+              variant={"secondary"}
+            />
+          </>
         )}
         <Link
           className={cn(

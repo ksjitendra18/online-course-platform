@@ -26,7 +26,10 @@ export async function PATCH(
       coursePrice,
       courseCategories,
       courseImg,
+      courseValidity,
     });
+
+    console.log("parsedData", courseValidity, parsedData, courseValidity);
 
     if (!parsedData.success) {
       return Response.json(
@@ -81,7 +84,6 @@ export async function PATCH(
         imageUrl: parsedData.data.courseImg,
         validity: courseValidity,
         price: parsedData.data.coursePrice,
-        isPublished: true,
       })
       .where(eq(course.id, params.courseId));
 

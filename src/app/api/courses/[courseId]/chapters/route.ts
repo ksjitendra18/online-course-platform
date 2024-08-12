@@ -1,10 +1,9 @@
 import { db } from "@/db";
-import { chapter, courseMember, session, videoData } from "@/db/schema";
+import { chapter, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 
 import { and, count, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const {
@@ -106,6 +105,8 @@ export async function POST(request: Request) {
           slug: parsedData.data.chapterSlug,
           isFree: parsedData.data.isFree,
           type: parsedData.data.type,
+          status: "draft",
+
           courseId,
         })
         .returning({ id: chapter.id, slug: chapter.slug });
@@ -133,6 +134,7 @@ export async function POST(request: Request) {
           slug: parsedData.data.chapterSlug,
           isFree: parsedData.data.isFree,
           type: parsedData.data.type,
+          status: "draft",
           courseId,
         })
         .returning({ id: chapter.id, slug: chapter.slug });

@@ -63,7 +63,6 @@ const OtherInformation = ({
 
     const coursePrice = formData.get("coursePrice");
     const teacherName = formData.get("teacherName");
-    // const courseCategoryId = formData.get("courseCategoryId");
     const courseValidity = formData.get("courseValidity");
 
     try {
@@ -99,7 +98,7 @@ const OtherInformation = ({
       }
       if (res.status === 200) {
         router.refresh();
-        router.push(`/dashboard/courses`);
+        // router.push(`/dashboard/courses`);
       }
     } catch (error) {
       toast.error("Server Error. Please try again");
@@ -151,15 +150,15 @@ const OtherInformation = ({
     },
     {
       key: "12 month",
-      value: "360",
+      value: "365",
     },
     {
       key: "2 years",
-      value: "720",
+      value: "730",
     },
     {
       key: "Unlimited",
-      value: "0",
+      value: "-1",
     },
   ];
   return (
@@ -254,7 +253,7 @@ const OtherInformation = ({
           <select
             name="courseValidity"
             className="w-full rounded-md border-slate-400 border-2 px-3 py-2"
-            defaultValue={validity ?? 0}
+            defaultValue={validity ?? -1}
             id="category"
           >
             {courseValidity?.map((validity) => (

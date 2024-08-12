@@ -1,17 +1,15 @@
+import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
-  primaryKey,
   sqliteTable,
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { user } from "./auth";
-import { category } from "./category";
-import { course } from "./course";
-import { createId } from "@paralleldrive/cuid2";
 import { chapter } from "./chapter";
+import { course } from "./course";
 
 export const courseProgress = sqliteTable(
   "course_progress",
@@ -37,7 +35,6 @@ export const courseProgress = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    isCompleted: integer("is_completed", { mode: "boolean" }).notNull(),
     createdAt: integer("created_at")
       .default(sql`(unixepoch())`)
       .notNull(),

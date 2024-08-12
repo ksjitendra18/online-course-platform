@@ -1,5 +1,6 @@
 import z from "zod";
 
+// TODO: IMPLEMENT MULTIPLE VALIDITY OPTIONS
 export const OtherInfoSchema = z
   .object({
     courseIsFree: z.boolean(),
@@ -13,6 +14,12 @@ export const OtherInfoSchema = z
         required_error: "Category is required",
       }
     ),
+    courseValidity: z
+      .union([z.number(), z.string().transform((val) => parseInt(val, 10))])
+      .refine((val) => [-1, 180, 365, 730].includes(val), {
+        message:
+          "Invalid course validity. Choose unlimited (-1), 6 months (180), 1 year (365), or 2 years (730).",
+      }),
     courseImg: z.string({ required_error: "Image is required" }).url(),
   })
   .superRefine((val, ctx) => {

@@ -1,14 +1,12 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   integer,
   primaryKey,
   sqliteTable,
   text,
-  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { course } from "./course";
 import { user } from "./auth";
+import { course } from "./course";
 
 export const courseMember = sqliteTable(
   "course_member",
@@ -19,6 +17,7 @@ export const courseMember = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+
     userId: text("user_id")
       .notNull()
       .references(() => user.id, {

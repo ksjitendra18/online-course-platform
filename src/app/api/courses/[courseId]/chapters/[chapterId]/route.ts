@@ -1,6 +1,6 @@
 import { clearTagCache } from "@/actions/clear-tag-cache";
 import { db } from "@/db";
-import { chapter, videoData } from "@/db/schema";
+import { chapter, courseModule, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import redis from "@/lib/redis";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
@@ -133,9 +133,11 @@ export async function DELETE(
 
     const chapterExists = await db.query.chapter.findFirst({
       where: eq(chapter.id, params.chapterId),
-      columns: { id: true },
+      columns: { id: true, moduleId: true },
       with: {
-        videoData: true,
+        videoData: {
+          columns: { playbackId: true },
+        },
       },
     });
 
@@ -150,7 +152,32 @@ export async function DELETE(
 
     await redis.sadd("delete_videos", chapterExists.videoData[0].playbackId);
 
-    await db.delete(chapter).where(eq(chapter.id, params.chapterId));
+    await db.transaction(async (trx) => {
+      await trx.delete(chapter).where(eq(chapter.id, params.chapterId));
+
+      const remainingChapters = await trx.query.chapter.findMany({
+        where: eq(chapter.moduleId, chapterExists.moduleId),
+        columns: { id: true, status: true },
+      });
+
+      if (remainingChapters.length === 0) {
+        await trx
+          .update(courseModule)
+          .set({ status: "draft" })
+          .where(eq(courseModule.id, chapterExists.moduleId));
+      } else {
+        const publishedChapters = remainingChapters.filter(
+          (chapter) => chapter.status === "published"
+        );
+
+        if (publishedChapters.length === 0) {
+          await trx
+            .update(courseModule)
+            .set({ status: "draft" })
+            .where(eq(courseModule.id, chapterExists.moduleId));
+        }
+      }
+    });
 
     clearTagCache("get-course-data");
     return Response.json({ success: true });

@@ -1,22 +1,22 @@
+import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   blob,
+  index,
   integer,
   sqliteTable,
   text,
   uniqueIndex,
-  index,
 } from "drizzle-orm/sqlite-core";
-import { createId } from "@paralleldrive/cuid2";
-import { courseMember } from "./course-member";
-import { organizationMember } from "./organization-member";
-import { course, courseLogs } from "./course";
-import { purchase } from "./purchase";
-import { courseEnrollment } from "./enrollment";
-import { courseProgress } from "./course-progress";
 import { chapterLogs } from "./chapter";
+import { course, courseLogs } from "./course";
+import { courseMember } from "./course-member";
 import { courseModuleLogs } from "./course-modules";
+import { courseProgress } from "./course-progress";
 import { discussionReply, discussionVote } from "./discussion";
+import { courseEnrollment } from "./enrollment";
+import { organizationMember } from "./organization-member";
+import { purchase } from "./purchase";
 
 export const organization = sqliteTable("organization", {
   id: text("id")
@@ -28,6 +28,7 @@ export const organization = sqliteTable("organization", {
     .default(sql`(unixepoch())`)
     .notNull(),
   updatedAt: integer("updated_at")
+    .default(sql`(unixepoch())`)
     .$onUpdate(() => sql`(unixepoch())`)
     .notNull(),
 });
@@ -77,7 +78,11 @@ export const userRelations = relations(user, ({ one, many }) => ({
   chapterLogs: many(chapterLogs),
   discussionVotes: many(discussionVote),
   discussionReplies: many(discussionReply),
+  passwordLogs: many(passwordLogs),
 }));
+
+export type User = typeof user.$inferSelect;
+export type NewUser = typeof user.$inferInsert;
 
 export const password = sqliteTable("password", {
   userId: text("user_id")
@@ -90,12 +95,44 @@ export const password = sqliteTable("password", {
   createdAt: integer("created_at")
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: integer("updated_at").$onUpdate(() => sql`(unixepoch())`),
+  updatedAt: integer("updated_at")
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => sql`(unixepoch())`)
+    .notNull(),
 });
 
 export const passwordRelations = relations(password, ({ one }) => ({
   user: one(user, {
     fields: [password.userId],
+    references: [user.id],
+  }),
+}));
+
+export const passwordLogs = sqliteTable(
+  "password_logs",
+  {
+    id: text("id")
+      .$default(() => createId())
+      .primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+  },
+  (table) => ({
+    userIdIdx: index("user_id_idx").on(table.userId),
+  })
+);
+
+export const passwordLogsRelations = relations(passwordLogs, ({ one }) => ({
+  user: one(user, {
+    fields: [passwordLogs.userId],
     references: [user.id],
   }),
 }));
@@ -117,6 +154,10 @@ export const oauthToken = sqliteTable(
     refreshToken: text("refresh_token").notNull(),
     createdAt: text("created_at")
       .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: text("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({
@@ -235,6 +276,3 @@ export const deviceSessRelations = relations(device, ({ one }) => ({
     references: [session.id],
   }),
 }));
-
-export type User = typeof user.$inferSelect;
-export type NewUser = typeof user.$inferInsert;

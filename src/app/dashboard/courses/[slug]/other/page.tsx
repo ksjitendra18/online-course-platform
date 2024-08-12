@@ -1,13 +1,11 @@
-import { getUserSessionRedis } from "@/db/queries/auth";
-import BasicInformation from "@/app/dashboard/components/basic-info-form";
 import OtherInformation from "@/app/dashboard/components/other-info-form";
+import PublishCourse from "@/app/dashboard/components/publish-course";
 import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
 import { course, user } from "@/db/schema";
-import { cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 import { FaHome } from "react-icons/fa";
 
 export const metadata = {
@@ -63,6 +61,13 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
 
       <div className="flex justify-between md:justify-start gap-x-3 items-center">
         <h1 className="text-2xl font-bold my-3">Edit Course Details</h1>
+        {courseInfo.status === "published" ? null : (
+          <PublishCourse
+            triggerMsg="Publish Course"
+            courseId={courseInfo.id}
+            variant={"app"}
+          />
+        )}
       </div>
       <OtherInformation
         courseSlug={courseInfo?.slug}

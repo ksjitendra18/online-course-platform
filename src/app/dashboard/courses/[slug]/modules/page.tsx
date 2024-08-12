@@ -1,13 +1,11 @@
 import DeleteModule from "@/app/dashboard/components/delete-module";
 import ModuleStatus from "@/app/dashboard/components/module-status";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { chapter, course, courseModule } from "@/db/schema";
 import { cn } from "@/lib/utils";
-import { eq, and, count, inArray, sql } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 import { FaHome } from "react-icons/fa";
 
 export const metadata = {
@@ -33,7 +31,7 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
           title: true,
           slug: true,
           position: true,
-          isPublished: true,
+          status: true,
         },
         orderBy: courseModule.position,
       },
@@ -51,7 +49,7 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
         db
           .select({ moduleId: chapter.moduleId })
           .from(chapter)
-          .where(eq(chapter.isPublished, true))
+          .where(eq(chapter.status, "published"))
       )
     );
 
@@ -103,11 +101,15 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
               Module {courseModule.position}: {courseModule.title}
               <div
                 className={cn(
-                  courseModule.isPublished ? "bg-green-600" : "bg-fuchsia-600",
+                  courseModule.status === "published"
+                    ? "bg-green-600"
+                    : "bg-fuchsia-600",
                   " rounded-full px-2 py-1 text-white text-sm"
                 )}
               >
-                {courseModule.isPublished ? "Published" : "Unpublished"}
+                {courseModule.status === "published"
+                  ? "Published"
+                  : "Unpublished"}
               </div>
             </div>
             <div className="flex items-center gap-x-5">
@@ -121,12 +123,12 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
               >
                 Edit
               </Link>
-              {!courseModule.isPublished &&
+              {courseModule.status !== "published" &&
                 publishableModules.some(
                   (module) => module.id === courseModule.id
                 ) && (
                   <ModuleStatus
-                    status={courseModule.isPublished}
+                    status={courseModule.status}
                     courseId={courseInfo.id}
                     moduleId={courseModule.id}
                   />

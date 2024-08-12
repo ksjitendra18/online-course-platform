@@ -30,7 +30,7 @@ const FetchCourse = async ({ searchParams }: Props) => {
       slug: true,
     },
     where: and(
-      eq(course.isPublished, true),
+      eq(course.status, "published"),
       like(course.title, `%${search ? search : ""}%`)
     ),
 
