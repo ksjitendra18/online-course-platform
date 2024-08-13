@@ -1,5 +1,4 @@
 "use client";
-import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,15 +10,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 const ModuleStatus = ({
   status,
   courseId,
   moduleId,
 }: {
-  status: boolean;
+  status: "draft" | "published" | "archived" | "deleted";
   courseId: string;
   moduleId: string;
 }) => {
@@ -33,7 +33,7 @@ const ModuleStatus = ({
       const res = await fetch(`/api/courses/${courseId}/modules/${moduleId}`, {
         method: "PATCH",
         body: JSON.stringify({
-          isPublished: true,
+          status: "published",
         }),
       });
 

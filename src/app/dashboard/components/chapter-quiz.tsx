@@ -1,8 +1,8 @@
-import { Check, Cross, Edit, Edit2, Loader2, Trash2, X } from "lucide-react";
-import ChapterQuizForm from "./chapter-quiz-form";
-import useSWR from "swr";
 import useQuizDataStore from "@/store/quiz-data";
+import { Check, Loader2, X } from "lucide-react";
 import { useEffect } from "react";
+import useSWR from "swr";
+import ChapterQuizForm from "./chapter-quiz-form";
 import DeleteQuiz from "./quiz-delete";
 import QuizEdit from "./quiz-edit";
 
@@ -19,7 +19,7 @@ export type QData = {
   chapterId: string;
   courseId: string;
   duration: number;
-  isPublished: boolean;
+  status: "draft" | "published" | "archived" | "deleted";
   createdAt: string;
   questions: {
     id: string;

@@ -1,28 +1,21 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
-import {
-  index,
-  integer,
-  sqliteTable,
-  text,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
-import { category } from "./category";
-import { courseModule, courseModuleLogs } from "./course-modules";
-import { courseCategory } from "./course-category";
-import { courseMember } from "./course-member";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import {
   chapter,
+  chapterLogs,
   courseEnrollment,
   discount,
   organization,
   purchase,
   quiz,
   quizResponse,
-  videoData,
   user,
-  chapterLogs,
+  videoData,
 } from ".";
+import { courseCategory } from "./course-category";
+import { courseMember } from "./course-member";
+import { courseModule, courseModuleLogs } from "./course-modules";
 import { discussion } from "./discussion";
 import { review } from "./review";
 
@@ -42,15 +35,16 @@ export const course = sqliteTable("course", {
   description: text("description"),
   imageUrl: text("image_url"),
   price: integer("price"),
-  validity: integer("validity").default(0),
-  isPublished: integer("is_published", { mode: "boolean" })
-    .default(false)
-    .notNull(),
+  validity: integer("validity"),
   duration: integer("duration"),
   level: text("level", {
     enum: ["beginner", "intermediate", "advanced"],
   }).notNull(),
   isFree: integer("is_free", { mode: "boolean" }).notNull(),
+  status: text("status", {
+    enum: ["draft", "published", "archived", "deleted"],
+  }).notNull(),
+  deletedAt: integer("deleted_at"),
   createdAt: integer("created_at")
     .default(sql`(unixepoch())`)
     .notNull(),
@@ -60,38 +54,45 @@ export const course = sqliteTable("course", {
     .notNull(),
 });
 
-export const courseLogs = sqliteTable("course_logs", {
-  id: text("id")
-    .$defaultFn(() => createId())
-    .primaryKey(),
-  action: text("action", {
-    enum: [
-      "create",
-      "update",
-      "delete",
-      "add_member",
-      "remove_member",
-      "publish",
-      "unpublish",
-      "discount_created",
-      "discount_deleted",
-    ],
-  }),
+export const courseLogs = sqliteTable(
+  "course_logs",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    action: text("action", {
+      enum: [
+        "create",
+        "update",
+        "delete",
+        "add_member",
+        "remove_member",
+        "publish",
+        "unpublish",
+        "discount_created",
+        "discount_deleted",
+      ],
+    }),
 
-  description: text("description"),
+    description: text("description"),
 
-  courseId: text("course_id").references(() => course.id, {
-    onDelete: "cascade",
-    onUpdate: "cascade",
-  }),
-  userId: text("user_id").references(() => user.id, {
-    onDelete: "set null",
-    onUpdate: "set null",
-  }),
-  createdAt: integer("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-});
+    courseId: text("course_id").references(() => course.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+      onUpdate: "set null",
+    }),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+  },
+  (table) => ({
+    courseLogsCourseId: index("course_logs_cid_idx").on(table.courseId),
+    courseLogsUserId: index("course_logs_uid_idx").on(table.userId),
+  })
+);
 
 export const courseRelations = relations(course, ({ many, one }) => ({
   courseCategory: many(courseCategory),

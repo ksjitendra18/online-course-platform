@@ -1,27 +1,19 @@
 "use client";
 
-import {
-  ChangeEvent,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { z } from "zod";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { OrgSlugSchema } from "@/validations/org-slug";
 import { OrganizationSignupSchema } from "@/validations/organization-signup";
-import debounce from "lodash.debounce";
+import { UsernameSchema } from "@/validations/username";
 import { Check, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ImSpinner8 } from "react-icons/im";
+import toast from "react-hot-toast";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import slugify from "slugify";
-import { Button } from "@/components/ui/button";
-import { UsernameSchema } from "@/validations/username";
-import toast from "react-hot-toast";
 import { useDebounce } from "use-debounce";
-import { OrgSlugSchema } from "@/validations/org-slug";
 
 interface Props {
   loading: boolean;
@@ -207,7 +199,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
       try {
         const parsedData = OrgSlugSchema.safeParse(deboundedOrgSlug);
         if (!parsedData.success) {
-          toast.error("Please enter a valid username");
+          toast.error("Please enter a valid slug");
           // setError(parsedData.error.format()._errors[0]);
         }
         const res = await fetch("/api/auth/availability/org-slug", {

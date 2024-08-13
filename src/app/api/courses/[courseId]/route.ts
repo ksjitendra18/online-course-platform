@@ -1,28 +1,22 @@
 import { db } from "@/db";
-import { chapter, course, courseMember, session } from "@/db/schema";
+import { chapter, course } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import redis from "@/lib/redis";
 import { BasicInfoSchema } from "@/validations/basic-info";
-import { and, eq } from "drizzle-orm";
-import { revalidatePath, revalidateTag } from "next/cache";
-import { cookies } from "next/headers";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { NextRequest } from "next/server";
+
+const PartialBasicInfoSchema = BasicInfoSchema.partial();
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { courseId: string } }
 ) {
   try {
-    const { courseName, courseSlug, courseDescription, level, isFree } =
-      await request.json();
+    const reqBody = await request.json();
 
-    const parsedData = BasicInfoSchema.safeParse({
-      courseName,
-      courseSlug,
-      courseDescription,
-      level,
-      isFree,
-    });
+    const parsedData = PartialBasicInfoSchema.safeParse(reqBody);
 
     if (!parsedData.success) {
       return Response.json(
@@ -65,7 +59,7 @@ export async function PATCH(
       );
     }
 
-    // if course is already free
+    // if course was previously free and is now paid
     // make every chapter paid
     if (courseInfo.isFree && !parsedData.data.isFree) {
       await db
@@ -76,6 +70,8 @@ export async function PATCH(
         .where(eq(chapter.courseId, courseInfo.id));
     }
 
+    // if course was previously paid and is now free
+    // make every chapter free
     if (!courseInfo.isFree && parsedData.data.isFree) {
       await db
         .update(chapter)
@@ -87,13 +83,7 @@ export async function PATCH(
 
     await db
       .update(course)
-      .set({
-        title: parsedData.data.courseName,
-        slug: parsedData.data.courseSlug,
-        description: parsedData.data.courseDescription,
-        isFree: parsedData.data.isFree,
-        level: parsedData.data.level,
-      })
+      .set(parsedData.data)
       .where(eq(course.id, courseInfo.id));
 
     revalidatePath("/dashboard/courses");

@@ -1,9 +1,8 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { chapter } from "./chapter";
 import { videoData } from "./video-data";
-import { index } from "drizzle-orm/sqlite-core";
 
 export const attachment = sqliteTable(
   "attachment",
@@ -33,6 +32,13 @@ export const attachment = sqliteTable(
   })
 );
 
+export const attachmentRelations = relations(attachment, ({ one }) => ({
+  chapter: one(chapter, {
+    fields: [attachment.chapterId],
+    references: [chapter.id],
+  }),
+}));
+
 export const videoAttachment = sqliteTable(
   "video_attachment",
   {
@@ -59,13 +65,6 @@ export const videoAttachment = sqliteTable(
     vidAttVidIdIdx: index("vidattc_vid_id_idx").on(table.videoId),
   })
 );
-
-export const attachmentRelations = relations(attachment, ({ one }) => ({
-  chapter: one(chapter, {
-    fields: [attachment.chapterId],
-    references: [chapter.id],
-  }),
-}));
 
 export const videoAttachmentRelations = relations(
   videoAttachment,

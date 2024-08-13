@@ -30,7 +30,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "${{ secrets.ENV_FILE }}" > .env.production
+          echo "${{ secrets.ENV_DEV_FILE }}" > .env.production
 
       - name: Build application
         run: pnpm run build
@@ -54,7 +54,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             echo "Node version: $(node --version)"
             echo "NPM version: $(npm --version)"
-            git pull origin main
+            git pull origin dev
             pnpm install
             pm2 restart learningapp-dev
           EOF

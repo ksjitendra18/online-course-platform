@@ -1,4 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
+import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
@@ -6,9 +7,8 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+import { videoAttachment } from "./attachment";
 import { chapter } from "./chapter";
-import { relations, sql } from "drizzle-orm";
-import { attachment, videoAttachment } from "./attachment";
 import { course } from "./course";
 
 export const videoData = sqliteTable(
@@ -34,10 +34,6 @@ export const videoData = sqliteTable(
     isDeleted: integer("is_deleted", { mode: "boolean" }).default(false),
     createdAt: integer("created_at")
       .default(sql`(unixepoch())`)
-      .notNull(),
-    updatedAt: integer("updated_at")
-      .default(sql`(unixepoch())`)
-      .$onUpdate(() => sql`(unixepoch())`)
       .notNull(),
   },
   (table) => {

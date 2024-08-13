@@ -28,7 +28,6 @@ export const quiz = sqliteTable(
     startDate: integer("start_date"),
     endDate: integer("end_date"),
     duration: integer("duration").notNull(),
-    isPublished: integer("is_published", { mode: "boolean" }).default(false),
 
     chapterId: text("chapter_id")
       .notNull()
@@ -43,6 +42,12 @@ export const quiz = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+
+    status: text("status", {
+      enum: ["draft", "published", "archived", "deleted"],
+    }).notNull(),
+
+    deletedAt: integer("deleted_at", { mode: "timestamp" }),
 
     createdAt: text("created_at")
       .default(sql`(unixepoch())`)

@@ -1,17 +1,12 @@
 import { db } from "@/db";
-import { getUserSessionRedis } from "@/db/queries/auth";
-import { and, eq, inArray, like } from "drizzle-orm";
 import {
-  Course,
   chapter,
   course,
   courseEnrollment,
   courseMember,
   courseModule,
-  courseProgress,
-  purchase,
 } from "@/db/schema";
-import { cache } from "react";
+import { and, eq, inArray, like } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 
 export const getCourseInfo = unstable_cache(
@@ -21,7 +16,7 @@ export const getCourseInfo = unstable_cache(
         id: true,
         title: true,
         slug: true,
-        isPublished: true,
+        status: true,
         isFree: true,
       },
       where: and(
@@ -62,7 +57,7 @@ export const getCourseData = unstable_cache(
       with: {
         courseMember: true,
         courseModule: {
-          where: eq(courseModule.isPublished, true),
+          where: eq(courseModule.status, "published"), 
           columns: {
             title: true,
             id: true,
@@ -71,7 +66,7 @@ export const getCourseData = unstable_cache(
           orderBy: courseModule.position,
           with: {
             chapter: {
-              where: eq(chapter.isPublished, true),
+              where: eq(courseModule.status, "published"),
               columns: {
                 id: true,
                 title: true,
@@ -207,7 +202,7 @@ export const getPublishedCourses = unstable_cache(
         id: true,
       },
       where: and(
-        eq(course.isPublished, true),
+        eq(courseModule.status, "published"),
         inArray(
           course.id,
           db

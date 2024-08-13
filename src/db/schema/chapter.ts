@@ -7,15 +7,14 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { courseModule } from "./course-modules";
-import { videoData } from "./video-data";
 import { article } from "./article";
-import { quiz } from "./quiz";
 import { attachment } from "./attachment";
-import { course } from "./course";
-import { courseProgress } from "./course-progress";
 import { user } from "./auth";
-import { logs } from "./logs";
+import { course } from "./course";
+import { courseModule } from "./course-modules";
+import { courseProgress } from "./course-progress";
+import { quiz } from "./quiz";
+import { videoData } from "./video-data";
 
 export const chapter = sqliteTable(
   "chapter",
@@ -28,9 +27,6 @@ export const chapter = sqliteTable(
     description: text("description"),
     position: integer("position").notNull(),
     modulePosition: integer("module_position").notNull(),
-    isPublished: integer("is_published", { mode: "boolean" })
-      .default(false)
-      .notNull(),
     isFree: integer("is_free", { mode: "boolean" }).default(false).notNull(),
     moduleId: text("module_id")
       .notNull()
@@ -47,6 +43,10 @@ export const chapter = sqliteTable(
     type: text("type", {
       enum: ["quiz", "video", "attachment", "article"],
     }).notNull(),
+    status: text("status", {
+      enum: ["draft", "published", "archived", "deleted"],
+    }).notNull(),
+    deletedAt: integer("deleted_at"),
     createdAt: integer("created_at")
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -120,7 +120,8 @@ export const chapterLogs = sqliteTable(
       .notNull(),
   },
   (table) => ({
-    chapterCourseIdx: index("cl_course_idx").on(table.courseId),
+    chapterLogsCourseIdx: index("cl_course_idx").on(table.courseId),
+    chapterLogsChapterIdx: index("cl_chapter_idx").on(table.chapterId),
   })
 );
 

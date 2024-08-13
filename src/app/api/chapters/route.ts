@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { chapter, courseMember, videoData } from "@/db/schema";
+import { chapter, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 
@@ -105,6 +105,7 @@ export async function POST(request: Request) {
           slug: parsedData.data.chapterSlug,
           isFree: parsedData.data.isFree,
           type: parsedData.data.type,
+          status: "draft",
           courseId,
         })
         .returning({ id: chapter.id });
@@ -127,6 +128,7 @@ export async function POST(request: Request) {
           slug: parsedData.data.chapterSlug,
           isFree: parsedData.data.isFree,
           type: parsedData.data.type,
+          status: "draft",
           courseId,
         })
         .returning({ id: chapter.id });

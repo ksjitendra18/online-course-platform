@@ -1,12 +1,10 @@
 import { db } from "@/db";
-import { chapter, courseMember, session, videoData } from "@/db/schema";
+import { chapter } from "@/db/schema";
 import { quiz, quizAnswer, quizQuestion } from "@/db/schema/quiz";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
-import { ChapterInfoSchema } from "@/validations/chapter-info";
 import { QuizSchema } from "@/validations/quiz-question";
 
 import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {
@@ -82,6 +80,7 @@ export async function POST(request: Request) {
           chapterId,
           duration: 30,
           courseId,
+          status: "draft",
           instructions: "Please answer all the question correctly",
         })
         .returning({ id: quiz.id });

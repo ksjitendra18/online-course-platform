@@ -1,12 +1,10 @@
-import React from "react";
-import DashboardSidebar from "../../components/dashboard-sidebar";
-import { getUserSessionRedis } from "@/db/queries/auth";
-import { redirect } from "next/navigation";
-import CourseDashboardSidebar from "../../components/course-dashboard-sidebar";
-import { getCourseData } from "@/db/queries/courses";
 import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
 import { course, courseMember } from "@/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import React from "react";
+import CourseDashboardSidebar from "../../components/course-dashboard-sidebar";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -33,7 +31,7 @@ const DashboardLayout = async ({
       id: true,
       title: true,
       slug: true,
-      isPublished: true,
+      status: true,
     },
     where: and(
       eq(course.slug, params.slug),
@@ -53,9 +51,10 @@ const DashboardLayout = async ({
   return (
     <div className="flex h-full">
       <CourseDashboardSidebar
-        isPublished={courseData.isPublished}
+        status={courseData.status}
         title={courseData.title}
         slug={params.slug}
+        courseId={courseData.id}
       />
       <div className=" h-full w-full">{children}</div>
     </div>

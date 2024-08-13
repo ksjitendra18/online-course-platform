@@ -4,7 +4,6 @@ export * from "./category";
 export * from "./chapter";
 export * from "./course-modules";
 export * from "./course";
-export * from "./logs";
 export * from "./purchase";
 export * from "./video-data";
 export * from "./course-member";

@@ -1,9 +1,9 @@
-import { eq } from "drizzle-orm";
-import { course, courseMember, session } from "@/db/schema";
-import { BasicInfoSchema } from "@/validations/basic-info";
-import { cookies } from "next/headers";
 import { db } from "@/db";
+import { course, courseLogs, courseMember, session } from "@/db/schema";
 import { decryptCookie } from "@/lib/cookies";
+import { BasicInfoSchema } from "@/validations/basic-info";
+import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {
@@ -92,6 +92,7 @@ export async function POST(request: Request) {
         organizationId: userOrgInfo[0].organizationId,
         isFree: parsedData.data.isFree,
         level: parsedData.data.level,
+        status: "draft",
       })
       .returning({ id: course.id, slug: course.slug });
 
@@ -100,6 +101,13 @@ export async function POST(request: Request) {
       userId: userOrgInfo[0].userId,
       role: "owner",
     });
+
+    await db.insert(courseLogs).values({
+      courseId: newCourse[0].id,
+      userId: userOrgInfo[0].userId,
+      action: "create",
+    });
+
     return Response.json(
       { data: { courseId: newCourse[0].id, courseSlug: newCourse[0].slug } },
       { status: 201 }

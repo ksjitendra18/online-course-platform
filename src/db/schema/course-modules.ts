@@ -7,12 +7,12 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { course } from "./course";
-import { chapter } from "./chapter";
 import { user } from "./auth";
+import { chapter } from "./chapter";
+import { course } from "./course";
 
 export const courseModule = sqliteTable(
-  "module",
+  "course_module",
   {
     id: text("id")
       .$defaultFn(() => createId())
@@ -20,9 +20,6 @@ export const courseModule = sqliteTable(
     title: text("title").notNull(),
     description: text("description"),
     slug: text("module_slug").notNull(),
-    isPublished: integer("is_published", { mode: "boolean" })
-      .default(false)
-      .notNull(),
     courseId: text("course_id")
       .notNull()
       .references(() => course.id, {
@@ -30,6 +27,10 @@ export const courseModule = sqliteTable(
         onUpdate: "cascade",
       }),
     position: integer("position").notNull(),
+    status: text("status", {
+      enum: ["draft", "published", "archived", "deleted"],
+    }).notNull(),
+    deletedAt: integer("deleted_at"),
     createdAt: integer("created_at")
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -38,48 +39,54 @@ export const courseModule = sqliteTable(
       .$onUpdate(() => sql`(unixepoch())`)
       .notNull(),
   },
-  (table) => {
-    return {
-      courseModuleSlug: uniqueIndex("course_module_slug").on(
-        table.courseId,
-        table.slug
-      ),
-      courseModuleCourseIdx: index("course_module_course_idx").on(
-        table.courseId
-      ),
-    };
-  }
+  (table) => ({
+    courseModuleSlug: uniqueIndex("course_module_slug").on(
+      table.courseId,
+      table.slug
+    ),
+  })
 );
 
-export const courseModuleLogs = sqliteTable("course_module_logs", {
-  id: text("id")
-    .$defaultFn(() => createId())
-    .primaryKey(),
+export const courseModuleLogs = sqliteTable(
+  "course_module_logs",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
 
-  action: text("action", {
-    enum: ["create", "update", "delete", "publish", "unpublish"],
-  }),
+    action: text("action", {
+      enum: ["create", "update", "delete", "publish", "unpublish"],
+    }),
 
-  description: text("description"),
-  moduleId: text("module_id").references(() => courseModule.id, {
-    onDelete: "cascade",
-    onUpdate: "cascade",
-  }),
-
-  courseId: text("course_id")
-    .notNull()
-    .references(() => course.id, {
+    description: text("description"),
+    moduleId: text("module_id").references(() => courseModule.id, {
       onDelete: "cascade",
       onUpdate: "cascade",
     }),
-  userId: text("user_id").references(() => user.id, {
-    onDelete: "set null",
-    onUpdate: "set null",
-  }),
-  createdAt: integer("created_at")
-    .default(sql`(unixepoch())`)
-    .notNull(),
-});
+
+    courseId: text("course_id")
+      .notNull()
+      .references(() => course.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+      onUpdate: "set null",
+    }),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+  },
+  (table) => ({
+    courseModuleLogsCourseIdx: index("course_module_course_idx").on(
+      table.courseId
+    ),
+    courseModuleLogsUserIdx: index("course_module_logs_user_idx").on(
+      table.userId
+    ),
+  })
+);
 
 export const courseModuleRelations = relations(
   courseModule,

@@ -17,7 +17,7 @@ export const discount = sqliteTable(
     }),
     isGlobal: integer("is_global", { mode: "boolean" }).notNull(),
     usageLimit: integer("usage_limit").notNull(),
-    validTill: text("valid_till").notNull(),
+    validTill: integer("valid_till").notNull(),
     createdAt: integer("created_at")
       .default(sql`(unixepoch())`)
       .notNull(),

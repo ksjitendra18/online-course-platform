@@ -6,11 +6,9 @@ import {
   primaryKey,
   sqliteTable,
   text,
-  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { chapter } from "./chapter";
-import { course } from "./course";
 import { user } from "./auth";
+import { course } from "./course";
 
 export const discussion = sqliteTable(
   "discussion",
@@ -35,6 +33,10 @@ export const discussion = sqliteTable(
       }),
     createdAt: integer("created_at")
       .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
       .notNull(),
   },
   (table) => ({
@@ -78,9 +80,13 @@ export const discussionReply = sqliteTable(
     createdAt: integer("created_at")
       .default(sql`(unixepoch())`)
       .notNull(),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
+      .notNull(),
   },
   (table) => ({
-    disc__id_idx: index("disc__id_idx").on(table.discussionId),
+    dreplyDiscIdIdx: index("dreply_disc_id_idx").on(table.discussionId),
   })
 );
 

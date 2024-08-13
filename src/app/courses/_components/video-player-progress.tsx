@@ -2,7 +2,6 @@
 
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -47,7 +46,6 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
               body: JSON.stringify({
                 courseId,
                 chapterId,
-                isCompleted: true,
               }),
             });
 

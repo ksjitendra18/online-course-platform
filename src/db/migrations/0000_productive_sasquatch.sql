@@ -63,6 +63,7 @@ CREATE TABLE `oauth_token` (
 	`access_token` text NOT NULL,
 	`refresh_token` text NOT NULL,
 	`created_at` text DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` text DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
@@ -71,14 +72,21 @@ CREATE TABLE `organization` (
 	`name` text NOT NULL,
 	`slug` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	`updated_at` integer NOT NULL
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `password` (
 	`user_id` text PRIMARY KEY NOT NULL,
 	`password` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	`updated_at` integer,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `password_logs` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
@@ -119,14 +127,15 @@ CREATE TABLE `chapter` (
 	`description` text,
 	`position` integer NOT NULL,
 	`module_position` integer NOT NULL,
-	`is_published` integer DEFAULT false NOT NULL,
 	`is_free` integer DEFAULT false NOT NULL,
 	`module_id` text NOT NULL,
 	`course_id` text NOT NULL,
 	`type` text NOT NULL,
+	`status` text NOT NULL,
+	`deleted_at` integer,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
-	FOREIGN KEY (`module_id`) REFERENCES `module`(`id`) ON UPDATE cascade ON DELETE cascade,
+	FOREIGN KEY (`module_id`) REFERENCES `course_module`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
@@ -146,7 +155,7 @@ CREATE TABLE `chapter_logs` (
 CREATE TABLE `course_category` (
 	`course_id` text NOT NULL,
 	`category_id` text NOT NULL,
-	PRIMARY KEY(`category_id`, `course_id`),
+	PRIMARY KEY(`course_id`, `category_id`),
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`category_id`) REFERENCES `category`(`id`) ON UPDATE cascade ON DELETE cascade
 );
@@ -162,14 +171,15 @@ CREATE TABLE `course_member` (
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `module` (
+CREATE TABLE `course_module` (
 	`id` text PRIMARY KEY NOT NULL,
 	`title` text NOT NULL,
 	`description` text,
 	`module_slug` text NOT NULL,
-	`is_published` integer DEFAULT false NOT NULL,
 	`course_id` text NOT NULL,
 	`position` integer NOT NULL,
+	`status` text NOT NULL,
+	`deleted_at` integer,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade
@@ -183,7 +193,7 @@ CREATE TABLE `course_module_logs` (
 	`course_id` text NOT NULL,
 	`user_id` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	FOREIGN KEY (`module_id`) REFERENCES `module`(`id`) ON UPDATE cascade ON DELETE cascade,
+	FOREIGN KEY (`module_id`) REFERENCES `course_module`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE set null ON DELETE set null
 );
@@ -193,7 +203,6 @@ CREATE TABLE `course_progress` (
 	`chapter_id` text NOT NULL,
 	`course_id` text NOT NULL,
 	`user_id` text NOT NULL,
-	`is_completed` integer NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`chapter_id`) REFERENCES `chapter`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade,
@@ -208,11 +217,12 @@ CREATE TABLE `course` (
 	`description` text,
 	`image_url` text,
 	`price` integer,
-	`validity` integer DEFAULT 0,
-	`is_published` integer DEFAULT false NOT NULL,
+	`validity` integer,
 	`duration` integer,
 	`level` text NOT NULL,
 	`is_free` integer NOT NULL,
+	`status` text NOT NULL,
+	`deleted_at` integer,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON UPDATE cascade ON DELETE cascade
@@ -224,7 +234,7 @@ CREATE TABLE `course_logs` (
 	`description` text,
 	`course_id` text,
 	`user_id` text,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE set null ON DELETE set null
 );
@@ -236,7 +246,7 @@ CREATE TABLE `discount` (
 	`course_id` text,
 	`is_global` integer NOT NULL,
 	`usage_limit` integer NOT NULL,
-	`valid_till` text NOT NULL,
+	`valid_till` integer NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade
@@ -249,6 +259,7 @@ CREATE TABLE `discussion` (
 	`course_id` text NOT NULL,
 	`user_id` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
@@ -259,6 +270,7 @@ CREATE TABLE `discussion-reply` (
 	`discussion_id` text NOT NULL,
 	`user_id` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`discussion_id`) REFERENCES `discussion`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
@@ -280,15 +292,6 @@ CREATE TABLE `course_enrollment` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
-);
---> statement-breakpoint
-CREATE TABLE `logs` (
-	`id` text PRIMARY KEY NOT NULL,
-	`type` text NOT NULL,
-	`ip` text NOT NULL,
-	`device_fingerprint` text,
-	`info` text,
-	`created_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `purchase` (
@@ -314,7 +317,6 @@ CREATE TABLE `video_data` (
 	`is_flagged` integer DEFAULT false,
 	`is_deleted` integer DEFAULT false,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`course_id`) REFERENCES `course`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`chapter_id`) REFERENCES `chapter`(`id`) ON UPDATE cascade ON DELETE cascade
 );
@@ -338,9 +340,10 @@ CREATE TABLE `quiz` (
 	`start_date` integer,
 	`end_date` integer,
 	`duration` integer NOT NULL,
-	`is_published` integer DEFAULT false,
 	`chapter_id` text NOT NULL,
 	`course_id` text NOT NULL,
+	`status` text NOT NULL,
+	`deleted_at` integer,
 	`created_at` text DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` text DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`chapter_id`) REFERENCES `chapter`(`id`) ON UPDATE cascade ON DELETE cascade,
@@ -404,6 +407,7 @@ CREATE INDEX `vidattc_vid_id_idx` ON `video_attachment` (`video_id`);--> stateme
 CREATE UNIQUE INDEX `device_sess_id_idx` ON `device` (`session_id`);--> statement-breakpoint
 CREATE INDEX `oauth_uid_idx` ON `oauth_token` (`user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `organization_slug_unique` ON `organization` (`slug`);--> statement-breakpoint
+CREATE INDEX `user_id_idx` ON `password_logs` (`user_id`);--> statement-breakpoint
 CREATE INDEX `user_id_sess_idx` ON `session` (`user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `user_user_name_unique` ON `user` (`user_name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint
@@ -411,14 +415,18 @@ CREATE UNIQUE INDEX `category_slug_unique` ON `category` (`slug`);--> statement-
 CREATE UNIQUE INDEX `module_id_slug` ON `chapter` (`module_id`,`slug`);--> statement-breakpoint
 CREATE INDEX `chapter_course_idx` ON `chapter` (`course_id`);--> statement-breakpoint
 CREATE INDEX `cl_course_idx` ON `chapter_logs` (`course_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `course_module_slug` ON `module` (`course_id`,`module_slug`);--> statement-breakpoint
-CREATE INDEX `course_module_course_idx` ON `module` (`course_id`);--> statement-breakpoint
+CREATE INDEX `cl_chapter_idx` ON `chapter_logs` (`chapter_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `course_module_slug` ON `course_module` (`course_id`,`module_slug`);--> statement-breakpoint
+CREATE INDEX `course_module_course_idx` ON `course_module_logs` (`course_id`);--> statement-breakpoint
+CREATE INDEX `course_module_logs_user_idx` ON `course_module_logs` (`user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `course_progress_user_id_idx` ON `course_progress` (`user_id`,`chapter_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `course_slug_unique` ON `course` (`slug`);--> statement-breakpoint
+CREATE INDEX `course_logs_cid_idx` ON `course_logs` (`course_id`);--> statement-breakpoint
+CREATE INDEX `course_logs_uid_idx` ON `course_logs` (`user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `discount_code_unique` ON `discount` (`code`);--> statement-breakpoint
 CREATE INDEX `dis_course_id_idx` ON `discount` (`course_id`);--> statement-breakpoint
 CREATE INDEX `disc_course_id_idx` ON `discussion` (`course_id`);--> statement-breakpoint
-CREATE INDEX `disc__id_idx` ON `discussion-reply` (`discussion_id`);--> statement-breakpoint
+CREATE INDEX `dreply_disc_id_idx` ON `discussion-reply` (`discussion_id`);--> statement-breakpoint
 CREATE INDEX `dv_disc_id_idx` ON `discussion_vote` (`discussion_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `course_enrollment_user_course_id_idx` ON `course_enrollment` (`course_id`,`user_id`);--> statement-breakpoint
 CREATE INDEX `course_enrollment_user_id_idx` ON `course_enrollment` (`user_id`);--> statement-breakpoint
@@ -429,6 +437,8 @@ CREATE UNIQUE INDEX `video_data_chapter_id_unique` ON `video_data` (`chapter_id`
 CREATE INDEX `video_course_id_idx` ON `video_data` (`course_id`);--> statement-breakpoint
 CREATE INDEX `video_chapter_id_idx` ON `video_data` (`chapter_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `video_course_chap_idx` ON `video_data` (`course_id`,`chapter_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `organization_id_user_id_idx` ON `organization_member` (`organization_id`,`user_id`);--> statement-breakpoint
+CREATE INDEX `org_mem_user_idx` ON `organization_member` (`user_id`);--> statement-breakpoint
 CREATE INDEX `quiz_chap_idx` ON `quiz` (`chapter_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `quiz_course_chap_idx` ON `quiz` (`course_id`,`chapter_id`);--> statement-breakpoint
 CREATE INDEX `qzans_quesid_idx` ON `quiz_answer` (`question_id`);--> statement-breakpoint

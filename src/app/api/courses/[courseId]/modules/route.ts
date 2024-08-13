@@ -1,9 +1,8 @@
 import { db } from "@/db/index";
-import { courseMember, courseModule, session } from "@/db/schema";
+import { courseModule } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
-import { and, count, eq, sql } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { and, count, eq } from "drizzle-orm";
 
 export async function POST(
   request: Request,
@@ -72,6 +71,7 @@ export async function POST(
         description: parsedData.data.moduleDescription,
         slug: parsedData.data.moduleSlug,
         courseId: params.courseId,
+        status: "draft",
         position: courseModules.count + 1,
       })
       .returning({
