@@ -30,7 +30,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "${{ secrets.ENV_DEV_FILE }}" > .env.dev
+          echo "${{ secrets.ENV_DEV_FILE }}" > .env.production
 
       - name: Build application
         run: pnpm run build
