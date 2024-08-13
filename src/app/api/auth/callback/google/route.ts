@@ -1,4 +1,3 @@
-import { NextRequest } from "next/server";
 import {
   checkUserExists,
   createLoginLog,
@@ -7,8 +6,9 @@ import {
   saveOauthToken,
   updateOauthToken,
 } from "@/lib/auth";
-import { cookies } from "next/headers";
 import { encryptCookie } from "@/lib/cookies";
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const code = new URL(request.url).searchParams?.get("code");
@@ -173,6 +173,7 @@ export async function GET(request: NextRequest) {
       });
     }
   } catch (error) {
+    console.log("error GOOGLE LOGIN", error);
     cookies().delete("google_oauth_state");
     cookies().delete("google_code_challenge");
     return new Response(null, {

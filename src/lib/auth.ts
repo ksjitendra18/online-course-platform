@@ -74,6 +74,7 @@ export const createUser = async ({
         name,
         userName,
         email,
+        emailVerified,
       })
       .returning({ id: user.id });
 

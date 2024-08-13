@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
             </h2>
             <p>Course <span>${
               courseData.title
-            }</span>purchased successfully for ${formatPrice(
+            }</span> purchased successfully for ${formatPrice(
               webhookBody?.payload?.payment.entity.amount / 100
             )}</p>
           `,

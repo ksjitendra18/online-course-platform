@@ -57,7 +57,7 @@ export const getCourseData = unstable_cache(
       with: {
         courseMember: true,
         courseModule: {
-          where: eq(courseModule.status, "published"), 
+          where: eq(courseModule.status, "published"),
           columns: {
             title: true,
             id: true,
@@ -191,8 +191,8 @@ export const getEnrolledCourses = unstable_cache(
     });
   },
 
-  [`get-enrolled-course`],
-  { revalidate: 7200, tags: [`get-enrolled-courses`] }
+  ["get-enrolled-courses"],
+  { revalidate: 7200, tags: ["get-enrolled-courses"] }
 );
 
 export const getPublishedCourses = unstable_cache(

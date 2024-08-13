@@ -1,23 +1,19 @@
-import { getCourseData } from "@/db/queries/courses";
-import { db } from "@/db";
-import { course, courseEnrollment, purchase } from "@/db/schema";
-import { and, count, desc, eq, gte, lte, sum } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import React from "react";
+import { DataCard } from "@/app/dashboard/(main)/analytics/_components/data-card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { db } from "@/db";
+import { course, courseEnrollment, purchase } from "@/db/schema";
+import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { DataCard } from "@/app/dashboard/(main)/analytics/_components/data-card";
-import { cn } from "@/lib/utils";
+import { and, count, desc, eq, gte, lte, sum } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 dayjs.extend(utc);
 export const metadata = {
@@ -62,15 +58,6 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
   if (!courseData) {
     return redirect("/dashboard");
   }
-
-  // const gmtDate = dayjs().utc().startOf("day").format("YYYY-MM-DD HH:mm:ss");
-
-  // const nextGmtDate = dayjs()
-  //   .utc()
-  //   .startOf("day")
-  //   .add(1, "day")
-
-  //   .format("YYYY-MM-DD HH:mm:ss");
 
   const gmtDate = dayjs().utc().startOf("day").unix();
 
