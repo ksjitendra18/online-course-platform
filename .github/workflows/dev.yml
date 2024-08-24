@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: 9
           run_install: false
@@ -56,7 +56,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./.next/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/learningapp-dev/.next/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./.next/standalone/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/learningapp-dev/.next/standalone/
 
           ssh -o StrictHostKeyChecking=no "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" << 'EOF'
             cd ~/learningapp-dev

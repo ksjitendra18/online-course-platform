@@ -5,6 +5,21 @@ import { BasicInfoSchema } from "@/validations/basic-info";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
+export async function GET(request: Request) {
+  const allCourses = await db.query.course.findMany({
+    columns: {
+      id: true,
+      title: true,
+      slug: true,
+      description: true,
+      isFree: true,
+      level: true,
+    },
+  });
+
+  return Response.json(allCourses, { status: 200 });
+}
+
 export async function POST(request: Request) {
   try {
     const { courseName, courseSlug, courseDescription, isFree, level } =
