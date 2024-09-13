@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { course, courseLogs, courseMember, session } from "@/db/schema";
-import { decryptCookie } from "@/lib/cookies";
+import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
 import { BasicInfoSchema } from "@/validations/basic-info";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const decryptedToken = await decryptCookie(token);
+    const decryptedToken = aesDecrypt(token, EncryptionPurpose.SESSION_COOKIE);
     const sessionExists = await db.query.session.findFirst({
       where: eq(session.id, decryptedToken),
       columns: { id: true },

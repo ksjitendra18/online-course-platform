@@ -3,7 +3,6 @@ import { password as DbPassword, session, user } from "@/db/schema";
 import { hashPassword } from "@/lib/auth";
 import redis from "@/lib/redis";
 import PasswordSchema from "@/validations/password";
-import { hash } from "argon2";
 import { and, eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 

@@ -1,17 +1,15 @@
 "use client";
 
-import { z } from "zod";
 import LoginSchema from "@/validations/login";
 import { FormEvent, useState } from "react";
+import { z } from "zod";
 
-import { LuEye, LuEyeOff } from "react-icons/lu";
-import { ImSpinner2, ImSpinner8 } from "react-icons/im";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { revalidatePath } from "next/cache";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 
 interface Props {
   loading: boolean;
@@ -25,7 +23,10 @@ const LoginForm = ({ loading, setLoading }: Props) => {
     string
   > | null>(null);
 
-  // const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  const redirectUrl = searchParams.get("redirect");
+
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
@@ -62,6 +63,10 @@ const LoginForm = ({ loading, setLoading }: Props) => {
       }
       const resData = await res.json();
 
+      if (res.status === 302) {
+        router.push(resData.redirect);
+        return;
+      }
       if (res.status !== 200) {
         if (resData.error.code === "email_unverified") {
           setUnverifiedEmail(true);
@@ -71,11 +76,14 @@ const LoginForm = ({ loading, setLoading }: Props) => {
       }
 
       if (res.status === 200) {
-        router.push("/");
+        if (redirectUrl) {
+          router.push(redirectUrl);
+        } else {
+          router.push("/");
+        }
         router.refresh();
       }
     } catch (error) {
-      console.log("caught error", error);
       setError("Error while login. Please try again later");
     } finally {
       setLoading(false);
@@ -84,11 +92,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
   return (
     <>
       <div className="flex w-full items-center justify-between">
-        <form
-          onSubmit={handleLogin}
-          method="post"
-          className="w-[100%] mx-auto md:w-3/4 lg:w-1/3 "
-        >
+        <form onSubmit={handleLogin} method="post" className="w-full ">
           <label
             htmlFor="email"
             className={cn(

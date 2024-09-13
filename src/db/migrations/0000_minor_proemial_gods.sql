@@ -28,25 +28,24 @@ CREATE TABLE `video_attachment` (
 	FOREIGN KEY (`video_id`) REFERENCES `video_data`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `device` (
+CREATE TABLE `admin_auth_logs` (
 	`id` text PRIMARY KEY NOT NULL,
-	`device_fingerprint` text NOT NULL,
-	`os` text NOT NULL,
+	`user_id` text,
+	`user_info` text NOT NULL,
+	`action` text NOT NULL,
 	`browser` text NOT NULL,
-	`user_ip` text NOT NULL,
-	`last_active` integer NOT NULL,
-	`user_id` text NOT NULL,
-	`logged_in` integer NOT NULL,
-	`session_id` text,
+	`device` text NOT NULL,
+	`os` text NOT NULL,
+	`ip` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`session_id`) REFERENCES `session`(`id`) ON UPDATE no action ON DELETE set null
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
 CREATE TABLE `login_log` (
 	`id` text PRIMARY KEY NOT NULL,
 	`session_id` text,
 	`user_id` text,
+	`strategy` text NOT NULL,
 	`browser` text NOT NULL,
 	`device` text NOT NULL,
 	`os` text NOT NULL,
@@ -56,14 +55,13 @@ CREATE TABLE `login_log` (
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `oauth_token` (
+CREATE TABLE `oauth_provider` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
-	`strategy` text NOT NULL,
-	`access_token` text NOT NULL,
-	`refresh_token` text NOT NULL,
-	`created_at` text DEFAULT (unixepoch()) NOT NULL,
-	`updated_at` text DEFAULT (unixepoch()) NOT NULL,
+	`provider` text NOT NULL,
+	`provider_user_id` text NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
@@ -90,13 +88,19 @@ CREATE TABLE `password_logs` (
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE TABLE `recovery_codes` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text,
+	`code` text NOT NULL,
+	`is_used` integer DEFAULT false,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
-	`active` integer DEFAULT true,
-	`expires_at` blob NOT NULL,
-	`user_ip` text NOT NULL,
-	`device_id` text NOT NULL,
+	`expires_at` integer NOT NULL,
 	`created_at` text DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE cascade ON DELETE cascade
 );
@@ -106,7 +110,10 @@ CREATE TABLE `user` (
 	`name` text NOT NULL,
 	`user_name` text NOT NULL,
 	`email` text NOT NULL,
+	`avatar` text,
 	`email_verified` integer DEFAULT false NOT NULL,
+	`two_factor_enabled` integer DEFAULT false NOT NULL,
+	`two_factor_secret` text,
 	`is_blocked` integer DEFAULT false NOT NULL,
 	`is_deleted` integer DEFAULT false NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
@@ -404,8 +411,7 @@ CREATE TABLE `review` (
 CREATE INDEX `chap_id_idx` ON `article` (`chapter_id`);--> statement-breakpoint
 CREATE INDEX `attach_chap_id_idx` ON `attachment` (`chapter_id`);--> statement-breakpoint
 CREATE INDEX `vidattc_vid_id_idx` ON `video_attachment` (`video_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `device_sess_id_idx` ON `device` (`session_id`);--> statement-breakpoint
-CREATE INDEX `oauth_uid_idx` ON `oauth_token` (`user_id`);--> statement-breakpoint
+CREATE INDEX `oauth_provider_user_id_idx` ON `oauth_provider` (`provider_user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `organization_slug_unique` ON `organization` (`slug`);--> statement-breakpoint
 CREATE INDEX `user_id_idx` ON `password_logs` (`user_id`);--> statement-breakpoint
 CREATE INDEX `user_id_sess_idx` ON `session` (`user_id`);--> statement-breakpoint

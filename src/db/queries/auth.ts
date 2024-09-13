@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { session } from "@/db/schema";
-import { decryptCookie } from "@/lib/cookies";
+import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
 import redis from "@/lib/redis";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -15,7 +15,6 @@ interface CurrentUser {
 
 type SessionExists = {
   id: string;
-  active: boolean | null;
   user: {
     id: string;
     name: string;
@@ -33,28 +32,30 @@ export async function getUserSessionRedis() {
     return null;
   }
 
-  // EXPERIMENTAL
-  const decryptedAuthToken = await decryptCookie(authToken);
+  const decryptedAuthToken = aesDecrypt(
+    authToken,
+    EncryptionPurpose.SESSION_COOKIE
+  );
 
   let cachedUserInfo = null;
 
   try {
     cachedUserInfo = await redis.get(decryptedAuthToken);
-  } catch (error) {}
+  } catch (error) {
+    return null;
+  }
 
   if (cachedUserInfo) {
     return JSON.parse(cachedUserInfo) as CurrentUser;
-  }
-
-  if (!cachedUserInfo) {
+  } else {
     let sessionExists: SessionExists | undefined = undefined;
     try {
       sessionExists = await db.query.session.findFirst({
         where: eq(session.id, decryptedAuthToken),
-        columns: { id: true, active: true },
+        columns: { id: true },
         with: {
           user: {
-            columns: { id: true, name: true, email: true },
+            columns: { id: true, name: true, email: true, avatar: true },
             with: {
               organizationMember: {
                 columns: { role: true },
@@ -67,8 +68,9 @@ export async function getUserSessionRedis() {
       return null;
     }
 
-    if (!sessionExists) return null;
-    if (!sessionExists.active) return null;
+    if (!sessionExists) {
+      return null;
+    }
 
     try {
       await redis.set(
@@ -84,17 +86,16 @@ export async function getUserSessionRedis() {
         3600
       );
     } catch (error) {
-    } finally {
-      return {
-        userId: sessionExists.user.id,
-        name: sessionExists.user.name,
-        email: sessionExists.user.email,
-        role:
-          sessionExists.user.organizationMember.length > 0
-            ? "ADMIN"
-            : "STUDENT",
-        staff: sessionExists.user.organizationMember.length > 0,
-      };
+      console.log("redis error");
     }
+
+    return {
+      userId: sessionExists.user.id,
+      name: sessionExists.user.name,
+      email: sessionExists.user.email,
+      role:
+        sessionExists.user.organizationMember.length > 0 ? "ADMIN" : "STUDENT",
+      staff: sessionExists.user.organizationMember.length > 0,
+    };
   }
 }

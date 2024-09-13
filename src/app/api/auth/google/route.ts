@@ -15,6 +15,10 @@ export async function GET(request: NextRequest) {
     path: "/",
   });
 
+  cookies().set("login_method", "google", {
+    path: "/",
+  });
+
   if (type) {
     cookies().set("signup_type", "organization", {
       path: "/",
@@ -33,9 +37,7 @@ export async function GET(request: NextRequest) {
   const authorizationUrl = queryString.stringifyUrl({
     url: "https://accounts.google.com/o/oauth2/v2/auth",
     query: {
-      access_type: "offline",
       scope: "openid email profile",
-      prompt: "consent",
       response_type: "code",
       client_id: process.env.GOOGLE_AUTH_CLIENT,
       redirect_uri: process.env.GOOGLE_AUTH_CALLBACK_URL,

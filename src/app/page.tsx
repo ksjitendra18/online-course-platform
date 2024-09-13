@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main className="h-full">
       <section
-        style={{ height: "calc(100vh - 80px)" }}
+        style={{ height: "calc(100vh - 65px)" }}
         className=" relative  bg-black"
       >
         <video muted autoPlay loop className="h-full w-full object-cover ">

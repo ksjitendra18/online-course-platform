@@ -1,11 +1,11 @@
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { createLoginLog, createSession } from "@/lib/auth";
-import { encryptCookie } from "@/lib/cookies";
+import { aesEncrypt, EncryptionPurpose } from "@/lib/aes";
+import { create2FASession, createLoginLog, createSession } from "@/lib/auth";
 import { rateLimit } from "@/lib/ratelimit";
 import LoginSchema from "@/validations/login";
 
-import { verify } from "argon2";
+import { verify } from "@node-rs/argon2";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
@@ -21,9 +21,25 @@ export async function POST(request: Request) {
 
     const userIP = request.headers.get("X-Forwarded-For") ?? "dev";
 
-    const emailRateLimit = rateLimit(`${email}:la`, 100, 86400);
-    const ipRateLimit = rateLimit(`${userIP}:la`, 50, 86400);
-    const ipHourRateLimit = rateLimit(`${userIP}:hla`, 20, 3600);
+    const EMAIL_LIMIT_OPTIONS = {
+      key: `${email}:la`,
+      limit: 100,
+      duration: 86400,
+    };
+    const IP_LIMIT_OPTIONS = {
+      key: `${userIP}:la`,
+      limit: 50,
+      duration: 86400,
+    };
+    const IP_HOUR_LIMIT_OPTIONS = {
+      key: `${userIP}:hla`,
+      limit: 20,
+      duration: 3600,
+    };
+
+    const emailRateLimit = rateLimit(EMAIL_LIMIT_OPTIONS);
+    const ipRateLimit = rateLimit(IP_LIMIT_OPTIONS);
+    const ipHourRateLimit = rateLimit(IP_HOUR_LIMIT_OPTIONS);
 
     const [resp1, resp2, resp3] = await Promise.all([
       emailRateLimit,
@@ -56,7 +72,7 @@ export async function POST(request: Request) {
     }
 
     const userExists = await db.query.user.findFirst({
-      columns: { id: true, emailVerified: true },
+      columns: { id: true, emailVerified: true, twoFactorEnabled: true },
       where: eq(user.email, email),
       with: {
         password: true,
@@ -104,24 +120,50 @@ export async function POST(request: Request) {
       );
     }
 
+    if (userExists.twoFactorEnabled) {
+      const faSess = await create2FASession(userExists.id);
+
+      cookies().set("login_method", "google", {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+
+      cookies().set("2fa_auth", faSess, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+
+      return Response.json(
+        { message: "2FA required", redirect: "/two-factor/totp/verify" },
+        {
+          status: 302,
+        }
+      );
+    }
     const userAgent = request.headers.get("user-agent") as string;
 
     const userIp = request.headers.get("X-Forwarded-For") ?? "dev";
 
     const { expiresAt, sessionId } = await createSession({
-      userAgent,
       userId: userExists.id,
-      userIp,
     });
 
     await createLoginLog({
       sessionId,
       userAgent: userAgent,
+      strategy: "credentials",
       userId: userExists.id,
       ip: userIp,
     });
 
-    const encryptedSessionId = await encryptCookie(sessionId);
+    const encryptedSessionId = aesEncrypt(
+      sessionId,
+      EncryptionPurpose.SESSION_COOKIE
+    );
 
     cookies().set("auth-token", encryptedSessionId, {
       sameSite: "lax",

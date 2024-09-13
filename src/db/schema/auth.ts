@@ -6,7 +6,6 @@ import {
   integer,
   sqliteTable,
   text,
-  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { chapterLogs } from "./chapter";
 import { course, courseLogs } from "./course";
@@ -17,6 +16,8 @@ import { discussionReply, discussionVote } from "./discussion";
 import { courseEnrollment } from "./enrollment";
 import { organizationMember } from "./organization-member";
 import { purchase } from "./purchase";
+import { create } from "domain";
+import { userInfo } from "os";
 
 export const organization = sqliteTable("organization", {
   id: text("id")
@@ -45,9 +46,14 @@ export const user = sqliteTable("user", {
   name: text("name").notNull(),
   userName: text("user_name").notNull().unique(),
   email: text("email").notNull().unique(),
+  avatar: text("avatar"),
   emailVerified: integer("email_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
+  twoFactorEnabled: integer("two_factor_enabled", { mode: "boolean" })
+    .default(false)
+    .notNull(),
+  twoFactorSecret: text("two_factor_secret"),
   isBlocked: integer("is_blocked", { mode: "boolean" })
     .default(false)
     .notNull(),
@@ -65,7 +71,6 @@ export const user = sqliteTable("user", {
 
 export const userRelations = relations(user, ({ one, many }) => ({
   session: many(session),
-  oauthToken: many(oauthToken),
   password: one(password),
   courseMember: many(courseMember),
   organizationMember: many(organizationMember),
@@ -79,10 +84,52 @@ export const userRelations = relations(user, ({ one, many }) => ({
   discussionVotes: many(discussionVote),
   discussionReplies: many(discussionReply),
   passwordLogs: many(passwordLogs),
+  oauthProvider: many(oauthProvider),
+  adminAuthLogs: many(adminAuthLogs),
+  recoveryCodes: many(recoveryCodes),
 }));
 
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
+
+export const oauthProvider = sqliteTable(
+  "oauth_provider",
+  {
+    id: text("id")
+      .$default(() => createId())
+      .primaryKey(),
+    userId: text("user_id")
+      .references(() => user.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
+      .notNull(),
+    provider: text("provider", { enum: ["google"] }).notNull(),
+    providerUserId: text("provider_user_id").notNull(),
+    createdAt: integer("created_at")
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: integer("updated_at")
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => sql`(unixepoch())`)
+      .notNull(),
+  },
+  (table) => ({
+    oauthProviderUserIdIdx: index("oauth_provider_user_id_idx").on(
+      table.userId
+    ),
+    oauthProviderProviderIdIdx: index("oauth_provider_user_id_idx").on(
+      table.providerUserId
+    ),
+  })
+);
+
+export const oauthProviderRelations = relations(oauthProvider, ({ one }) => ({
+  user: one(user, {
+    fields: [oauthProvider.userId],
+    references: [user.id],
+  }),
+}));
 
 export const password = sqliteTable("password", {
   userId: text("user_id")
@@ -137,41 +184,6 @@ export const passwordLogsRelations = relations(passwordLogs, ({ one }) => ({
   }),
 }));
 
-export const oauthToken = sqliteTable(
-  "oauth_token",
-  {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      }),
-    strategy: text("strategy", { enum: ["google", "github"] }).notNull(),
-    accessToken: text("access_token").notNull(),
-    refreshToken: text("refresh_token").notNull(),
-    createdAt: text("created_at")
-      .default(sql`(unixepoch())`)
-      .notNull(),
-    updatedAt: text("updated_at")
-      .default(sql`(unixepoch())`)
-      .$onUpdate(() => sql`(unixepoch())`)
-      .notNull(),
-  },
-  (table) => ({
-    oauthUIdIdx: index("oauth_uid_idx").on(table.userId),
-  })
-);
-
-export const oauthTokenRelations = relations(oauthToken, ({ one }) => ({
-  user: one(user, {
-    fields: [oauthToken.userId],
-    references: [user.id],
-  }),
-}));
-
 export const session = sqliteTable(
   "session",
   {
@@ -184,10 +196,7 @@ export const session = sqliteTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    active: integer("active", { mode: "boolean" }).default(true),
-    expiresAt: blob("expires_at", { mode: "bigint" }).notNull(),
-    userIp: text("user_ip").notNull(),
-    deviceId: text("device_id").notNull(),
+    expiresAt: integer("expires_at").notNull(),
     createdAt: text("created_at")
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -219,6 +228,11 @@ export const loginLog = sqliteTable("login_log", {
     onDelete: "cascade",
     onUpdate: "cascade",
   }),
+
+  strategy: text("strategy", {
+    enum: ["google", "credentials", "magic_link"],
+  }).notNull(),
+
   browser: text("browser").notNull(),
   device: text("device").notNull(),
   os: text("os").notNull(),
@@ -239,40 +253,48 @@ export const loginLogRelations = relations(loginLog, ({ one }) => ({
   }),
 }));
 
-export const device = sqliteTable(
-  "device",
-  {
-    id: text("id")
-      .$default(() => createId())
-      .primaryKey(),
-    deviceFingerPrint: text("device_fingerprint").notNull(),
-    os: text("os").notNull(),
-    browser: text("browser").notNull(),
-    userIp: text("user_ip").notNull(),
-    lastActive: integer("last_active").notNull(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, {
-        onDelete: "cascade",
-      }),
-    loggedIn: integer("logged_in", { mode: "boolean" }).notNull(),
-    sessionId: text("session_id").references(() => session.id, {
-      onDelete: "set null",
-    }),
-    createdAt: integer("created_at")
-      .default(sql`(unixepoch())`)
-      .notNull(),
-  },
-  (table) => {
-    return {
-      sessionIdIdx: uniqueIndex("device_sess_id_idx").on(table.sessionId),
-    };
-  }
-);
+export const recoveryCodes = sqliteTable("recovery_codes", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  userId: text("user_id").references(() => user.id, {
+    onDelete: "cascade",
+  }),
+  code: text("code").notNull(),
+  isUsed: integer("is_used", { mode: "boolean" }).default(false),
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
+    .notNull(),
+});
 
-export const deviceSessRelations = relations(device, ({ one }) => ({
-  device: one(session, {
-    fields: [device.sessionId],
-    references: [session.id],
+export const recoveryCodesRelations = relations(recoveryCodes, ({ one }) => ({
+  user: one(user, {
+    fields: [recoveryCodes.userId],
+    references: [user.id],
+  }),
+}));
+
+export const adminAuthLogs = sqliteTable("admin_auth_logs", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  userId: text("user_id").references(() => user.id, {
+    onDelete: "set null",
+  }),
+  userInfo: text("user_info").notNull(),
+  action: text("action").notNull(),
+  browser: text("browser").notNull(),
+  device: text("device").notNull(),
+  os: text("os").notNull(),
+  ip: text("ip").notNull(),
+  createdAt: integer("created_at")
+    .default(sql`(unixepoch())`)
+    .notNull(),
+});
+
+export const adminAuthLogsRelations = relations(adminAuthLogs, ({ one }) => ({
+  user: one(user, {
+    fields: [adminAuthLogs.userId],
+    references: [user.id],
   }),
 }));

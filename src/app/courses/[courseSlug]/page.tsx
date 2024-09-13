@@ -168,7 +168,13 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
               </>
             ) : (
               <Button variant="app" asChild>
-                <Link href="/login">Log in</Link>
+                <Link
+                  href={`/login?redirect=${encodeURIComponent(
+                    `/courses/${params.courseSlug}`
+                  )}`}
+                >
+                  Log in
+                </Link>
               </Button>
             )}
           </div>
