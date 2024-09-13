@@ -1,26 +1,65 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import CourseSearch from "./course-search";
 
-const Navbar = ({
-  currentUser,
-}: {
-  currentUser:
-    | {
-        userId: string;
-        name: string;
-        email: string;
-        role: string;
-        staff: boolean;
-      }
-    | null
-    | undefined;
-}) => {
-  const [mobileNavActive, setMobileNavActive] = useState(false);
+import { Book, GraduationCap, Home, LogIn, Menu } from "lucide-react";
+import { MdSpaceDashboard } from "react-icons/md";
+import { useRouter } from "next/navigation";
+
+type NavbarProps = {
+  currentUser: CurrentUser;
+};
+
+type CurrentUser = {
+  userId: string;
+  name: string;
+  email: string;
+  role: string;
+  staff: boolean;
+  avatar?: string;
+} | null;
+
+export default function Navbar({ currentUser }: NavbarProps) {
+  const navItems = [
+    { label: "Home", href: "/", icon: Home },
+    { label: "Courses", href: "/courses", icon: Book },
+    ...(currentUser?.staff
+      ? [{ label: "Dashboard", href: "/dashboard", icon: MdSpaceDashboard }]
+      : []),
+    ...(currentUser && !currentUser.staff
+      ? [{ label: "My Courses", href: "/my-courses", icon: GraduationCap }]
+      : []),
+  ];
+
+  const renderNavItems = (isMobile: boolean = false) => (
+    <>
+      {navItems.map((item) => (
+        <Button
+          key={item.href}
+          variant="ghost"
+          asChild
+          className={isMobile ? "w-full justify-start" : ""}
+        >
+          <Link href={item.href}>
+            <item.icon className="w-4 h-4 mr-2" />
+            {item.label}
+          </Link>
+        </Button>
+      ))}
+    </>
+  );
+
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -29,87 +68,120 @@ const Navbar = ({
     router.refresh();
   };
 
-  const searchParams = useSearchParams();
-
-  const existingSearchTerm = searchParams.get("query");
-
-  // console.log("navbar", currentUser);
   return (
-    <>
-      <header className="relative text-black bg-white  h-[80px]">
-        <div className="h-full  mx-auto flex justify-between items-center py-2 px-3 md:px-6">
-          <Link
-            onClick={() => setMobileNavActive(false)}
-            href="/"
-            className="font-bold text-2xl px-3 md:px-0"
-          >
-            Learning App
-          </Link>
+    <nav className="border-b">
+      <div className=" mx-auto px-3">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center">
+              <GraduationCap className="w-8 h-8 text-primary" />
+              <span className="ml-2 text-xl font-bold">LearningApp</span>
+            </Link>
+          </div>
 
-          <CourseSearch existingSearchTerm={existingSearchTerm ?? ""} />
-          <nav
-            className={cn(
-              mobileNavActive ? "flex" : "hidden",
-              "z-30 md:flex absolute md:static left-0 top-16 duration-300 ease-in transition-all md:top-0 items-center w-full md:w-auto justify-center bg-[#1f2023] md:bg-transparent text-white md:text-black"
-            )}
-          >
-            <ul className="flex flex-col md:flex-row text-xl py-5 md:py-3 justify-center items-center gap-5">
-              <li onClick={() => setMobileNavActive(false)}>
-                <Link href="/">Home</Link>
-              </li>
-
-              <li onClick={() => setMobileNavActive(false)}>
-                <Link href="/courses">Courses</Link>
-              </li>
-              {currentUser ? (
-                <>
-                  {currentUser.staff && (
-                    <li onClick={() => setMobileNavActive(false)}>
-                      <Link href="/dashboard">Dashboard</Link>
-                    </li>
-                  )}
-
-                  {!currentUser.staff && (
-                    <>
-                      <li onClick={() => setMobileNavActive(false)}>
-                        <Link href="/my-courses">My Courses</Link>
-                      </li>
-                    </>
-                  )}
-
-                  <li onClick={() => setMobileNavActive(false)}>
-                    <Link href="/profile">Profile</Link>
-                  </li>
-
-                  <button
-                    className="bg-blue-600 px-4 py-2 text-white rounded-md "
-                    onClick={() => handleLogout()}
+          <div className="hidden md:flex items-center space-x-4">
+            {renderNavItems()}
+            {currentUser ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative w-8 h-8 rounded-full"
                   >
-                    <p>Logout</p>
-                  </button>
-                </>
-              ) : (
-                <li onClick={() => setMobileNavActive(false)}>
-                  <Link href="/login">Login</Link>
-                </li>
-              )}
-            </ul>
-          </nav>
-          <div
-            onClick={() => setMobileNavActive((prev) => !prev)}
-            className={cn(
-              mobileNavActive && "active",
-              "px-3 hamburger  block md:hidden mt-1 cursor-pointer"
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage
+                        src={currentUser.avatar}
+                        alt={currentUser.name}
+                      />
+                      <AvatarFallback className="bg-blue-700 text-white">
+                        {currentUser?.name?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{currentUser.name}</DropdownMenuLabel>
+
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link href="/account">Account</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild>
+                <Link href="/login">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Log in
+                </Link>
+              </Button>
             )}
-          >
-            <span className="bar block w-[30px] h-[4px] bg-black"></span>
-            <span className="bar block w-[30px] mt-1 h-[4px] bg-black"></span>
-            <span className="bar block w-[30px] mt-1 h-[4px] bg-black"></span>
+          </div>
+
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Open menu">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <nav className="flex flex-col space-y-4 mt-4">
+                  {renderNavItems(true)}
+                  {currentUser ? (
+                    <>
+                      <div className="flex items-center space-x-4 mb-4">
+                        <Avatar className="w-10 h-10">
+                          {/* <AvatarImage
+                            src={currentUser.avatar}
+                            alt={currentUser.name}
+                          /> */}
+                          <AvatarFallback>
+                            {/* {currentUser.name.charAt(0)}
+                            
+                          
+                          */}
+                            J
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{currentUser.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {currentUser.role}
+                          </p>
+                        </div>
+                      </div>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Profile
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Settings
+                      </Button>
+                      <Button
+                        onClick={handleLogout}
+                        variant="ghost"
+                        className="w-full justify-start"
+                      >
+                        Log out
+                      </Button>
+                    </>
+                  ) : (
+                    <Button asChild className="w-full">
+                      <Link href="/login">
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Log in
+                      </Link>
+                    </Button>
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
-      </header>
-    </>
+      </div>
+    </nav>
   );
-};
-
-export default Navbar;
+}

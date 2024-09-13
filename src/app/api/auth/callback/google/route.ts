@@ -1,14 +1,14 @@
-import { NextRequest } from "next/server";
 import {
-  checkUserExists,
+  checkOauthUserExists,
+  create2FASession,
   createLoginLog,
+  createOauthProvider,
   createSession,
   createUser,
-  saveOauthToken,
-  updateOauthToken,
 } from "@/lib/auth";
+import { aesEncrypt, EncryptionPurpose } from "@/lib/aes";
 import { cookies } from "next/headers";
-import { encryptCookie } from "@/lib/cookies";
+import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const code = new URL(request.url).searchParams?.get("code");
@@ -56,9 +56,10 @@ export async function GET(request: NextRequest) {
     );
     const fetchUserRes = await fetchUser.json();
 
-    const userExists = await checkUserExists({
-      email: fetchUserRes.email,
+    const userExists = await checkOauthUserExists({
+      providerId: fetchUserRes.id,
       strategy: "google",
+      email: fetchUserRes.email,
     });
 
     const userAgent = request.headers.get("user-agent") as string;
@@ -74,17 +75,8 @@ export async function GET(request: NextRequest) {
         emailVerified: true,
       });
 
-      await saveOauthToken({
-        userId: userId,
-        strategy: "google",
-        accessToken: fetchTokenRes.access_token,
-        refreshToken: fetchTokenRes.refresh_token,
-      });
-
       const { sessionId, expiresAt } = await createSession({
         userId: userId,
-        userAgent,
-        userIp,
       });
 
       // log
@@ -92,18 +84,26 @@ export async function GET(request: NextRequest) {
         sessionId,
         userAgent: userAgent,
         userId: userId,
+        strategy: "google",
         ip: userIp,
       });
 
       cookies().delete("google_oauth_state");
       cookies().delete("google_code_challenge");
 
-      const encryptedSessionId = await encryptCookie(sessionId);
+      const encryptedSessionId = aesEncrypt(
+        sessionId,
+        EncryptionPurpose.SESSION_COOKIE
+      );
 
       cookies().set("auth-token", encryptedSessionId, {
         sameSite: "lax",
         expires: expiresAt,
         httpOnly: true,
+        domain:
+          process.env.NODE_ENV === "production"
+            ? ".learningapp.link"
+            : "localhost",
         secure: process.env.NODE_ENV === "production",
       });
 
@@ -120,59 +120,80 @@ export async function GET(request: NextRequest) {
           Location: redirectLocation,
         },
       });
-    } else {
-      if (userExists.oauthToken.length > 0) {
-        // oauth strategy exists
-        // update token
-
-        await updateOauthToken({
-          userId: userExists.id,
-          strategy: "google",
-          accessToken: fetchTokenRes.access_token,
-          refreshToken: fetchTokenRes.refresh_token,
-        });
-      } else {
-        await saveOauthToken({
-          userId: userExists.id,
-          strategy: "google",
-          accessToken: fetchTokenRes.access_token,
-          refreshToken: fetchTokenRes.refresh_token,
-        });
-      }
-
-      const { sessionId, expiresAt } = await createSession({
+    } else if (userExists.oauthProvider.length < 0) {
+      await createOauthProvider({
+        providerId: fetchUserRes.id,
         userId: userExists.id,
-        userAgent,
-        userIp,
+        strategy: "google",
       });
+    }
 
-      await createLoginLog({
-        sessionId,
-        userAgent: userAgent,
-        userId: userExists.id,
-        ip: userIp,
-      });
+    if (userExists.twoFactorEnabled) {
+      const faSess = await create2FASession(userExists.id);
 
-      cookies().delete("google_oauth_state");
-      cookies().delete("google_code_challenge");
-
-      const encryptedSessionId = await encryptCookie(sessionId);
-
-      cookies().set("auth-token", encryptedSessionId, {
-        sameSite: "lax",
-        expires: expiresAt,
+      cookies().set("login_method", "google", {
+        path: "/",
         httpOnly: true,
+        sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
       });
 
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/",
-        },
+      cookies().set("2fa_auth", faSess, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
       });
+
+      return Response.json(
+        { message: "2FA required", redirect: "/verify-two-factor" },
+        {
+          status: 302,
+          headers: {
+            Location: "/verify-two-factor",
+          },
+        }
+      );
     }
+    const { sessionId, expiresAt } = await createSession({
+      userId: userExists.id,
+    });
+
+    await createLoginLog({
+      sessionId,
+      userAgent: userAgent,
+      userId: userExists.id,
+      strategy: "google",
+      ip: userIp,
+    });
+
+    cookies().delete("google_oauth_state");
+    cookies().delete("google_code_challenge");
+
+    const encryptedSessionId = aesEncrypt(
+      sessionId,
+      EncryptionPurpose.SESSION_COOKIE
+    );
+
+    cookies().set("auth-token", encryptedSessionId, {
+      sameSite: "lax",
+      expires: expiresAt,
+      httpOnly: true,
+      domain:
+        process.env.NODE_ENV === "production"
+          ? ".learningapp.link"
+          : "localhost",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+      },
+    });
   } catch (error) {
+    console.log("error GOOGLE LOGIN", error);
     cookies().delete("google_oauth_state");
     cookies().delete("google_code_challenge");
     return new Response(null, {

@@ -31,9 +31,25 @@ export async function POST(request: Request) {
   try {
     const userIP = request.headers.get("X-Forwarded-For") ?? "dev";
 
-    const emailRateLimit = rateLimit(`${email}:sa`, 20, 86400);
-    const ipRateLimit = rateLimit(`${userIP}:sa`, 50, 86400);
-    const ipHourRateLimit = rateLimit(`${userIP}:sa`, 20, 3600);
+    const EMAIL_LIMIT_OPTIONS = {
+      key: `${email}:la`,
+      limit: 100,
+      duration: 86400,
+    };
+    const IP_LIMIT_OPTIONS = {
+      key: `${userIP}:la`,
+      limit: 50,
+      duration: 86400,
+    };
+    const IP_HOUR_LIMIT_OPTIONS = {
+      key: `${userIP}:hla`,
+      limit: 20,
+      duration: 3600,
+    };
+
+    const emailRateLimit = rateLimit(EMAIL_LIMIT_OPTIONS);
+    const ipRateLimit = rateLimit(IP_LIMIT_OPTIONS);
+    const ipHourRateLimit = rateLimit(IP_HOUR_LIMIT_OPTIONS);
 
     const [resp1, resp2, resp3] = await Promise.all([
       emailRateLimit,

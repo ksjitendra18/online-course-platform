@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { session } from "@/db/schema";
-import { decryptCookie } from "@/lib/cookies";
+import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
 import redis from "@/lib/redis";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -9,7 +9,10 @@ export async function GET(request: Request) {
   const authToken = cookies().get("auth-token")?.value;
   try {
     if (authToken) {
-      const decryptedToken = await decryptCookie(authToken);
+      const decryptedToken = aesDecrypt(
+        authToken,
+        EncryptionPurpose.SESSION_COOKIE
+      );
       const dbPromise = db
         .delete(session)
         .where(eq(session.id, decryptedToken));

@@ -86,9 +86,20 @@ export async function POST(request: NextRequest) {
             </h2>
             <p>Course <span>${
               courseData.title
-            }</span>purchased successfully for ${formatPrice(
+            }</span> purchased successfully for ${formatPrice(
               webhookBody?.payload?.payment.entity.amount / 100
             )}</p>
+
+            <p>You have been enrolled in <span>${
+              courseData.title
+            }</span> on LearningApp.</p>
+            <p>Track your progress and get involved with other learners via discussions tab.</p>
+            
+
+            <p>You have received this email because you have purchased <span>${
+              courseData.title
+            }</span> on LearningApp.</p>
+            <p>If you think this is a mistake, please contact us at <a href="mailto:support@learningapp.link">support@learningapp.link</a>.</p>
           `,
           }),
         });
