@@ -56,7 +56,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./.next/standalone/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/learningapp-dev/.next/standalone/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./.next/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/learningapp-dev/.next/
 
           ssh -o StrictHostKeyChecking=no "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" << 'EOF'
             cd ~/learningapp-dev
