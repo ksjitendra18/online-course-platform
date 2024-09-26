@@ -1,13 +1,15 @@
-import { db } from "@/db";
-import { user } from "@/db/schema";
-import { aesEncrypt, EncryptionPurpose } from "@/lib/aes";
-import { create2FASession, createLoginLog, createSession } from "@/lib/auth";
-import { rateLimit } from "@/lib/ratelimit";
-import LoginSchema from "@/validations/login";
+import { cookies } from "next/headers";
 
 import { verify } from "@node-rs/argon2";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+
+import { db } from "@/db";
+import { user } from "@/db/schema";
+import { EncryptionPurpose, aesEncrypt } from "@/lib/aes";
+import { create2FASession, createLoginLog, createSession } from "@/lib/auth";
+import { rateLimit } from "@/lib/ratelimit";
+import { env } from "@/utils/env/server";
+import LoginSchema from "@/validations/login";
 
 export async function POST(request: Request) {
   try {
@@ -123,18 +125,18 @@ export async function POST(request: Request) {
     if (userExists.twoFactorEnabled) {
       const faSess = await create2FASession(userExists.id);
 
-      cookies().set("login_method", "google", {
+      cookies().set("login_method", "credentials", {
         path: "/",
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
       });
 
       cookies().set("2fa_auth", faSess, {
         path: "/",
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
       });
 
       return Response.json(
@@ -168,12 +170,9 @@ export async function POST(request: Request) {
     cookies().set("auth-token", encryptedSessionId, {
       sameSite: "lax",
       expires: expiresAt,
-      domain:
-        process.env.NODE_ENV === "production"
-          ? ".learningapp.link"
-          : "localhost",
+      domain: env.NODE_ENV === "production" ? ".learningapp.link" : "localhost",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: env.NODE_ENV === "production",
     });
     return Response.json({ success: true });
   } catch (error) {

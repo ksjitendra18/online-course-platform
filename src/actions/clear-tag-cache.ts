@@ -1,7 +1,8 @@
 "use server";
 
-import { getUserSessionRedis } from "@/db/queries/auth";
 import { revalidateTag } from "next/cache";
+
+import { getUserSessionRedis } from "@/db/queries/auth";
 
 export async function clearTagCache(tag: string) {
   revalidateTag(tag);

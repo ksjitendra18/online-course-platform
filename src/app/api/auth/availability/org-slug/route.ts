@@ -1,8 +1,10 @@
+import { cookies } from "next/headers";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { organization, session } from "@/db/schema";
 import { OrgSlugSchema } from "@/validations/org-slug";
-import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const {

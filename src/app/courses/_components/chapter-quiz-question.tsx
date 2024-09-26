@@ -1,11 +1,14 @@
 "use client";
+
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import useQuizStore from "@/store/quiz";
-import { Loader2 } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
-import toast from "react-hot-toast";
 
 interface Props {
   chapterQuiz: {
@@ -100,11 +103,11 @@ const ChapterQuizQuestion = ({
   };
 
   return (
-    <div className="flex px-4 my-5 w-full gap-5 flex-col">
+    <div className="my-5 flex w-full flex-col gap-5 px-4">
       {chapterQuiz.questions.map((question, index) => (
         <div
           key={question.id}
-          className="flex flex-col shadow-md bg-white rounded-md px-5 py-3"
+          className="flex flex-col rounded-md bg-white px-5 py-3 shadow-md"
         >
           <h3 className="font-semibold">
             Q{index + 1}. {question.questionText}
@@ -113,7 +116,7 @@ const ChapterQuizQuestion = ({
           <div>
             <p className="my-3">Answer Choices</p>
 
-            <div className="grid grid-cols-2 gap-5 grid-rows-2">
+            <div className="grid grid-cols-2 grid-rows-2 gap-5">
               {question.answers.map((answer, index) => (
                 <button
                   onClick={() => handleClick(question.id, answer.id)}
@@ -121,7 +124,7 @@ const ChapterQuizQuestion = ({
                     selected.find((s) => s.answerId === answer.id)
                       ? "bg-blue-600 text-white"
                       : "bg-slate-200",
-                    " rounded-md transition-all truncate text duration-100  flex items-center px-3 py-3"
+                    "text flex items-center truncate rounded-md px-3 py-3 transition-all duration-100"
                   )}
                   key={answer.id}
                 >
@@ -137,9 +140,9 @@ const ChapterQuizQuestion = ({
         <Button
           onClick={handleSubmit}
           disabled={loading}
-          className="my-5 bg-blue-600 cursor-pointer px-10 py-3 rounded-md text-white"
+          className="my-5 cursor-pointer rounded-md bg-blue-600 px-10 py-3 text-white"
         >
-          {loading ? <Loader2 className="animate-spin mx-auto" /> : <>Submit</>}
+          {loading ? <Loader2 className="mx-auto animate-spin" /> : <>Submit</>}
         </Button>
       </div>
     </div>

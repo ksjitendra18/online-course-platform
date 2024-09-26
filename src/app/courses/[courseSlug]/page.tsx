@@ -1,3 +1,9 @@
+import { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { and, count, eq } from "drizzle-orm";
+
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
@@ -12,10 +18,7 @@ import {
   videoData,
 } from "@/db/schema";
 import { capitalizeFirstWord, formatDuration } from "@/lib/utils";
-import { and, count, eq } from "drizzle-orm";
-import { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import BuyCourse from "../_components/buy-course";
 import CourseSidebar from "../_components/course-sidebar";
 import EnrollCourse from "../_components/enroll-course";
@@ -114,7 +117,7 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
   );
 
   return (
-    <div className="flex ">
+    <div className="flex">
       <CourseSidebar
         courseData={courseData}
         courseSlug={params.courseSlug}
@@ -127,11 +130,11 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
         completedChapterIds={completedChapterIds}
       />
       <div className="mx-auto mt-5 w-full">
-        <div className="bg-[#213147]  rounded-md text-white px-7 py-5">
+        <div className="rounded-md bg-[#213147] px-7 py-5 text-white">
           <h2 className="text-3xl">{courseData.title}</h2>
           <p className="my-2">{courseData.description}</p>
 
-          <div className="flex my-5">
+          <div className="my-5 flex">
             {userSession ? (
               <>
                 {userHasEnrolled || isPartOfCourse ? (
@@ -169,7 +172,7 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
             ) : (
               <Button variant="app" asChild>
                 <Link
-                  href={`/login?redirect=${encodeURIComponent(
+                  href={`/login?next${encodeURIComponent(
                     `/courses/${params.courseSlug}`
                   )}`}
                 >
@@ -179,21 +182,21 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
             )}
           </div>
 
-          <div className="flex mt-8 gap-8 items-center">
+          <div className="mt-8 flex items-center gap-8">
             <p>{capitalizeFirstWord(courseData.level)}</p>
 
-            <p className="bg-white/20 backdrop-blur-md p-1 rounded-md">
+            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
               {courseData.courseModule.length} Modules
             </p>
-            <p className="bg-white/20 backdrop-blur-md p-1 rounded-md">
+            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
               {videosCount} Videos
             </p>
             {totalDuration > 0 && (
-              <p className="bg-white/20 backdrop-blur-md p-1 rounded-md">
+              <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
                 {formatDuration(totalDuration)}
               </p>
             )}
-            <p className="bg-white/20 backdrop-blur-md p-1 rounded-md">
+            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
               {quizzesCount} Quiz
             </p>
           </div>

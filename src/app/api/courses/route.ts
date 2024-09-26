@@ -1,9 +1,11 @@
+import { cookies } from "next/headers";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { course, courseLogs, courseMember, session } from "@/db/schema";
-import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 import { BasicInfoSchema } from "@/validations/basic-info";
-import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   const allCourses = await db.query.course.findMany({

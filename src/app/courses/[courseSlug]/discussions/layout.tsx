@@ -1,17 +1,20 @@
-import React, { ReactNode } from "react";
-import CourseSidebar from "../../_components/course-sidebar";
-import { getCourseData } from "@/db/queries/courses";
 import { redirect } from "next/navigation";
+import React, { ReactNode } from "react";
+
+import { and, eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { getProgress } from "@/db/queries/course-progress";
+import { getCourseData } from "@/db/queries/courses";
 import {
   CourseEnrollment,
   Purchase,
   courseEnrollment,
   purchase,
 } from "@/db/schema";
-import { db } from "@/db";
-import { and, eq } from "drizzle-orm";
-import { getUserSessionRedis } from "@/db/queries/auth";
-import { getProgress } from "@/db/queries/course-progress";
+
+import CourseSidebar from "../../_components/course-sidebar";
 
 const DiscussionLayout = async ({
   children,
@@ -66,7 +69,7 @@ const DiscussionLayout = async ({
   }
 
   return (
-    <div className="flex lg:flex-row flex-col-reverse">
+    <div className="flex flex-col-reverse lg:flex-row">
       <CourseSidebar
         courseData={courseData}
         courseSlug={params.courseSlug}
@@ -78,7 +81,7 @@ const DiscussionLayout = async ({
         userHasEnrolled={!!userHasEnrolled}
         completedChapterIds={completedChapterIds}
       />
-      <div className="lg:pl-80 h-full w-full">{children}</div>
+      <div className="h-full w-full lg:pl-80">{children}</div>
     </div>
   );
 };

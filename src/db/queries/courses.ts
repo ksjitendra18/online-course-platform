@@ -1,3 +1,7 @@
+import { unstable_cache } from "next/cache";
+
+import { and, eq, inArray, like } from "drizzle-orm";
+
 import { db } from "@/db";
 import {
   chapter,
@@ -6,8 +10,6 @@ import {
   courseMember,
   courseModule,
 } from "@/db/schema";
-import { and, eq, inArray, like } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
 
 export const getCourseInfo = unstable_cache(
   async (slug: string, userId: string) => {

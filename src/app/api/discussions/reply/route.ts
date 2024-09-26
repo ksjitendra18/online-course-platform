@@ -1,8 +1,10 @@
+import { NextRequest } from "next/server";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { discussion, discussionReply } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { discussionId, reply } = await request.json();

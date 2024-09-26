@@ -1,16 +1,19 @@
 "use client";
+
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+
 import { AlertTriangle, Loader2, Upload } from "lucide-react";
+import toast from "react-hot-toast";
 import { type ZodFormattedError } from "zod";
 
 import { MultiSelect } from "@/components/multi-select";
 import { Button } from "@/components/ui/button";
 import { Category } from "@/db/schema";
 import { cn } from "@/lib/utils";
+import { env } from "@/utils/env/client";
 import { OtherInfoSchema } from "@/validations/other-info";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 
 const OtherInformation = ({
   courseId,
@@ -120,7 +123,7 @@ const OtherInformation = ({
 
     try {
       const imageUpload = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/image`,
+        `${env.NEXT_PUBLIC_BACKEND_URL}/v1/image`,
         {
           method: "POST",
           body: formData,
@@ -163,14 +166,14 @@ const OtherInformation = ({
   ];
   return (
     <>
-      <div className="auth-options w-full px-6 flex flex-col items-center justify-center">
+      <div className="auth-options flex w-full flex-col items-center justify-center px-6">
         <form
           onSubmit={handleCreateCourse}
-          className="w-[100%] mx-auto md:w-3/4 lg:w-1/2"
+          className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
         >
           {!isFree && (
             <>
-              <label htmlFor="coursePrice" className=" mt-5 block ">
+              <label htmlFor="coursePrice" className="mt-5 block">
                 Course Price
               </label>
               <input
@@ -183,13 +186,13 @@ const OtherInformation = ({
                   formErrors?.coursePrice || customError
                     ? "border-red-600"
                     : "border-slate-400"
-                } px-3 w-full  py-2 rounded-md border-2 `}
+                } w-full rounded-md border-2 px-3 py-2`}
               />
               {formErrors?.coursePrice && (
                 <>
                   {formErrors.coursePrice._errors.map((err, index) => (
                     <div key={index}>
-                      <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                      <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                         <AlertTriangle />
                         {err}
                       </div>
@@ -199,7 +202,7 @@ const OtherInformation = ({
               )}
             </>
           )}
-          <label htmlFor="teacherName" className=" mt-5 block ">
+          <label htmlFor="teacherName" className="mt-5 block">
             Teacher(s) Name
           </label>
           <input
@@ -212,14 +215,14 @@ const OtherInformation = ({
               formErrors?.teacherName || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {formErrors?.teacherName && (
             <>
               {formErrors.teacherName._errors.map((err, index) => (
                 <div key={index}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <AlertTriangle />
                     {err}
                   </div>
@@ -232,7 +235,7 @@ const OtherInformation = ({
             Course Category
           </label>
           <MultiSelect
-            className="border-2 border-slate-400 rounded-md"
+            className="rounded-md border-2 border-slate-400"
             options={categories!.map((category) => ({
               label: category.name,
               value: category.id,
@@ -252,7 +255,7 @@ const OtherInformation = ({
           </label>
           <select
             name="courseValidity"
-            className="w-full rounded-md border-slate-400 border-2 px-3 py-2"
+            className="w-full rounded-md border-2 border-slate-400 px-3 py-2"
             defaultValue={validity ?? -1}
             id="category"
           >
@@ -274,17 +277,17 @@ const OtherInformation = ({
               formErrors?.courseImg || customError
                 ? "border-red-600 text-red-600"
                 : "border-slate-600",
-              "flex mt-5 cursor-pointer items-center justify-center h-[400px] rounded-md border-2  border-dashed"
+              "mt-5 flex h-[400px] cursor-pointer items-center justify-center rounded-md border-2 border-dashed"
             )}
           >
             {imageUploading ? (
               <>
-                <Loader2 className="animate-spin mr-2" />
+                <Loader2 className="mr-2 animate-spin" />
                 Uploading Image
               </>
             ) : null}
             {imageUrl.length > 1 && (
-              <div className="px-5 flex  flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center px-5">
                 <Image
                   width={640}
                   height={360}
@@ -293,7 +296,7 @@ const OtherInformation = ({
                 />
 
                 <button
-                  className="mt-5 bg-red-600 text-white rounded-md px-4 py-1"
+                  className="mt-5 rounded-md bg-red-600 px-4 py-1 text-white"
                   onClick={() => setImageUrl("")}
                 >
                   Use another image
@@ -319,7 +322,7 @@ const OtherInformation = ({
             <>
               {formErrors.courseImg._errors.map((err, index) => (
                 <div key={index}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <AlertTriangle />
                     {err}
                   </div>
@@ -329,7 +332,7 @@ const OtherInformation = ({
           )}
 
           {customError && (
-            <div className="text-white flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 mt-3">
+            <div className="mt-3 flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 text-white">
               <AlertTriangle /> Server Error please try again.
             </div>
           )}
@@ -339,10 +342,10 @@ const OtherInformation = ({
               variant="app"
               type="submit"
               disabled={isLoading}
-              className="w-full my-5"
+              className="my-5 w-full"
             >
               {isLoading ? (
-                <Loader2 className="animate-spin mx-auto" />
+                <Loader2 className="mx-auto animate-spin" />
               ) : (
                 "Update Course"
               )}

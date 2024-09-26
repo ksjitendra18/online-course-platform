@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import React from "react";
+
 import ForgotPasswordForm from "../_components/forgot-password-form";
 
 export const metadata: Metadata = {

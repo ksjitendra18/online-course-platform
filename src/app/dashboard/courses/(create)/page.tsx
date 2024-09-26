@@ -1,12 +1,14 @@
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
 import { getUserSessionRedis } from "@/db/queries/auth";
 import {
   getAllCoursesByUserId,
   getDynamicCoursesByUserId,
 } from "@/db/queries/courses";
 import { formatPrice } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import DashboardCourseSearch from "../../components/dashboard-search";
 
 export const metadata = {
@@ -37,14 +39,14 @@ const Courses = async ({
 
   return (
     <>
-      <section className="p-6 w-full">
-        <h1 className="text-2xl font-bold my-3">Courses</h1>
+      <section className="w-full p-6">
+        <h1 className="my-3 text-2xl font-bold">Courses</h1>
 
-        <div className="flex items-center my-3 justify-between">
+        <div className="my-3 flex items-center justify-between">
           <DashboardCourseSearch existingSearchTerm={search ?? ""} />
 
           <Link
-            className="bg-blue-600 px-5 py-2  text-white rounded-md"
+            className="rounded-md bg-blue-600 px-5 py-2 text-white"
             href="/dashboard/courses/create"
           >
             Add New Course
@@ -52,29 +54,29 @@ const Courses = async ({
         </div>
       </section>
 
-      <section className="p-6  items-center auto-rows-[1fr] gap-5 grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 ">
+      <section className="grid auto-rows-[1fr] items-center gap-5 p-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
         {memberCourses?.map((memberCourse) => (
           <div
             key={memberCourse.courseId}
-            className="border-2 flex flex-col justify-between relative w-full h-full rounded-md border-blue-600"
+            className="relative flex h-full w-full flex-col justify-between rounded-md border-2 border-blue-600"
           >
             {/* width unknown how to do? */}
-            <div className=" w-full aspect-video rounded-md overflow-hidden">
+            <div className="aspect-video w-full overflow-hidden rounded-md">
               <img
                 alt="Course Image"
                 src={
                   memberCourse.course.imageUrl ??
                   "https://cdn.learningapp.link/images/default-course-image.png"
                 }
-                className="object-cover rounded-t-md"
+                className="rounded-t-md object-cover"
               />
             </div>
-            <div className="flex  px-4 mt-2 flex-col">
-              <h3 className="text-lg truncate font-medium text-center mb-4 text-blue-600">
+            <div className="mt-2 flex flex-col px-4">
+              <h3 className="mb-4 truncate text-center text-lg font-medium text-blue-600">
                 {memberCourse.course.title}
               </h3>
 
-              <div className="flex items-center  justify-between rounded-md  gap-1  mb-4">
+              <div className="mb-4 flex items-center justify-between gap-1 rounded-md">
                 <div className="">
                   {memberCourse.course.courseModule.length} Modules
                 </div>
@@ -105,7 +107,7 @@ const Courses = async ({
               <div className="flex items-center justify-center">
                 <Link
                   href={`/dashboard/courses/${memberCourse.course.slug}/basic`}
-                  className="flex items-center justify-center py-2 px-2 rounded-lg border-2 border-blue-600 bg-blue-600 text-white text-base w-fit mb-2"
+                  className="mb-2 flex w-fit items-center justify-center rounded-lg border-2 border-blue-600 bg-blue-600 px-2 py-2 text-base text-white"
                 >
                   Manage
                 </Link>

@@ -1,9 +1,11 @@
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { sendVerificationMail } from "@/lib/auth";
 import EmailSchema from "@/validations/email";
-import { and, eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { email }: { email: string } = await request.json();

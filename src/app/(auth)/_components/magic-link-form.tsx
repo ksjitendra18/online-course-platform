@@ -1,11 +1,14 @@
 "use client";
+
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useState } from "react";
+
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import EmailSchema from "@/validations/email";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
-import toast from "react-hot-toast";
 
 const MagicLinkForm = () => {
   const [error, setError] = useState("");
@@ -47,7 +50,7 @@ const MagicLinkForm = () => {
     }
   };
   return (
-    <div className=" w-full mb-7">
+    <div className="mb-7 w-full">
       <form method="post" onSubmit={handleMagicLinkLogin} className="space-y-4">
         <input
           type="email"
@@ -57,27 +60,27 @@ const MagicLinkForm = () => {
           required
           className={cn(
             error ? "border-red-600" : "border-slate-600",
-            "px-3 w-full mt-4 py-2 rounded-md border-2"
+            "mt-4 w-full rounded-md border-2 px-3 py-2"
           )}
         />
 
         {error ? (
           <>
-            <p className="rounded-md bg-red-600 text-white px-2 py-1">
+            <p className="rounded-md bg-red-600 px-2 py-1 text-white">
               {error}
             </p>
           </>
         ) : null}
         <Button variant="app" className="w-full" type="submit">
           {loading ? (
-            <Loader2 className="animate-spin mx-auto" />
+            <Loader2 className="mx-auto animate-spin" />
           ) : (
             "Send Magic Link"
           )}
         </Button>
       </form>
       {success && (
-        <p className="bg-green-700 text-white px-2 py-1 rounded-md">
+        <p className="rounded-md bg-green-700 px-2 py-1 text-white">
           Magic Link Sent
         </p>
       )}

@@ -1,11 +1,13 @@
+import { revalidatePath } from "next/cache";
+import { NextRequest } from "next/server";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { chapter, course } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import redis from "@/lib/redis";
 import { BasicInfoSchema } from "@/validations/basic-info";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { NextRequest } from "next/server";
 
 const PartialBasicInfoSchema = BasicInfoSchema.partial();
 

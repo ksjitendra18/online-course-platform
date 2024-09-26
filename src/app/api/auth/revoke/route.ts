@@ -1,7 +1,8 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { session } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const {

@@ -1,9 +1,12 @@
-import { getCourseInfo } from "@/db/queries/courses";
-import { AlertTriangle } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
-import DeleteCourse from "./_components/delete-course";
+
+import { AlertTriangle } from "lucide-react";
+
 import { getUserSessionRedis } from "@/db/queries/auth";
+import { getCourseInfo } from "@/db/queries/courses";
+
+import DeleteCourse from "./_components/delete-course";
 
 export const metadata = {
   title: "Settings",
@@ -23,13 +26,13 @@ const SettingsPage = async ({ params }: { params: { slug: string } }) => {
     return redirect("/dashboard");
   }
   return (
-    <div className="p-6 w-full">
+    <div className="w-full p-6">
       <h1 className="text-2xl font-bold">Settings</h1>
 
-      <div className="flex pb-5 bg-white flex-col px-4 py-3 rounded-md items-center mx-auto md:w-1/2">
+      <div className="mx-auto flex flex-col items-center rounded-md bg-white px-4 py-3 pb-5 md:w-1/2">
         <h2 className="text-xl font-bold">Delete Course</h2>
 
-        <p className="bg-red-600 mt-3 flex items-center text-white rounded-md px-2 py-3">
+        <p className="mt-3 flex items-center rounded-md bg-red-600 px-2 py-3 text-white">
           <AlertTriangle className="mr-2" />
           All the data associated with this course will be deleted
         </p>

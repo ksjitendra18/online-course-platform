@@ -1,4 +1,10 @@
 "use client";
+
+import { useEffect, useState } from "react";
+
+import "@radix-ui/react-dialog";
+import { AlertTriangle } from "lucide-react";
+
 import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,10 +16,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {} from "@radix-ui/react-dialog";
-import { AlertTriangle } from "lucide-react";
-import { useEffect, useState } from "react";
+
 import PublishCourseDialog from "./publish-course-dialog";
+
 type PublishCourseProps = {
   triggerMsg: string;
   courseId: string;
@@ -85,19 +90,19 @@ const PublishCourse = ({
 
             <div className="flex flex-col gap-2">
               {!hasPublishedModule && (
-                <div className="flex gap-2 items-start">
+                <div className="flex items-start gap-2">
                   <AlertTriangle className="h-6 w-6 text-red-500" />
                   Course should have atleast one published module
                 </div>
               )}
               {missingFields.length > 0 && (
-                <div className="flex gap-2 items-start">
+                <div className="flex items-start gap-2">
                   <AlertTriangle className="h-6 w-6 text-red-500" />
                   Missing fields: {missingFields.join(", ")}
                 </div>
               )}
               {invalidFields.length > 0 && (
-                <div className="flex gap-2 items-start">
+                <div className="flex items-start gap-2">
                   <AlertTriangle className="h-6 w-6 text-red-500" />
                   Invalid fields: {invalidFields.join(", ")}
                 </div>

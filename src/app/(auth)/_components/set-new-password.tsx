@@ -1,13 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import PasswordSchema from "@/validations/password";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+
+import { Loader2 } from "lucide-react";
 import { ImSpinner8 } from "react-icons/im";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import PasswordSchema from "@/validations/password";
 
 const SetNewPassword = ({ id }: { id: string }) => {
   const [verificationErr, setVerificationErr] = useState("");
@@ -79,12 +81,12 @@ const SetNewPassword = ({ id }: { id: string }) => {
 
   return (
     <>
-      <div className="flex max-w-[400px] mt-32 mx-auto items-center justify-center flex-col">
-        <h1 className="text-3xl font-bold text-center">Set New Password</h1>
+      <div className="mx-auto mt-32 flex max-w-[400px] flex-col items-center justify-center">
+        <h1 className="text-center text-3xl font-bold">Set New Password</h1>
 
         <form
           onSubmit={handleSubmit}
-          className="mx-auto flex flex-col gap-3 mt-8 w-full"
+          className="mx-auto mt-8 flex w-full flex-col gap-3"
         >
           <div className="relative">
             <input
@@ -95,7 +97,7 @@ const SetNewPassword = ({ id }: { id: string }) => {
               required
               className={`${
                 validationIssue?._errors ? "border-red-600" : "border-slate-600"
-              }  px-3 w-full  py-2 rounded-md border-2`}
+              } w-full rounded-md border-2 px-3 py-2`}
             />
             <button
               onClick={() => setShowPassword((prev) => !prev)}
@@ -104,9 +106,9 @@ const SetNewPassword = ({ id }: { id: string }) => {
               aria-label="Password Invisible."
             >
               {showPassword ? (
-                <LuEye className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEye className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               ) : (
-                <LuEyeOff className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEyeOff className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               )}
             </button>
           </div>
@@ -119,7 +121,7 @@ const SetNewPassword = ({ id }: { id: string }) => {
               required
               className={`${
                 validationIssue?._errors ? "border-red-600" : "border-slate-600"
-              }  px-3 w-full  py-2 rounded-md border-2`}
+              } w-full rounded-md border-2 px-3 py-2`}
             />
             <button
               onClick={() => setShowConfirmPassword((prev) => !prev)}
@@ -128,9 +130,9 @@ const SetNewPassword = ({ id }: { id: string }) => {
               aria-label="Password Invisible."
             >
               {showConfirmPassword ? (
-                <LuEye className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEye className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               ) : (
-                <LuEyeOff className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEyeOff className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               )}
             </button>
           </div>
@@ -140,7 +142,7 @@ const SetNewPassword = ({ id }: { id: string }) => {
             {validationIssue?._errors?.map((err, idx) => (
               <p
                 key={idx}
-                className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
               >
                 {err}
               </p>
@@ -159,13 +161,13 @@ const SetNewPassword = ({ id }: { id: string }) => {
         </form>
 
         {verificationErr && (
-          <div className="bg-red-500 text-white px-3 py-2 rounded-md my-3">
+          <div className="my-3 rounded-md bg-red-500 px-3 py-2 text-white">
             {verificationErr}
           </div>
         )}
 
         {verificationSuccess && (
-          <div className="bg-green-600 text-white px-3 py-2 rounded-md my-3">
+          <div className="my-3 rounded-md bg-green-600 px-3 py-2 text-white">
             <p>
               Password Reset Success. Now you can{" "}
               <Link href="/login">Log in. Redirecting to login page...</Link>

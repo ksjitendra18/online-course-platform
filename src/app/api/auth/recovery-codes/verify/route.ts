@@ -1,13 +1,15 @@
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
+
+import { xxh32 } from "@node-rs/xxhash";
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { recoveryCodes, user } from "@/db/schema";
-import { aesDecrypt, aesEncrypt, EncryptionPurpose } from "@/lib/aes";
+import { EncryptionPurpose, aesDecrypt, aesEncrypt } from "@/lib/aes";
 import { createLoginLog, createSession } from "@/lib/auth";
 import { rateLimit } from "@/lib/ratelimit";
 import redis from "@/lib/redis";
-import { xxh32 } from "@node-rs/xxhash";
-import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
 
 // rate limiting will be on the basis of 3 things
 // 1. ip address: 500 requests per hour
@@ -194,11 +196,8 @@ export async function POST(request: NextRequest) {
       path: "/",
       httpOnly: true,
       expires: expiresAt,
-      domain:
-        process.env.NODE_ENV === "production"
-          ? ".learningapp.link"
-          : "localhost",
-      secure: process.env.NODE_ENV === "production",
+      domain: env.NODE_ENV === "production" ? ".learningapp.link" : "localhost",
+      secure: env.NODE_ENV === "production",
       sameSite: "lax",
     });
 

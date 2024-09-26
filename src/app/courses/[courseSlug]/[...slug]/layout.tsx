@@ -1,8 +1,12 @@
+import { redirect } from "next/navigation";
 import React from "react";
-import CourseSidebar from "../../_components/course-sidebar";
 
-import { getUserSessionRedis } from "@/db/queries/auth";
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { getProgress } from "@/db/queries/course-progress";
+import { getCourseData } from "@/db/queries/courses";
 import {
   CourseEnrollment,
   Purchase,
@@ -12,10 +16,8 @@ import {
   courseModule,
   purchase,
 } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import { getCourseData } from "@/db/queries/courses";
-import { getProgress } from "@/db/queries/course-progress";
+
+import CourseSidebar from "../../_components/course-sidebar";
 
 export type CourseData = {
   id: string;
@@ -93,7 +95,7 @@ const CourseLayout = async ({
   }
 
   return (
-    <div className="flex lg:flex-row flex-col-reverse">
+    <div className="flex flex-col-reverse lg:flex-row">
       <CourseSidebar
         courseData={courseData}
         courseSlug={params.courseSlug}

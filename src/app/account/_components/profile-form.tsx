@@ -1,14 +1,17 @@
 "use client";
+
+import { useRouter } from "next/navigation";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+
+import debounce from "lodash.debounce";
+import { Check, Loader, Loader2, Router, X } from "lucide-react";
+import toast from "react-hot-toast";
+import { useDebounce } from "use-debounce";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProfileSchema } from "@/validations/profile";
-import { Check, Loader, Loader2, Router, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { z } from "zod";
-import debounce from "lodash.debounce";
-import toast from "react-hot-toast";
-import { useDebounce } from "use-debounce";
 import { UsernameSchema } from "@/validations/username";
 
 interface Props {
@@ -164,15 +167,15 @@ const ProfileForm = ({ email, name, userName }: Props) => {
     <>
       <form
         id="profile-form"
-        className="w-[100%] mx-auto md:w-3/4 lg:w-1/3 "
+        className="mx-auto w-[100%] md:w-3/4 lg:w-1/3"
         onSubmit={handleSubmit}
       >
-        <label className="block mt-5 text-gray-600" htmlFor="email">
+        <label className="mt-5 block text-gray-600" htmlFor="email">
           Email
         </label>
         <input
           type="text"
-          className="border-2 border-slate-400 rounded-md px-2 py-3 w-full"
+          className="w-full rounded-md border-2 border-slate-400 px-2 py-3"
           name="email"
           placeholder="Email"
           value={email}
@@ -200,7 +203,7 @@ const ProfileForm = ({ email, name, userName }: Props) => {
             error || validationIssue?.fullName
               ? "border-red-600"
               : "border-slate-600",
-            "px-3 w-full  py-2 rounded-md border-2"
+            "w-full rounded-md border-2 px-3 py-2"
           )}
         />
 
@@ -209,7 +212,7 @@ const ProfileForm = ({ email, name, userName }: Props) => {
             {validationIssue?.fullName?._errors?.map((err, idx) => (
               <p
                 key={idx}
-                className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
               >
                 {err}
               </p>
@@ -239,12 +242,12 @@ const ProfileForm = ({ email, name, userName }: Props) => {
             error || validationIssue?.userName
               ? "border-red-600"
               : "border-slate-600",
-            "px-3 w-full  py-2 rounded-md border-2"
+            "w-full rounded-md border-2 px-3 py-2"
           )}
         />
 
         {usernameState.isLoading && (
-          <div className="flex my-3 items-center gap-2">
+          <div className="my-3 flex items-center gap-2">
             <Loader2 className="mr-2 animate-spin" />
             Checking username
           </div>
@@ -253,11 +256,11 @@ const ProfileForm = ({ email, name, userName }: Props) => {
         {usernameState.isChecked && (
           <>
             {usernameState.isAvailable ? (
-              <div className="flex my-3 rounded-md px-3 py-3 bg-green-600 text-white items-center gap-2">
+              <div className="my-3 flex items-center gap-2 rounded-md bg-green-600 px-3 py-3 text-white">
                 <Check /> Username Available
               </div>
             ) : (
-              <div className="flex my-3 rounded-md px-3 py-3 bg-red-600 text-white items-center gap-2">
+              <div className="my-3 flex items-center gap-2 rounded-md bg-red-600 px-3 py-3 text-white">
                 <X /> Username Not Available
               </div>
             )}
@@ -269,7 +272,7 @@ const ProfileForm = ({ email, name, userName }: Props) => {
             {validationIssue?.userName?._errors?.map((err, idx) => (
               <p
                 key={idx}
-                className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
               >
                 {err}
               </p>
@@ -280,11 +283,11 @@ const ProfileForm = ({ email, name, userName }: Props) => {
           disabled={loading}
           type="submit"
           variant="app"
-          className=" mt-5 flex items-center justify-center w-full px-10 py-2 text-center rounded-md text-white  duration-100 ease-in"
+          className="mt-5 flex w-full items-center justify-center rounded-md px-10 py-2 text-center text-white duration-100 ease-in"
         >
           {loading ? (
             <>
-              <Loader2 className="animate-spin  mx-auto " />
+              <Loader2 className="mx-auto animate-spin" />
             </>
           ) : (
             <>Update</>

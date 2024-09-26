@@ -1,11 +1,13 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import useChapterStore from "@/store/chapter";
-import { AlertTriangle, Loader2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
+
+import { AlertTriangle, Loader2, Upload } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { cn } from "@/lib/utils";
+import useChapterStore from "@/store/chapter";
 
 interface Props {
   exisitingImage?: string;
@@ -31,7 +33,7 @@ const ChapterAttachment = ({ exisitingImage }: Props) => {
 
     try {
       const imageUpload = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/attachment`,
+        `${env.NEXT_PUBLIC_BACKEND_URL}/attachment`,
         {
           method: "POST",
           body: formData,
@@ -55,21 +57,21 @@ const ChapterAttachment = ({ exisitingImage }: Props) => {
         onChange={handleImageUpload}
         className={cn(
           customError ? "border-red-600 text-red-600" : "border-slate-600",
-          "flex mt-5 cursor-pointer items-center justify-center h-[400px] rounded-md border-2  border-dashed"
+          "mt-5 flex h-[400px] cursor-pointer items-center justify-center rounded-md border-2 border-dashed"
         )}
       >
         {imageUploading ? (
           <>
-            <Loader2 className="animate-spin mr-2" />
+            <Loader2 className="mr-2 animate-spin" />
             Uploading
           </>
         ) : null}
         {imageUrl.length > 1 && (
-          <div className="px-5 flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center px-5">
             <Image fill src={imageUrl} alt="Uploaded image" />
 
             <button
-              className="mt-5 bg-red-600 text-white rounded-md px-4 py-1"
+              className="mt-5 rounded-md bg-red-600 px-4 py-1 text-white"
               onClick={() => setImageUrl("")}
             >
               Use another image

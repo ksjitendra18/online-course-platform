@@ -1,9 +1,10 @@
-import { courseEnrollment, purchase, session, user } from "@/db/schema";
-import { db } from "@/db/index";
-import { createId } from "@paralleldrive/cuid2";
-
-import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
+
+import { createId } from "@paralleldrive/cuid2";
+import { eq } from "drizzle-orm";
+
+import { db } from "@/db/index";
+import { courseEnrollment, purchase, session, user } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 
 export async function POST(request: Request) {

@@ -1,7 +1,8 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { UsernameSchema } from "@/validations/username";
-import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const {

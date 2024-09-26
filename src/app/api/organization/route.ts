@@ -1,8 +1,9 @@
+import { createId } from "@paralleldrive/cuid2";
+
 import { db } from "@/db";
 import { organization, organizationMember } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { OrganizationSetupSchema } from "@/validations/organization-setup";
-import { createId } from "@paralleldrive/cuid2";
 
 export async function POST(request: Request) {
   const {

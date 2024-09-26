@@ -1,5 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+
 import { AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,10 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 
 const DeleteChapter = ({
   chapterId,
@@ -70,7 +72,7 @@ const DeleteChapter = ({
 
             <Button onClick={handleClick} variant="destructive">
               {loading ? (
-                <Loader2 className="animate-spin mx-auto" />
+                <Loader2 className="mx-auto animate-spin" />
               ) : (
                 <>Delete</>
               )}

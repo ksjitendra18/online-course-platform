@@ -1,9 +1,13 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
-import BuyCourse from "../../_components/buy-course";
-import VideoPlayer from "../../_components/video-player";
 
-import { getUserSessionRedis } from "@/db/queries/auth";
+import { and, desc, eq } from "drizzle-orm";
+import { Check, X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
 import {
   CourseEnrollment,
   Purchase,
@@ -15,14 +19,12 @@ import {
   quiz,
   quizResponse,
 } from "@/db/schema";
-import { and, desc, eq } from "drizzle-orm";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Check, X } from "lucide-react";
-import ChapterQuiz from "../../_components/chapter-quiz";
-import { Button } from "@/components/ui/button";
-import QuizDuration from "../../_components/quiz-duration";
 import { formatDate } from "@/lib/utils";
+
+import BuyCourse from "../../_components/buy-course";
+import ChapterQuiz from "../../_components/chapter-quiz";
+import QuizDuration from "../../_components/quiz-duration";
+import VideoPlayer from "../../_components/video-player";
 import VideoPlayerWithProgress from "../../_components/video-player-progress";
 
 export const revalidate = 0;
@@ -168,10 +170,10 @@ const ChapterPage = async ({
         {chapterInfo.type === "quiz" && (
           <>
             {userSession?.userId ? (
-              <div className="flex mt-3 items-center gap-5">
+              <div className="mt-3 flex items-center gap-5">
                 {chapterInfo?.quiz[0].response.length > 0 ? (
                   <>
-                    <p className="px-4 rounded-md text-white bg-blue-600 py-2">
+                    <p className="rounded-md bg-blue-600 px-4 py-2 text-white">
                       Attempted at:{" "}
                       {formatDate(chapterInfo?.quiz[0].response[0].createdAt!)}
                     </p>
@@ -189,11 +191,11 @@ const ChapterPage = async ({
         chapterInfo.isFree ||
         purchaseInfo ||
         isPartOfCourse ? (
-          <div className="fill mx-auto rounded-t-md ">
+          <div className="fill mx-auto rounded-t-md">
             {chapterInfo.type === "video" && (
               // <div className="flex items-center justify-center mx-auto max-w-[900px]">
               <>
-                <div className="flex items-center justify-center mx-auto ">
+                <div className="mx-auto flex items-center justify-center">
                   <VideoPlayerWithProgress
                     userId={userSession?.userId}
                     chapterId={chapterInfo.id}
@@ -243,12 +245,12 @@ const ChapterPage = async ({
         ) : (
           <div
             style={{ height: "400px" }}
-            className="bg-slate-800 text-white flex flex-col items-center justify-center w-full"
+            className="flex w-full flex-col items-center justify-center bg-slate-800 text-white"
           >
-            <h3 className="text-center text-2xl font-bold mb-3">
+            <h3 className="mb-3 text-center text-2xl font-bold">
               Chapter Locked
             </h3>
-            <p className="text-center ">
+            <p className="text-center">
               Please purchase the course to view all the chapters.
             </p>
 
@@ -256,7 +258,7 @@ const ChapterPage = async ({
               <>
                 <Link
                   href="/login"
-                  className="px-8 py-2 my-5 bg-blue-600 hover:bg-blue-500 rounded-full"
+                  className="my-5 rounded-full bg-blue-600 px-8 py-2 hover:bg-blue-500"
                 >
                   Login
                 </Link>

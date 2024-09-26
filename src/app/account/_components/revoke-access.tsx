@@ -1,9 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { Button } from "@/components/ui/button";
 
 const RevokeAcess = ({ id }: { id: string }) => {
   const router = useRouter();
@@ -29,7 +32,7 @@ const RevokeAcess = ({ id }: { id: string }) => {
   return (
     <Button disabled={isLoading} onClick={handleClick} variant="destructive">
       {isLoading ? (
-        <Loader2 className="animate-spin mx-auto" />
+        <Loader2 className="mx-auto animate-spin" />
       ) : (
         "Revoke Access"
       )}

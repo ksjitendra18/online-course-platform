@@ -1,9 +1,12 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import React, { Suspense } from "react";
-import CourseCard from "./_components/course-card";
-import { db } from "@/db";
+
 import { and, eq, like } from "drizzle-orm";
+
+import { Skeleton } from "@/components/ui/skeleton";
+import { db } from "@/db";
 import { course } from "@/db/schema";
+
+import CourseCard from "./_components/course-card";
 
 type Props = {
   searchParams: {
@@ -43,7 +46,7 @@ const FetchCourse = async ({ searchParams }: Props) => {
     },
   });
   return (
-    <div className="grid my-5 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
+    <div className="my-5 grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
       {courses.map((course) => (
         <CourseCard
           key={course.id}

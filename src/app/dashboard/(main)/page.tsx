@@ -1,7 +1,9 @@
+import { redirect } from "next/navigation";
+
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getAnalytics } from "@/db/queries/course-analytics";
 import { getPublishedCourses, getTotalEnrollments } from "@/db/queries/courses";
-import { redirect } from "next/navigation";
+
 import { DataCard } from "./analytics/_components/data-card";
 
 export const revalidate = 0;
@@ -26,7 +28,7 @@ const DashboardPage = async () => {
 
   return (
     <section className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <DataCard
           label="Total Published Course"
           value={publishedCourses.length}

@@ -1,15 +1,16 @@
 "use client";
 
-import LoginSchema from "@/validations/login";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
+
+import { Loader2 } from "lucide-react";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { LuEye, LuEyeOff } from "react-icons/lu";
+import LoginSchema from "@/validations/login";
 
 interface Props {
   loading: boolean;
@@ -25,7 +26,9 @@ const LoginForm = ({ loading, setLoading }: Props) => {
 
   const searchParams = useSearchParams();
 
-  const redirectUrl = searchParams.get("redirect");
+  const redirectUrl = searchParams.get("next");
+
+  console.log("redirectUrl", redirectUrl);
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -92,7 +95,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
   return (
     <>
       <div className="flex w-full items-center justify-between">
-        <form onSubmit={handleLogin} method="post" className="w-full ">
+        <form onSubmit={handleLogin} method="post" className="w-full">
           <label
             htmlFor="email"
             className={cn(
@@ -113,7 +116,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
               error || validationIssue?.email
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
@@ -122,21 +125,21 @@ const LoginForm = ({ loading, setLoading }: Props) => {
               {validationIssue?.email?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
               ))}
             </div>
           )}
-          <div className="flex items-center justify-between mt-3 mb-1">
+          <div className="mb-1 mt-3 flex items-center justify-between">
             <label
               htmlFor="password"
               className={cn(
                 error || validationIssue?.password
                   ? "text-red-600"
                   : "text-gray-600",
-                " block"
+                "block"
               )}
             >
               Password
@@ -154,7 +157,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
                 error || validationIssue?.password
                   ? "border-red-600"
                   : "border-slate-600",
-                "px-3 w-full  py-2 rounded-md border-2"
+                "w-full rounded-md border-2 px-3 py-2"
               )}
             />
             <button
@@ -163,18 +166,18 @@ const LoginForm = ({ loading, setLoading }: Props) => {
               aria-label="Password Invisible."
             >
               {showPassword ? (
-                <LuEye className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEye className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               ) : (
-                <LuEyeOff className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEyeOff className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               )}
             </button>
           </div>
           {validationIssue?.password && (
-            <div className="flex flex-col ">
+            <div className="flex flex-col">
               {validationIssue?.password?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="mt-2 bg-red-500 text-white rounded-md px-3 py-2"
+                  className="mt-2 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -183,13 +186,13 @@ const LoginForm = ({ loading, setLoading }: Props) => {
           )}
 
           {error && (
-            <p className="mt-2 bg-red-500 text-white rounded-md px-3 py-2">
+            <p className="mt-2 rounded-md bg-red-500 px-3 py-2 text-white">
               {error}
             </p>
           )}
 
           {unverifiedEmail && (
-            <p className="mt-2 bg-red-500 text-white rounded-md px-3 py-2">
+            <p className="mt-2 rounded-md bg-red-500 px-3 py-2 text-white">
               Please verify your email. <Link href="/verify">Verify Email</Link>
             </p>
           )}
@@ -201,7 +204,7 @@ const LoginForm = ({ loading, setLoading }: Props) => {
               className="my-5 w-full"
             >
               {loading ? (
-                <Loader2 className="animate-spin mx-auto" />
+                <Loader2 className="mx-auto animate-spin" />
               ) : (
                 <>Log in</>
               )}

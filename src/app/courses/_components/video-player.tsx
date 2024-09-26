@@ -1,8 +1,9 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import Script from "next/script";
 import React, { useState } from "react";
+
+import { Loader2 } from "lucide-react";
 
 interface VideoPlayerProps {
   playbackId: string;
@@ -21,7 +22,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playbackId, autoPlay }) => {
     <>
       <Script src="//assets.mediadelivery.net/playerjs/player-0.1.0.min.js" />
       {isLoading ? (
-        <div className="h-full flex items-center justify-center w-full bg-red-800">
+        <div className="flex h-full w-full items-center justify-center bg-red-800">
           <Loader2 size={30} />
         </div>
       ) : (

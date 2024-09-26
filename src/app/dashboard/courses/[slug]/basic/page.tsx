@@ -1,10 +1,12 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { eq } from "drizzle-orm";
+import { FaHome } from "react-icons/fa";
+
 import BasicInformation from "@/app/dashboard/components/basic-info-form";
 import { db } from "@/db";
 import { course } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { FaHome } from "react-icons/fa";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -29,9 +31,9 @@ const BasicPage = async ({ params }: { params: { slug: string } }) => {
     return redirect("/");
   }
   return (
-    <section className="px-6 py-3 w-full">
-      <div className="flex items-center my-5 gap-2">
-        <Link className="flex  ease-in items-center gap-3" href="/dashboard">
+    <section className="w-full px-6 py-3">
+      <div className="my-5 flex items-center gap-2">
+        <Link className="flex items-center gap-3 ease-in" href="/dashboard">
           <FaHome />
           Home &gt;
         </Link>
@@ -48,8 +50,8 @@ const BasicPage = async ({ params }: { params: { slug: string } }) => {
         </Link>
       </div>
 
-      <div className="flex justify-between md:justify-start gap-x-3 items-center">
-        <h1 className="text-2xl font-bold my-3">Edit Course Details</h1>
+      <div className="flex items-center justify-between gap-x-3 md:justify-start">
+        <h1 className="my-3 text-2xl font-bold">Edit Course Details</h1>
       </div>
       <BasicInformation
         courseSlug={courseInfo?.slug}

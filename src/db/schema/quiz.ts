@@ -7,6 +7,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
 import { chapter } from "./chapter";
 import { course } from "./course";
 import { quizResponse, quizUserResponse } from "./quiz-response";

@@ -1,8 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { FormEventHandler, useState } from "react";
+
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 const VerifyRecoveryCodeForm = () => {
   const [loading, setLoading] = useState(false);
@@ -43,8 +45,8 @@ const VerifyRecoveryCodeForm = () => {
     }
   };
   return (
-    <div className="flex max-w-[400px] mt-32 mx-auto items-center justify-center flex-col">
-      <h1 className="text-3xl font-bold text-center">
+    <div className="mx-auto mt-32 flex max-w-[400px] flex-col items-center justify-center">
+      <h1 className="text-center text-3xl font-bold">
         Access Account via Recovery Code
       </h1>
 
@@ -54,17 +56,17 @@ const VerifyRecoveryCodeForm = () => {
           type="text"
           name="enteredCode"
           id="enteredCode"
-          className="border-2 border-slate-600 px-3 py-2 w-full rounded-md"
+          className="w-full rounded-md border-2 border-slate-600 px-3 py-2"
           required
         />
 
         <Button
           disabled={loading}
-          className="rounded-md my-4 flex items-center justify-center gap-1 bg-black px-5 py-3 w-full text-white"
+          className="my-4 flex w-full items-center justify-center gap-1 rounded-md bg-black px-5 py-3 text-white"
         >
           {loading ? (
             <>
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="mx-auto animate-spin" />
             </>
           ) : (
             "Verify"
@@ -72,12 +74,12 @@ const VerifyRecoveryCodeForm = () => {
         </Button>
       </form>
 
-      <div className="flex items-center justify-center w-full">
+      <div className="flex w-full items-center justify-center">
         {msg && (
           <p
             className={`${
               success ? "bg-green-600" : "bg-red-600"
-            } my-5 rounded-md w-fit px-2 py-2 text-white`}
+            } my-5 w-fit rounded-md px-2 py-2 text-white`}
           >
             {msg}
           </p>

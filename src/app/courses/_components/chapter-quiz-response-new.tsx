@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils";
 import React from "react";
+
+import { cn } from "@/lib/utils";
 
 type Props =
   | {
@@ -40,11 +41,11 @@ const ChapterQuizResponseNew = ({
   const qNo = ["a", "b", "c", "d"];
 
   return (
-    <div className="flex px-4 mt-5 gap-5 flex-col">
+    <div className="mt-5 flex flex-col gap-5 px-4">
       {chapterQuizResponse!.questions.map((question, index) => (
         <div
           key={question.id}
-          className="flex flex-col shadow-md bg-white rounded-md px-5 py-3"
+          className="flex flex-col rounded-md bg-white px-5 py-3 shadow-md"
         >
           <h3 className="font-semibold">
             Q{index + 1}. {question.questionText}
@@ -53,7 +54,7 @@ const ChapterQuizResponseNew = ({
           <div>
             <p className="my-3">Answer Choices</p>
 
-            <div className="grid grid-cols-2 gap-5 grid-rows-2">
+            <div className="grid grid-cols-2 grid-rows-2 gap-5">
               {question.answers.map((answer, index) => (
                 <div
                   className={cn(
@@ -70,14 +71,14 @@ const ChapterQuizResponseNew = ({
                           (r) => r.questionId === question.id
                         )?.answerId &&
                       "bg-[#fdb9b9]",
-                    " rounded-md transition-all duration-100  flex items-center px-3 py-3 "
+                    "flex items-center rounded-md px-3 py-3 transition-all duration-100"
                   )}
                   key={answer.id}
                 >
                   {qNo[index]}.
                   <span className="truncate">{answer.answerText}</span>
                   {answer.isCorrect && (
-                    <div className="text-sm ml-2  rounded-md px-2 py-1 bg-green-600 text-white">
+                    <div className="ml-2 rounded-md bg-green-600 px-2 py-1 text-sm text-white">
                       Correct Answer
                     </div>
                   )}
@@ -85,7 +86,7 @@ const ChapterQuizResponseNew = ({
                     chapterQuizResponse?.response[0].quizUserResponse.find(
                       (r) => r.questionId === question.id
                     )?.answerId && (
-                    <div className="text-sm ml-2  rounded-md px-2 py-1 bg-fuchsia-600 text-white">
+                    <div className="ml-2 rounded-md bg-fuchsia-600 px-2 py-1 text-sm text-white">
                       Your Selection
                     </div>
                   )}

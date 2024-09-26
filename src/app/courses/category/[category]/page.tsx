@@ -1,14 +1,17 @@
+import { redirect } from "next/navigation";
+import React, { Suspense } from "react";
+
+import { eq } from "drizzle-orm";
+
+import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/db";
 import { category, courseCategory } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import React, { Suspense } from "react";
+
 import CategoriesCard from "../../_components/category-card";
-import CourseCard from "../../_components/course-card";
-import FetchCategories from "../../fetch-categories";
-import { Skeleton } from "@/components/ui/skeleton";
-import { redirect } from "next/navigation";
 import CategoryLoading from "../../_components/category-loading";
+import CourseCard from "../../_components/course-card";
 import CourseLoading from "../../_components/course-loading";
+import FetchCategories from "../../fetch-categories";
 import FetchCategoryCourses from "../_components/fetch-category-courses";
 
 export const metadata = {
@@ -41,7 +44,7 @@ const CourseCategoryPage = async ({
         <FetchCategories currentCategory={params.category} />
       </Suspense>
 
-      <h2 className="my-5 text-center font-bold text-3xl">
+      <h2 className="my-5 text-center text-3xl font-bold">
         Courses for {categoryInfo?.name}
       </h2>
       <Suspense fallback={<CourseLoading />}>

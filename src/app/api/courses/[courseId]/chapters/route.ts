@@ -1,9 +1,9 @@
+import { and, count, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { chapter, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
-
-import { and, count, eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const {

@@ -1,6 +1,13 @@
 "use client";
+
+import { useRouter } from "next/navigation";
 import React, { FormEvent, RefObject, useRef, useState } from "react";
+
+import { Check, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { useSWRConfig } from "swr";
+import { ZodFormattedError } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,13 +21,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { Check, Loader2 } from "lucide-react";
-import { QuizSchema } from "@/validations/quiz-question";
-import { ZodFormattedError } from "zod";
 import useQuizDataStore from "@/store/quiz-data";
-import { useRouter } from "next/navigation";
+import { QuizSchema } from "@/validations/quiz-question";
 
 interface Option {
   value: string;
@@ -155,12 +158,12 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
                 onClick={() => handleMarkAsCorrect(index)}
                 className={cn(
                   options[index].isCorrect &&
-                    "bg-green-600 text-white rounded-md transition-all duration-100 ease-in",
-                  "flex items-center col-span-1 px-2 py-2 "
+                    "rounded-md bg-green-600 text-white transition-all duration-100 ease-in",
+                  "col-span-1 flex items-center px-2 py-2"
                 )}
               >
                 <Check />
-                <span className="text-sm ml-2">Mark as Answer</span>
+                <span className="ml-2 text-sm">Mark as Answer</span>
               </button>
             </div>
           ))}
@@ -173,7 +176,7 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
             type="submit"
           >
             {loading ? (
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="mx-auto animate-spin" />
             ) : (
               <>Add Question</>
             )}

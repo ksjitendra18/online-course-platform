@@ -1,11 +1,12 @@
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+import { z } from "zod";
+
 import { db } from "@/db";
 import { chapter, courseMember, quiz, session } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
-
-import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
-import { z } from "zod";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";

@@ -1,9 +1,11 @@
-import { db } from "@/db";
-import { recoveryCodes, session } from "@/db/schema";
-import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
-import { and, eq, gte } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
+
+import { and, eq, gte } from "drizzle-orm";
+
+import { db } from "@/db";
+import { recoveryCodes, session } from "@/db/schema";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 
 export async function GET(request: NextRequest) {
   try {

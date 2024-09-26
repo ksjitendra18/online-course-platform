@@ -1,46 +1,47 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
+
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Loading = () => {
   return (
-    <section className="px-6 py-3 w-full">
-      <div className="flex items-center  my-5 gap-2">
-        <Skeleton className="w-24 h-3 bg-gray-500" />
+    <section className="w-full px-6 py-3">
+      <div className="my-5 flex items-center gap-2">
+        <Skeleton className="h-3 w-24 bg-gray-500" />
         &gt;
-        <Skeleton className="w-48 h-3 bg-gray-500" />
+        <Skeleton className="h-3 w-48 bg-gray-500" />
         &gt;
-        <Skeleton className="w-24 underline h-3 bg-gray-500" />
+        <Skeleton className="h-3 w-24 bg-gray-500 underline" />
       </div>
 
-      <div className="flex justify-between md:justify-start gap-x-3 items-center">
-        <h1 className="text-2xl font-bold my-3">Edit Course Details</h1>
+      <div className="flex items-center justify-between gap-x-3 md:justify-start">
+        <h1 className="my-3 text-2xl font-bold">Edit Course Details</h1>
       </div>
 
-      <div className="auth-options w-full px-6 flex flex-col items-center justify-center">
-        <div className="w-[100%] mx-auto md:w-3/4 lg:w-1/2">
-          <Skeleton className="w-24 h-3 mt-5 bg-gray-400" />
-          <Skeleton className="w-full my-3 h-8 rounded-md bg-gray-400" />
+      <div className="auth-options flex w-full flex-col items-center justify-center px-6">
+        <div className="mx-auto w-[100%] md:w-3/4 lg:w-1/2">
+          <Skeleton className="mt-5 h-3 w-24 bg-gray-400" />
+          <Skeleton className="my-3 h-8 w-full rounded-md bg-gray-400" />
 
-          <Skeleton className="w-24 h-3 mt-5 bg-gray-400" />
-          <Skeleton className="w-full mt-3 mb-5 h-8 rounded-md bg-gray-400" />
+          <Skeleton className="mt-5 h-3 w-24 bg-gray-400" />
+          <Skeleton className="mb-5 mt-3 h-8 w-full rounded-md bg-gray-400" />
 
-          <Skeleton className="w-24 h-3 mt-5 bg-gray-400" />
+          <Skeleton className="mt-5 h-3 w-24 bg-gray-400" />
 
           <div className="flex gap-5">
-            <Skeleton className="w-32 mt-3 mb-5 h-8 rounded-md bg-gray-400" />
-            <Skeleton className="w-32 mt-3 mb-5 h-8 rounded-md bg-gray-400" />
+            <Skeleton className="mb-5 mt-3 h-8 w-32 rounded-md bg-gray-400" />
+            <Skeleton className="mb-5 mt-3 h-8 w-32 rounded-md bg-gray-400" />
           </div>
 
-          <Skeleton className="w-24 h-3 mt-5 bg-gray-400" />
+          <Skeleton className="mt-5 h-3 w-24 bg-gray-400" />
           <div className="flex gap-5">
-            <Skeleton className="w-32 mt-3 mb-5 h-8 rounded-md bg-gray-400" />
-            <Skeleton className="w-32 mt-3 mb-5 h-8 rounded-md bg-gray-400" />
-            <Skeleton className="w-32 mt-3 mb-5 h-8 rounded-md bg-gray-400" />
+            <Skeleton className="mb-5 mt-3 h-8 w-32 rounded-md bg-gray-400" />
+            <Skeleton className="mb-5 mt-3 h-8 w-32 rounded-md bg-gray-400" />
+            <Skeleton className="mb-5 mt-3 h-8 w-32 rounded-md bg-gray-400" />
           </div>
-          <Skeleton className="w-24 h-3 mt-5 bg-gray-400" />
-          <Skeleton className="w-full h-24 mt-3 mb-5  rounded-md bg-gray-400" />
+          <Skeleton className="mt-5 h-3 w-24 bg-gray-400" />
+          <Skeleton className="mb-5 mt-3 h-24 w-full rounded-md bg-gray-400" />
 
-          <Skeleton className="w-full h-8 my-5  rounded-md bg-gray-400" />
+          <Skeleton className="my-5 h-8 w-full rounded-md bg-gray-400" />
         </div>
       </div>
     </section>

@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { db } from "@/db";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -82,3 +84,9 @@ export function formatDuration(durationInSeconds: number) {
 
   return formattedDuration.trim();
 }
+
+// export async function createTransaction<T extends typeof db>(
+//   cb: (trx: T) => void
+// ) {
+//   await db.transaction(cb as any);
+// }

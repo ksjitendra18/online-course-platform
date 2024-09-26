@@ -1,6 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+
+import { Check, Loader2, X } from "lucide-react";
+import toast from "react-hot-toast";
+import { LuEye, LuEyeOff } from "react-icons/lu";
+import slugify from "slugify";
+import { useDebounce } from "use-debounce";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -8,12 +15,6 @@ import { cn } from "@/lib/utils";
 import { OrgSlugSchema } from "@/validations/org-slug";
 import { OrganizationSignupSchema } from "@/validations/organization-signup";
 import { UsernameSchema } from "@/validations/username";
-import { Check, Loader2, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { LuEye, LuEyeOff } from "react-icons/lu";
-import slugify from "slugify";
-import { useDebounce } from "use-debounce";
 
 interface Props {
   loading: boolean;
@@ -244,11 +245,11 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
 
   return (
     <>
-      <div className="flex w-full  items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <form
           onSubmit={handleSignup}
           method="post"
-          className="w-[100%] mx-auto md:w-3/4 lg:w-1/3 "
+          className="mx-auto w-[100%] md:w-3/4 lg:w-1/3"
         >
           <label
             htmlFor="orgName"
@@ -271,7 +272,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               error || validationIssue?.orgName
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
@@ -280,7 +281,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               {validationIssue?.orgName?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -309,7 +310,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               error || validationIssue?.orgSlug
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
@@ -318,7 +319,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               {validationIssue?.orgSlug?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -327,7 +328,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
           )}
 
           {orgState.isLoading && (
-            <div className="flex my-3 items-center gap-2">
+            <div className="my-3 flex items-center gap-2">
               <Loader2 className="mr-2 animate-spin" />
               Checking Slug
             </div>
@@ -336,11 +337,11 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
           {orgState.isChecked && (
             <>
               {orgState.isAvailable ? (
-                <div className="flex my-3 rounded-md px-3 py-3 bg-green-600 text-white items-center gap-2">
+                <div className="my-3 flex items-center gap-2 rounded-md bg-green-600 px-3 py-3 text-white">
                   <Check /> Slug Available
                 </div>
               ) : (
-                <div className="flex my-3 rounded-md px-3 py-3 bg-red-600 text-white items-center gap-2">
+                <div className="my-3 flex items-center gap-2 rounded-md bg-red-600 px-3 py-3 text-white">
                   <X /> Slug Not Available
                 </div>
               )}
@@ -367,7 +368,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               error || validationIssue?.fullName
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
@@ -376,7 +377,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               {validationIssue?.fullName?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -406,12 +407,12 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               error || validationIssue?.userName
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
           {usernameState.isLoading && (
-            <div className="flex my-3 items-center gap-2">
+            <div className="my-3 flex items-center gap-2">
               <Loader2 className="mr-2 animate-spin" />
               Checking username
             </div>
@@ -420,11 +421,11 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
           {usernameState.isChecked && (
             <>
               {usernameState.isAvailable ? (
-                <div className="flex my-3 rounded-md px-3 py-3 bg-green-600 text-white items-center gap-2">
+                <div className="my-3 flex items-center gap-2 rounded-md bg-green-600 px-3 py-3 text-white">
                   <Check /> Username Available
                 </div>
               ) : (
-                <div className="flex my-3 rounded-md px-3 py-3 bg-red-600 text-white items-center gap-2">
+                <div className="my-3 flex items-center gap-2 rounded-md bg-red-600 px-3 py-3 text-white">
                   <X /> Not Available
                 </div>
               )}
@@ -436,7 +437,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               {validationIssue?.userName?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -449,7 +450,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               {validationIssue?.userName?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -478,7 +479,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               error || validationIssue?.email
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
@@ -487,21 +488,21 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               {validationIssue?.email?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
               ))}
             </div>
           )}
-          <div className="flex items-center justify-between mt-3 mb-1">
+          <div className="mb-1 mt-3 flex items-center justify-between">
             <label
               htmlFor="password"
               className={cn(
                 error || validationIssue?.password
                   ? "text-red-600"
                   : "text-gray-600",
-                " block"
+                "block"
               )}
             >
               Password
@@ -517,7 +518,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
                 error || validationIssue?.password
                   ? "border-red-600"
                   : "border-slate-600",
-                "px-3 w-full  py-2 rounded-md border-2"
+                "w-full rounded-md border-2 px-3 py-2"
               )}
             />
             <button
@@ -526,18 +527,18 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
               aria-label="Password Invisible."
             >
               {showPassword ? (
-                <LuEye className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEye className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               ) : (
-                <LuEyeOff className="w-6 h-6 absolute top-2 right-2 select-none text-gray-700 cursor-pointer" />
+                <LuEyeOff className="absolute right-2 top-2 h-6 w-6 cursor-pointer select-none text-gray-700" />
               )}
             </button>
           </div>
           {validationIssue?.password && (
-            <div className="flex flex-col ">
+            <div className="flex flex-col">
               {validationIssue?.password?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="mt-2 bg-red-500 text-white rounded-md px-3 py-2"
+                  className="mt-2 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -546,7 +547,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
           )}
 
           {error && (
-            <p className="mt-2 bg-red-500 text-white rounded-md px-3 py-2">
+            <p className="mt-2 rounded-md bg-red-500 px-3 py-2 text-white">
               {error}
             </p>
           )}
@@ -558,7 +559,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
           >
             {loading ? (
               <>
-                <Loader2 className="animate-spin  mx-auto " />
+                <Loader2 className="mx-auto animate-spin" />
               </>
             ) : (
               <>Signup</>

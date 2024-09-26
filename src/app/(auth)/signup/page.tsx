@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+
 import Signup from "../_components/signup";
 
 export const metadata: Metadata = {

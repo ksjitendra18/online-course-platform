@@ -1,10 +1,12 @@
+import { revalidateTag } from "next/cache";
+import { NextRequest } from "next/server";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { course, courseCategory } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { OtherInfoSchema } from "@/validations/other-info";
-import { eq } from "drizzle-orm";
-import { revalidateTag } from "next/cache";
-import { NextRequest } from "next/server";
 
 export async function PATCH(
   request: NextRequest,

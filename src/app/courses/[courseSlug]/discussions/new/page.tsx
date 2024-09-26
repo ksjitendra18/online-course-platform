@@ -1,8 +1,11 @@
-import { getCourseData } from "@/db/queries/courses";
-import { customAlphabet } from "nanoid";
-import NewDiscussionForm from "../_components/new-discussion-form";
 import { redirect } from "next/navigation";
+
+import { customAlphabet } from "nanoid";
+
 import { getUserSessionRedis } from "@/db/queries/auth";
+import { getCourseData } from "@/db/queries/courses";
+
+import NewDiscussionForm from "../_components/new-discussion-form";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -23,10 +26,10 @@ const AddNewDiscussion = async ({
     redirect("/");
   }
   return (
-    <div className=" my-6 px-6   h-full w-full">
-      <h2 className="text-3xl text-center font-bold">New Question</h2>
+    <div className="my-6 h-full w-full px-6">
+      <h2 className="text-center text-3xl font-bold">New Question</h2>
 
-      <section className="my-10  ">
+      <section className="my-10">
         <NewDiscussionForm
           courseSlug={params.courseSlug}
           courseId={courseData.id}

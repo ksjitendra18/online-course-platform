@@ -1,3 +1,7 @@
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
+
+import { EncryptionPurpose, aesEncrypt } from "@/lib/aes";
 import {
   checkOauthUserExists,
   create2FASession,
@@ -6,9 +10,7 @@ import {
   createSession,
   createUser,
 } from "@/lib/auth";
-import { aesEncrypt, EncryptionPurpose } from "@/lib/aes";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
+import { env } from "@/utils/env/server";
 
 export async function GET(request: NextRequest) {
   const code = new URL(request.url).searchParams?.get("code");
@@ -32,9 +34,9 @@ export async function GET(request: NextRequest) {
 
     const formData = new URLSearchParams();
     formData.append("grant_type", "authorization_code");
-    formData.append("client_id", process.env.GOOGLE_AUTH_CLIENT!);
-    formData.append("client_secret", process.env.GOOGLE_AUTH_SECRET!);
-    formData.append("redirect_uri", process.env.GOOGLE_AUTH_CALLBACK_URL!);
+    formData.append("client_id", env.GOOGLE_AUTH_CLIENT);
+    formData.append("client_secret", env.GOOGLE_AUTH_SECRET);
+    formData.append("redirect_uri", env.GOOGLE_AUTH_CALLBACK_URL);
     formData.append("code", code);
     formData.append("code_verifier", codeVerifier);
 
@@ -70,16 +72,21 @@ export async function GET(request: NextRequest) {
       const { userId } = await createUser({
         email: fetchUserRes.email,
         name: fetchUserRes.name,
-        profilePhoto: fetchUserRes.picture,
+        avatar: fetchUserRes.picture,
         userName: fetchUserRes.email.split("@")[0],
         emailVerified: true,
+      });
+
+      await createOauthProvider({
+        providerId: fetchUserRes.id,
+        userId: userId,
+        strategy: "google",
       });
 
       const { sessionId, expiresAt } = await createSession({
         userId: userId,
       });
 
-      // log
       await createLoginLog({
         sessionId,
         userAgent: userAgent,
@@ -101,10 +108,8 @@ export async function GET(request: NextRequest) {
         expires: expiresAt,
         httpOnly: true,
         domain:
-          process.env.NODE_ENV === "production"
-            ? ".learningapp.link"
-            : "localhost",
-        secure: process.env.NODE_ENV === "production",
+          env.NODE_ENV === "production" ? ".learningapp.link" : "localhost",
+        secure: env.NODE_ENV === "production",
       });
 
       const signupType = cookies().get("signup_type")?.value;
@@ -135,14 +140,14 @@ export async function GET(request: NextRequest) {
         path: "/",
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
       });
 
       cookies().set("2fa_auth", faSess, {
         path: "/",
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
       });
 
       return Response.json(
@@ -179,11 +184,8 @@ export async function GET(request: NextRequest) {
       sameSite: "lax",
       expires: expiresAt,
       httpOnly: true,
-      domain:
-        process.env.NODE_ENV === "production"
-          ? ".learningapp.link"
-          : "localhost",
-      secure: process.env.NODE_ENV === "production",
+      domain: env.NODE_ENV === "production" ? ".learningapp.link" : "localhost",
+      secure: env.NODE_ENV === "production",
     });
 
     return new Response(null, {

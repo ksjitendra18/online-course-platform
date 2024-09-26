@@ -1,9 +1,12 @@
-import CourseProgress from "@/app/courses/_components/course-progress";
-import { course, type Course } from "@/db/schema";
-import { BookOpen } from "lucide-react";
-import Link from "next/link";
-import { CourseWithProgress } from "../page";
 import Image from "next/image";
+import Link from "next/link";
+
+import { BookOpen } from "lucide-react";
+
+import CourseProgress from "@/app/courses/_components/course-progress";
+import { type Course, course } from "@/db/schema";
+
+import { CourseWithProgress } from "../page";
 
 interface Props {
   courseInfo: CourseWithProgress;
@@ -15,8 +18,8 @@ const MyCourseCard = ({ courseInfo, purchasedDate, validity }: Props) => {
   return (
     <>
       <Link href={`/courses/${courseInfo.slug}`}>
-        <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
-          <div className="relative w-full aspect-video rounded-md overflow-hidden">
+        <div className="group h-full overflow-hidden rounded-lg border p-3 transition hover:shadow-sm">
+          <div className="relative aspect-video w-full overflow-hidden rounded-md">
             <Image
               fill
               className="object-cover"
@@ -28,7 +31,7 @@ const MyCourseCard = ({ courseInfo, purchasedDate, validity }: Props) => {
             />
           </div>
           <div className="flex flex-col pt-2">
-            <div className="text-lg md:text-base font-medium group-hover:text-sky-700 transition line-clamp-2">
+            <div className="line-clamp-2 text-lg font-medium transition group-hover:text-sky-700 md:text-base">
               {courseInfo.title}
             </div>
 

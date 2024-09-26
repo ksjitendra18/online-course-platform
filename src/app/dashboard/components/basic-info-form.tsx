@@ -1,28 +1,29 @@
 "use client";
+
 // import { AlertTriangle, Info, Loader2 } from "lucide-solid";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useState } from "react";
+
+import { Info, Loader2 } from "lucide-react";
 import { FiAlertTriangle, FiInfo } from "react-icons/fi";
 import { ImSpinner8 } from "react-icons/im";
+import slugify from "slugify";
 import { type ZodFormattedError } from "zod";
 
-import slugify from "slugify";
-import { cn } from "@/lib/utils";
-import { ChangeEvent, useState } from "react";
-import { BasicInfoSchema } from "@/validations/basic-info";
-import { useRouter } from "next/navigation";
-
+import {
+  clearTagCache,
+  clearTagCacheByUserId,
+} from "@/actions/clear-tag-cache";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  clearTagCache,
-  clearTagCacheByUserId,
-} from "@/actions/clear-tag-cache";
 import { getUserSessionRedis } from "@/db/queries/auth";
+import { cn } from "@/lib/utils";
+import { BasicInfoSchema } from "@/validations/basic-info";
 
 // this same component is responsible for both editing and
 // creating that's why it is accepting these props
@@ -146,12 +147,12 @@ const BasicInformation = ({
 
   return (
     <>
-      <div className="auth-options w-full px-6 flex flex-col items-center justify-center">
+      <div className="auth-options flex w-full flex-col items-center justify-center px-6">
         <form
           onSubmit={handleCreateCourse}
-          className="w-[100%] mx-auto md:w-3/4 lg:w-1/2"
+          className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
         >
-          <label htmlFor="courseName" className=" mt-5 block text-gray-600">
+          <label htmlFor="courseName" className="mt-5 block text-gray-600">
             Course Name
           </label>
           <input
@@ -165,14 +166,14 @@ const BasicInformation = ({
               formErrors?.courseName || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {formErrors?.courseName && (
             <>
               {formErrors.courseName._errors.map((err) => (
                 <div key={err}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
                     {err}
                   </div>
@@ -180,7 +181,7 @@ const BasicInformation = ({
               ))}
             </>
           )}
-          <label htmlFor="courseSlug" className=" mt-5 block text-gray-600">
+          <label htmlFor="courseSlug" className="mt-5 block text-gray-600">
             Course Slug
           </label>
           <input
@@ -193,14 +194,14 @@ const BasicInformation = ({
               formErrors?.courseSlug || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {formErrors?.courseSlug && (
             <>
               {formErrors.courseSlug._errors.map((err, index) => (
                 <div key={index}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
                     {err}
                   </div>
@@ -211,14 +212,14 @@ const BasicInformation = ({
 
           {slugExists && (
             <>
-              <div className="flex items-center gap-3 bg-red-600 text-white rounded-md px-3 py-1 mt-2">
+              <div className="mt-2 flex items-center gap-3 rounded-md bg-red-600 px-3 py-1 text-white">
                 <FiAlertTriangle className="mr-2" />A course with this slug
                 already exists. Please choose another slug
               </div>
             </>
           )}
 
-          <label className=" mt-5 inline-flex text-gray-600">
+          <label className="mt-5 inline-flex text-gray-600">
             This will be:
             <TooltipProvider>
               <Tooltip>
@@ -235,15 +236,15 @@ const BasicInformation = ({
             </TooltipProvider>
           </label>
 
-          <div className="flex mt-2 items-center gap-4 ">
+          <div className="mt-2 flex items-center gap-4">
             <button
               type="button"
               onClick={() => setCourseFree(false)}
               className={cn(
                 !courseFree
-                  ? "text-white bg-blue-500"
+                  ? "bg-blue-500 text-white"
                   : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                " cursor-pointer  rounded-md px-3 py-1"
+                "cursor-pointer rounded-md px-3 py-1"
               )}
             >
               Paid Course
@@ -253,28 +254,28 @@ const BasicInformation = ({
               onClick={() => setCourseFree(true)}
               className={cn(
                 courseFree
-                  ? "text-white bg-blue-500"
+                  ? "bg-blue-500 text-white"
                   : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                " cursor-pointer  rounded-md px-3 py-1"
+                "cursor-pointer rounded-md px-3 py-1"
               )}
             >
               Free Course
             </button>
           </div>
 
-          <label className=" mt-5 inline-flex text-gray-600">
+          <label className="mt-5 inline-flex text-gray-600">
             This course is intended for:
           </label>
 
-          <div className="flex mt-2 items-center gap-4 ">
+          <div className="mt-2 flex items-center gap-4">
             <button
               type="button"
               onClick={() => setCourseLevel("beginner")}
               className={cn(
                 courseLevel === "beginner"
-                  ? "text-white bg-blue-500"
+                  ? "bg-blue-500 text-white"
                   : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                " cursor-pointer  rounded-md px-3 py-1"
+                "cursor-pointer rounded-md px-3 py-1"
               )}
             >
               Beginner
@@ -284,9 +285,9 @@ const BasicInformation = ({
               onClick={() => setCourseLevel("intermediate")}
               className={cn(
                 courseLevel === "intermediate"
-                  ? "text-white bg-blue-500"
+                  ? "bg-blue-500 text-white"
                   : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                " cursor-pointer  rounded-md px-3 py-1"
+                "cursor-pointer rounded-md px-3 py-1"
               )}
             >
               Intermediate
@@ -296,9 +297,9 @@ const BasicInformation = ({
               onClick={() => setCourseLevel("advanced")}
               className={cn(
                 courseLevel === "advanced"
-                  ? "text-white bg-blue-500"
+                  ? "bg-blue-500 text-white"
                   : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                " cursor-pointer  rounded-md px-3 py-1"
+                "cursor-pointer rounded-md px-3 py-1"
               )}
             >
               Advanced
@@ -307,7 +308,7 @@ const BasicInformation = ({
 
           <label
             htmlFor="courseDescription"
-            className=" mt-5 block text-gray-600"
+            className="mt-5 block text-gray-600"
           >
             Course Description
           </label>
@@ -320,13 +321,13 @@ const BasicInformation = ({
               formErrors?.courseDescription || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           ></textarea>
           {formErrors?.courseDescription && (
             <>
               {formErrors.courseDescription._errors.map((err, index) => (
                 <div key={index}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
                     {err}
                   </div>
@@ -336,16 +337,16 @@ const BasicInformation = ({
           )}
 
           {customError && (
-            <div className="text-white flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 mt-3">
+            <div className="mt-3 flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 text-white">
               <FiAlertTriangle /> Server Error please try again.
             </div>
           )}
 
           <div className="flex justify-end">
-            <Button variant="app" disabled={isLoading} className="w-full my-5">
+            <Button variant="app" disabled={isLoading} className="my-5 w-full">
               {isLoading ? (
                 <>
-                  <Loader2 className="animate-spin mx-auto" />
+                  <Loader2 className="mx-auto animate-spin" />
                 </>
               ) : (
                 <>{update ? "Update Course" : "Create Course"}</>

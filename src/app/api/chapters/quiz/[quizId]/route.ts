@@ -1,3 +1,8 @@
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import {
   chapter,
@@ -8,9 +13,6 @@ import {
   session,
 } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
-import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
 
 export async function DELETE(
   request: NextRequest,

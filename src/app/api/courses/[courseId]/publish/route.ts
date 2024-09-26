@@ -1,8 +1,9 @@
+import { eq } from "drizzle-orm";
+
 import { clearCourseData } from "@/actions/clear-course-data";
 import { db } from "@/db";
 import { course } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
-import { eq } from "drizzle-orm";
 
 export async function POST(
   request: Request,

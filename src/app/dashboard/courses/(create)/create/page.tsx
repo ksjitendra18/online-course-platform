@@ -1,11 +1,12 @@
-import React from "react";
-import BasicInformation from "../../../components/basic-info-form";
 import Link from "next/link";
+import React from "react";
+
+import BasicInformation from "../../../components/basic-info-form";
 
 const CreateNewCourse = () => {
   return (
-    <section className="p-6 w-full">
-      <h1 className="text-2xl font-bold my-3">Create New Course</h1>
+    <section className="w-full p-6">
+      <h1 className="my-3 text-2xl font-bold">Create New Course</h1>
 
       <BasicInformation
         courseDescription=""

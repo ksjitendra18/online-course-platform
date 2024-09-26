@@ -1,12 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
-import {
-  blob,
-  index,
-  integer,
-  sqliteTable,
-  text,
-} from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
 import { chapterLogs } from "./chapter";
 import { course, courseLogs } from "./course";
 import { courseMember } from "./course-member";
@@ -16,8 +11,6 @@ import { discussionReply, discussionVote } from "./discussion";
 import { courseEnrollment } from "./enrollment";
 import { organizationMember } from "./organization-member";
 import { purchase } from "./purchase";
-import { create } from "domain";
-import { userInfo } from "os";
 
 export const organization = sqliteTable("organization", {
   id: text("id")

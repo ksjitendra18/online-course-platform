@@ -1,11 +1,13 @@
-import { db } from "@/db";
-import { recoveryCodes, session, user } from "@/db/schema";
-import { aesDecrypt, aesEncrypt, EncryptionPurpose } from "@/lib/aes";
-import { and, eq, gte } from "drizzle-orm";
-import { customAlphabet } from "nanoid";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
+
+import { and, eq, gte } from "drizzle-orm";
+import { customAlphabet } from "nanoid";
 import { authenticator } from "otplib";
+
+import { db } from "@/db";
+import { recoveryCodes, session, user } from "@/db/schema";
+import { EncryptionPurpose, aesDecrypt, aesEncrypt } from "@/lib/aes";
 
 export async function POST(request: NextRequest) {
   const generateId = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 4);

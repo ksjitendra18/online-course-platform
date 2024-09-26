@@ -1,8 +1,9 @@
+import { and, count, eq } from "drizzle-orm";
+
 import { db } from "@/db/index";
 import { courseModule } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
-import { and, count, eq } from "drizzle-orm";
 
 export async function POST(
   request: Request,

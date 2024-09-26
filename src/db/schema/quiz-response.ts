@@ -7,10 +7,11 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
+import { user } from "./auth";
 import { chapter } from "./chapter";
 import { course } from "./course";
 import { quiz, quizAnswer, quizQuestion } from "./quiz";
-import { user } from "./auth";
 
 export const quizResponse = sqliteTable(
   "quiz_response",

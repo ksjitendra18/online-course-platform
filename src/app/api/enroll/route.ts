@@ -1,9 +1,11 @@
+import { revalidateTag } from "next/cache";
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { course, courseEnrollment } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
-import { and, eq } from "drizzle-orm";
-import { revalidateTag } from "next/cache";
-import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,7 +61,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${process.env.ZOHO_MAIL_TOKEN}`,
+        Authorization: `${env.ZOHO_MAIL_TOKEN}`,
       },
       body: JSON.stringify({
         from: { address: "orders-donotreply@learningapp.link" },

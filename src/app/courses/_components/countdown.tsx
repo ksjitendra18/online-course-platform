@@ -1,5 +1,6 @@
+import React, { useEffect, useState } from "react";
+
 import { cn } from "@/lib/utils";
-import React, { useState, useEffect } from "react";
 
 interface CountdownProps {
   durationInSeconds: number;
@@ -45,7 +46,7 @@ const Countdown: React.FC<CountdownProps> = ({ durationInSeconds }) => {
       <div
         className={cn(
           isTimesUp ? "bg-red-600" : "bg-blue-600",
-          "flex  text-white rounded-md px-2 py-2"
+          "flex rounded-md px-2 py-2 text-white"
         )}
       >
         {isTimesUp ? (

@@ -1,4 +1,5 @@
 import React from "react";
+
 import VerifyRecoveryCodeForm from "../_components/verify-recovery-code";
 
 export const metadata = {

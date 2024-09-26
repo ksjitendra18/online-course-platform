@@ -1,10 +1,12 @@
 "use client";
 
-import { formatPrice } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { formatPrice } from "@/lib/utils";
 
 interface Props {
   coursePrice: number | null;
@@ -81,7 +83,7 @@ const BuyCourse = ({
       const paymentResData = await paymentRes.json();
 
       var options = {
-        key: process.env.RAZORPAY_KEY,
+        key: env.RAZORPAY_KEY,
         name: "Course Platform",
         currency: paymentResData.currency,
         amount: +paymentResData.amount,
@@ -127,7 +129,7 @@ const BuyCourse = ({
       <button
         disabled={buttonLoading}
         onClick={onPayment}
-        className="px-8 my-2 hover:bg-blue-600 text-white bg-blue-700 py-3  rounded-full flex items-center justify-center gap-2"
+        className="my-2 flex items-center justify-center gap-2 rounded-full bg-blue-700 px-8 py-3 text-white hover:bg-blue-600"
       >
         {buttonLoading ? (
           <>

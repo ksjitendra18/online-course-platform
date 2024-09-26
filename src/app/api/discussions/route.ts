@@ -1,10 +1,12 @@
+import { cookies } from "next/headers";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { course, session } from "@/db/schema";
 import { discussion } from "@/db/schema/discussion";
 import { checkAuth } from "@/lib/auth";
 import DiscussionSchema from "@/validations/discussion";
-import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {

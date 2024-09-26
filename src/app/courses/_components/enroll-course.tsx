@@ -1,10 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { Button } from "@/components/ui/button";
 
 const EnrollCourse = ({
   courseId,
@@ -39,7 +41,7 @@ const EnrollCourse = ({
       {
         <Button variant="app" onClick={enrollToCourse} disabled={loading}>
           {loading ? (
-            <Loader2 className="animate-spin mx-auto" />
+            <Loader2 className="mx-auto animate-spin" />
           ) : (
             "Enroll to Course"
           )}

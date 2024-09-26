@@ -1,15 +1,17 @@
-import { getUserSessionRedis } from "@/db/queries/auth";
-import VideoPlayer from "@/app/courses/_components/video-player";
-import { Button } from "@/components/ui/button";
-import { db } from "@/db";
-import { chapter, course, courseMember } from "@/db/schema";
-import { capitalizeFirstWord, cn } from "@/lib/utils";
-import { and, eq } from "drizzle-orm";
-import { Check, X } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
+
+import { and, eq } from "drizzle-orm";
+import { Check, X } from "lucide-react";
 import { FaHome } from "react-icons/fa";
+
+import VideoPlayer from "@/app/courses/_components/video-player";
+import { Button } from "@/components/ui/button";
+import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { chapter, course, courseMember } from "@/db/schema";
+import { capitalizeFirstWord, cn } from "@/lib/utils";
 
 export const metadata = {
   title: "View Chapter",
@@ -86,9 +88,9 @@ const ViewChapter = async ({
     return redirect(`/dashboard/courses/${params.slug}`);
   }
   return (
-    <section className="px-6 py-3 w-full">
-      <div className="flex items-center gap-2 my-5">
-        <Link className="flex  ease-in items-center gap-3" href="/dashboard">
+    <section className="w-full px-6 py-3">
+      <div className="my-5 flex items-center gap-2">
+        <Link className="flex items-center gap-3 ease-in" href="/dashboard">
           <FaHome />
           Home &gt;
         </Link>
@@ -118,10 +120,10 @@ const ViewChapter = async ({
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold text-center my-3">View Chapter</h1>
-      <div className=" w-full px-6 flex flex-col items-center justify-center">
-        <div className="w-[100%] mx-auto md:w-3/4 lg:w-1/2">
-          <label htmlFor="chapterName" className=" mt-5 block text-gray-600">
+      <h1 className="my-3 text-center text-2xl font-bold">View Chapter</h1>
+      <div className="flex w-full flex-col items-center justify-center px-6">
+        <div className="mx-auto w-[100%] md:w-3/4 lg:w-1/2">
+          <label htmlFor="chapterName" className="mt-5 block text-gray-600">
             Chapter Name
           </label>
           <input
@@ -131,10 +133,10 @@ const ViewChapter = async ({
             value={chapterInfo.title}
             id="chapterName"
             placeholder="Name of the chapter"
-            className=" px-3 border-slate-400 w-full  py-2 rounded-md border-2"
+            className="w-full rounded-md border-2 border-slate-400 px-3 py-2"
           />
 
-          <label htmlFor="chapterSlug" className=" mt-5 block text-gray-600">
+          <label htmlFor="chapterSlug" className="mt-5 block text-gray-600">
             Chapter Slug
           </label>
           <input
@@ -143,12 +145,12 @@ const ViewChapter = async ({
             id="chapterSlug"
             defaultValue={chapterInfo.slug}
             placeholder="Slug of the chapter"
-            className="border-slate-400 px-3 w-full  py-2 rounded-md border-2"
+            className="w-full rounded-md border-2 border-slate-400 px-3 py-2"
           />
 
           <label
             htmlFor="chapterDescription"
-            className=" mt-5 block text-gray-600"
+            className="mt-5 block text-gray-600"
           >
             Chapter Description
           </label>
@@ -157,29 +159,29 @@ const ViewChapter = async ({
             id="chapterDescription"
             value={chapterInfo.description!}
             placeholder="Description of the chapter (under 300 words)"
-            className=" px-3 w-full border-slate-400  py-2 rounded-md border-2"
+            className="w-full rounded-md border-2 border-slate-400 px-3 py-2"
           />
 
-          <label className=" mt-5 inline-flex text-gray-600">
+          <label className="mt-5 inline-flex text-gray-600">
             This will be:
           </label>
 
-          <div className="text-white w-fit mt-2 bg-blue-500 cursor-pointer  rounded-md px-3 py-1">
+          <div className="mt-2 w-fit cursor-pointer rounded-md bg-blue-500 px-3 py-1 text-white">
             {chapterInfo.isFree ? "Free Chapter" : "Paid Chapter"}
           </div>
 
-          <label className=" mt-5 inline-flex text-gray-600">
+          <label className="mt-5 inline-flex text-gray-600">
             Chapter Type:
           </label>
-          <div className="flex mt-2 items-center gap-4 ">
-            <div className="text-white bg-blue-500 cursor-pointer  rounded-md px-3 py-1">
+          <div className="mt-2 flex items-center gap-4">
+            <div className="cursor-pointer rounded-md bg-blue-500 px-3 py-1 text-white">
               {capitalizeFirstWord(chapterInfo.type)}
             </div>
           </div>
 
           {chapterInfo.type === "video" ? (
             <>
-              <div className="flex my-5  items-center justify-center mx-auto ">
+              <div className="mx-auto my-5 flex items-center justify-center">
                 <VideoPlayer
                   autoPlay={false}
                   playbackId={chapterInfo.videoData[0].playbackId!}
@@ -192,7 +194,7 @@ const ViewChapter = async ({
             <>
               {chapterInfo.quiz[0]?.questions ? (
                 <>
-                  <h3 className="text-xl my-3 font-bold">
+                  <h3 className="my-3 text-xl font-bold">
                     {" "}
                     {chapterInfo.quiz[0].questions.length} Questions
                   </h3>
@@ -200,7 +202,7 @@ const ViewChapter = async ({
                     {chapterInfo.quiz[0].questions.map((question, index) => (
                       <div
                         key={question.id}
-                        className="flex flex-col shadow-md bg-white rounded-md px-5 py-3"
+                        className="flex flex-col rounded-md bg-white px-5 py-3 shadow-md"
                       >
                         <h3 className="font-semibold">
                           Q{index + 1}. {question.questionText}

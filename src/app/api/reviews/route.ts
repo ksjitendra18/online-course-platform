@@ -1,10 +1,12 @@
-import { eq } from "drizzle-orm";
-import { course, courseMember, review, session } from "@/db/schema";
-import { BasicInfoSchema } from "@/validations/basic-info";
 import { cookies } from "next/headers";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
-import { ReviewSchema } from "@/validations/rating";
+import { course, courseMember, review, session } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
+import { BasicInfoSchema } from "@/validations/basic-info";
+import { ReviewSchema } from "@/validations/rating";
 
 export async function POST(request: Request) {
   try {

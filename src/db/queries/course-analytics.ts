@@ -1,6 +1,7 @@
+import { eq, inArray } from "drizzle-orm";
+
 import { db } from "@/db";
 import { Course, Purchase, courseMember, purchase } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
 
 type PurchaseWithCourse = Pick<Purchase, "coursePrice"> & {
   course: Pick<Course, "title" | "price">;

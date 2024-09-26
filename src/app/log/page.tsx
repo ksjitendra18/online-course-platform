@@ -1,17 +1,20 @@
 "use client";
+
 import React, { useState } from "react";
+
+import { Lock, Mail } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Lock } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -33,14 +36,14 @@ const LoginScreen = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="mx-auto w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+        <CardTitle className="text-center text-2xl font-bold">Login</CardTitle>
       </CardHeader>
       <CardContent>
         <Button
           onClick={handleGoogleLogin}
-          className="w-full mb-4"
+          className="mb-4 w-full"
           variant="outline"
         >
           <FcGoogle className="mr-2 h-4 w-4" />

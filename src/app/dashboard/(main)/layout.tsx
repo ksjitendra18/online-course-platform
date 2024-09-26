@@ -1,7 +1,9 @@
-import React from "react";
-import DashboardSidebar from "../components/dashboard-sidebar";
-import { getUserSessionRedis } from "@/db/queries/auth";
 import { redirect } from "next/navigation";
+import React from "react";
+
+import { getUserSessionRedis } from "@/db/queries/auth";
+
+import DashboardSidebar from "../components/dashboard-sidebar";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -19,7 +21,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-full">
       <DashboardSidebar />
-      <div className=" h-full w-full">{children}</div>
+      <div className="h-full w-full">{children}</div>
     </div>
   );
 };

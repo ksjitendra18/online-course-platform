@@ -1,12 +1,14 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { eq, inArray } from "drizzle-orm";
+import { FaHome } from "react-icons/fa";
+
 import DeleteModule from "@/app/dashboard/components/delete-module";
 import ModuleStatus from "@/app/dashboard/components/module-status";
 import { db } from "@/db";
 import { chapter, course, courseModule } from "@/db/schema";
 import { cn } from "@/lib/utils";
-import { eq, inArray } from "drizzle-orm";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { FaHome } from "react-icons/fa";
 
 export const metadata = {
   title: "Modules",
@@ -61,9 +63,9 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
   }
 
   return (
-    <section className="px-6 py-3 w-full">
-      <div className="flex items-center my-5 gap-2">
-        <Link className="flex  ease-in items-center gap-3" href="/dashboard">
+    <section className="w-full px-6 py-3">
+      <div className="my-5 flex items-center gap-2">
+        <Link className="flex items-center gap-3 ease-in" href="/dashboard">
           <FaHome />
           Home &gt;
         </Link>
@@ -80,31 +82,31 @@ const ModulesPage = async ({ params }: { params: { slug: string } }) => {
         </Link>
       </div>
 
-      <div className="flex justify-between md:justify-start gap-x-3 items-center">
-        <h1 className="text-2xl font-bold my-3">{courseInfo?.title} Modules</h1>
+      <div className="flex items-center justify-between gap-x-3 md:justify-start">
+        <h1 className="my-3 text-2xl font-bold">{courseInfo?.title} Modules</h1>
 
         <Link
           href={`/dashboard/courses/${courseInfo?.slug}/modules/new`}
-          className="bg-blue-500 text-white rounded-md px-3 py-2"
+          className="rounded-md bg-blue-500 px-3 py-2 text-white"
         >
           Add New Module
         </Link>
       </div>
 
-      <div className="flex flex-col gap-y-3 mt-3">
+      <div className="mt-3 flex flex-col gap-y-3">
         {courseInfo?.courseModule.map((courseModule) => (
           <div
             key={courseModule.id}
-            className="px-3 py-2 flex bg-slate-100  items-center justify-between rounded-md"
+            className="flex items-center justify-between rounded-md bg-slate-100 px-3 py-2"
           >
-            <div className=" flex items-center gap-x-3">
+            <div className="flex items-center gap-x-3">
               Module {courseModule.position}: {courseModule.title}
               <div
                 className={cn(
                   courseModule.status === "published"
                     ? "bg-green-600"
                     : "bg-fuchsia-600",
-                  " rounded-full px-2 py-1 text-white text-sm"
+                  "rounded-full px-2 py-1 text-sm text-white"
                 )}
               >
                 {courseModule.status === "published"

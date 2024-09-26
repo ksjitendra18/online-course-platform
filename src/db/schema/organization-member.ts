@@ -7,6 +7,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
 import { organization, user } from "./auth";
 
 export const organizationMember = sqliteTable(

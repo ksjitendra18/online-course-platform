@@ -1,3 +1,8 @@
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import {
   chapter,
@@ -10,9 +15,6 @@ import {
 } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { QuizEditSchema } from "@/validations/quiz-question";
-import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
 
 export async function PATCH(
   request: NextRequest,

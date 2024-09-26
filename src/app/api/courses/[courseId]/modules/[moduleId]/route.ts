@@ -1,11 +1,13 @@
+import { NextRequest } from "next/server";
+
+import { eq } from "drizzle-orm";
+
 import { clearTagCache } from "@/actions/clear-tag-cache";
 import { db } from "@/db";
 import { chapter, courseModule } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import redis from "@/lib/redis";
 import { ModuleInfoSchema } from "@/validations/module-info";
-import { eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
 
 const PartialModuleInfoSchema = ModuleInfoSchema.partial();
 
