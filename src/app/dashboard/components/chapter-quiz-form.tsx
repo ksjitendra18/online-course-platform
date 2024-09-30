@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { FormEvent, RefObject, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { Check, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -13,7 +13,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -24,11 +23,6 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import useQuizDataStore from "@/store/quiz-data";
 import { QuizSchema } from "@/validations/quiz-question";
-
-interface Option {
-  value: string;
-  correct: boolean;
-}
 
 interface Props {
   moduleId: string;
@@ -47,6 +41,7 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
     QuizSchema,
     string
   > | null>(null);
+  
   const modalCloseRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
@@ -103,7 +98,7 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
 
       if (res.status === 201) {
         modalCloseRef.current?.click();
-        mutate(`questions`);
+        mutate("questions");
         setOptions([
           { option: "", isCorrect: false },
           { option: "", isCorrect: false },

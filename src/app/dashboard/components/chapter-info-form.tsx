@@ -6,8 +6,6 @@ import { useRef, useState } from "react";
 import {
   AlertTriangle,
   Check,
-  Eye,
-  EyeOff,
   Info,
   Loader,
   Loader2,
@@ -15,7 +13,6 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import slugify from "slugify";
-import useSWR from "swr";
 import { type ZodFormattedError } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -24,7 +21,7 @@ import useQuizDataStore from "@/store/quiz-data";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 
 import ChapterAttachment from "./chapter-attachment";
-import ChapterQuiz, { QData } from "./chapter-quiz";
+import ChapterQuiz from "./chapter-quiz";
 import ChapterText from "./chapter-text";
 
 const ChapterInformation = ({
@@ -45,7 +42,7 @@ const ChapterInformation = ({
   moduleSlug: string;
   update?: boolean;
 }) => {
-  let videoInput = useRef<HTMLInputElement | null>(null);
+  const videoInput = useRef<HTMLInputElement | null>(null);
 
   const [chapterType, setChapterType] = useState<
     "video" | "quiz" | "article" | "attachment"
@@ -222,10 +219,9 @@ const ChapterInformation = ({
         const originalUrl = pathname.split("/");
         originalUrl.shift();
         originalUrl.pop();
-        const editUrl =
-          "/" +
-          originalUrl.join("/") +
-          `/chapters/${resData.data.chapterSlug}/edit`;
+        const editUrl = `/${originalUrl.join(
+          "/"
+        )}/chapters/${resData.data.chapterSlug}/edit`;
 
         router.push(editUrl);
       }

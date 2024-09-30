@@ -2,11 +2,10 @@
 
 // import { AlertTriangle, Info, Loader2 } from "lucide-solid";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 import { Info, Loader2 } from "lucide-react";
-import { FiAlertTriangle, FiInfo } from "react-icons/fi";
-import { ImSpinner8 } from "react-icons/im";
+import { FiAlertTriangle } from "react-icons/fi";
 import slugify from "slugify";
 import { type ZodFormattedError } from "zod";
 
@@ -21,7 +20,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getUserSessionRedis } from "@/db/queries/auth";
 import { cn } from "@/lib/utils";
 import { BasicInfoSchema } from "@/validations/basic-info";
 
@@ -58,13 +56,13 @@ const BasicInformation = ({
     string
   > | null>(null);
 
-  const handleCreateCourse = async (e: any) => {
+  const handleCreateCourse = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFormErrors(null);
     setCustomError(false);
     setSlugExists(false);
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const courseName = formData.get("courseName");
     const courseSlug = formData.get("courseSlug");
@@ -117,18 +115,17 @@ const BasicInformation = ({
       if (res.status === 201) {
         await clearTagCache("get-all-courses-admin");
         await clearTagCache("get-course-data");
-        await clearTagCacheByUserId(`get-all-courses-admin-userId`);
+        await clearTagCacheByUserId("get-all-courses-admin-userId");
         router.push(`/dashboard/courses/${resData.data.courseSlug}/modules`);
       }
 
       if (res.status === 200) {
         await clearTagCache("get-all-courses-admin");
         await clearTagCache("get-course-data");
-        await clearTagCacheByUserId(`get-all-courses-admin-userId`);
+        await clearTagCacheByUserId("get-all-courses-admin-userId");
         router.refresh();
       }
     } catch (error) {
-      console.log("Caught error", error);
       setCustomError(true);
     } finally {
       setIsLoading(false);

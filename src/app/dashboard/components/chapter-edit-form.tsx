@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 
 import {
   AlertTriangle,
@@ -52,7 +52,7 @@ const ChapterEditForm = ({
   isChapterFree: boolean;
   videoData: { playbackId: string; duration: number } | undefined;
 }) => {
-  let videoInput = useRef<HTMLInputElement | null>(null);
+  const videoInput = useRef<HTMLInputElement | null>(null);
 
   const [chapterType, setChapterType] = useState(type);
 
@@ -81,7 +81,7 @@ const ChapterEditForm = ({
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleCreateCourse = async (e: any) => {
+  const handleChapterEdit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFormErrors(null);
@@ -92,7 +92,7 @@ const ChapterEditForm = ({
       router.refresh();
     }
 
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const chapterName = formData.get("chapterName");
     const chapterSlug = formData.get("chapterSlug");
@@ -202,7 +202,7 @@ const ChapterEditForm = ({
       <div className="auth-options flex w-full flex-col items-center justify-center px-6">
         <form
           ref={formRef}
-          onSubmit={handleCreateCourse}
+          onSubmit={handleChapterEdit}
           className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
         >
           <label htmlFor="chapterName" className="mt-5 block text-gray-600">

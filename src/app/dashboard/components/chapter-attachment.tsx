@@ -3,11 +3,12 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-import { AlertTriangle, Loader2, Upload } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { cn } from "@/lib/utils";
 import useChapterStore from "@/store/chapter";
+import { env } from "@/utils/env/client";
 
 interface Props {
   exisitingImage?: string;
