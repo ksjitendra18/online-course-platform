@@ -18,6 +18,7 @@ import { type ZodFormattedError } from "zod";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import useQuizDataStore from "@/store/quiz-data";
+import { env } from "@/utils/env/client";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 
 import ChapterAttachment from "./chapter-attachment";

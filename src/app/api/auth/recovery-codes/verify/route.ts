@@ -10,6 +10,7 @@ import { EncryptionPurpose, aesDecrypt, aesEncrypt } from "@/lib/aes";
 import { createLoginLog, createSession } from "@/lib/auth";
 import { rateLimit } from "@/lib/ratelimit";
 import redis from "@/lib/redis";
+import { env } from "@/utils/env/server";
 
 // rate limiting will be on the basis of 3 things
 // 1. ip address: 500 requests per hour

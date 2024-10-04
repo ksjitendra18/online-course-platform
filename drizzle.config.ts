@@ -1,3 +1,4 @@
+import { env } from "@/utils/env/server";
 import { defineConfig } from "drizzle-kit";
 
 if (!env.DB_URL || !env.DB_AUTH_TOKEN) {

@@ -1,11 +1,11 @@
-import { cookies } from "next/headers";
 
 import { eq } from "drizzle-orm";
 import Razorpay from "razorpay";
 
 import { db } from "@/db";
-import { course, session } from "@/db/schema";
+import { course } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
+import { env } from "@/utils/env/server";
 
 export async function POST(request: Request) {
   const razorpay = new Razorpay({

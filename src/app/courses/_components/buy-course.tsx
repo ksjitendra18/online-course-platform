@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -15,8 +16,10 @@ interface Props {
   userName: string;
   email: string;
 }
+
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Razorpay: any;
   }
 }
@@ -29,7 +32,6 @@ type PaymentData = {
 const BuyCourse = ({
   coursePrice,
   courseId,
-  userId,
   email,
   userName,
 }: Props) => {
@@ -82,8 +84,7 @@ const BuyCourse = ({
 
       const paymentResData = await paymentRes.json();
 
-      var options = {
-        key: env.RAZORPAY_KEY,
+      const options = {
         name: "Course Platform",
         currency: paymentResData.currency,
         amount: +paymentResData.amount,
@@ -98,7 +99,7 @@ const BuyCourse = ({
           setButtonText("Processing Payment");
           checkId = setInterval(async () => {
             const res = await fetch(`/api/enroll/check?courseId=${courseId}`);
-            const resData = await res.json();
+             await res.json();
             if (res.status === 200) {
               setButtonLoading(false);
               router.refresh();

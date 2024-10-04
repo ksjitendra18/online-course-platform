@@ -24,6 +24,7 @@ import { ChapterInfoSchema } from "@/validations/chapter-info";
 import ChapterAttachment from "./chapter-attachment";
 import ChapterQuiz from "./chapter-quiz";
 import ChapterText from "./chapter-text";
+import { env } from "@/utils/env/client";
 
 const ChapterEditForm = ({
   moduleId,

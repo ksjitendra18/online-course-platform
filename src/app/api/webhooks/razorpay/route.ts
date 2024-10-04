@@ -7,10 +7,11 @@ import { createHmac } from "node:crypto";
 import { db } from "@/db";
 import { course, courseEnrollment, purchase, user } from "@/db/schema";
 import { formatPrice } from "@/lib/utils";
+import { env } from "@/utils/env/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const webhookSecret = env.WEBHOOK_SECRET;
+    const webhookSecret = env.RAZORPAY_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
       return Response.json(
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
                 },
               },
             ],
-            subject: `Order Confirmation`,
+            subject: "Order Confirmation",
             htmlbody: `<h2>
             Start your learning journey
             </h2>

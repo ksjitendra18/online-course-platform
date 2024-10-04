@@ -6,6 +6,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { course, courseEnrollment } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
+import { env } from "@/utils/env/server";
 
 export async function POST(request: NextRequest) {
   try {

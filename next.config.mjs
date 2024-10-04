@@ -2,7 +2,6 @@
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/xxhash", "@node-rs/argon2"],
-    typedRoutes: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
