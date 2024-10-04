@@ -5,10 +5,12 @@ Online course platform powered by BunnyCDN for content storage and distribution.
 ## Tech Used
 
 - Next.js
+- Turbo Repo
+- Bun
 - Turso DB
 - Redis
 - DrizzleORM
 - TailwindCSS
 - shadcn
 - BunnyCDN
-- RazoryPay
+- Razorpay

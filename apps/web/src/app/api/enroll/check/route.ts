@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { courseEnrollment } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const params = request.nextUrl.searchParams;

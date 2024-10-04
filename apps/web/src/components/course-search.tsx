@@ -6,35 +6,34 @@ import React, { useState, useTransition } from "react";
 
 import { Search } from "lucide-react";
 
-const DashboardCourseSearch = ({
+const CourseSearch = ({
   existingSearchTerm,
 }: {
   existingSearchTerm: string;
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timer>();
   const [query, setQuery] = useState("");
   const isSearching = !!timeoutId || isPending;
   return (
     <div className="flex w-[600px] items-center rounded-md border-2 border-blue-600 px-5 py-2">
       <input
         type="text"
-        className="w-full border-none bg-transparent outline-none"
-        placeholder="Search Course"
         disabled={isSearching}
         defaultValue={existingSearchTerm}
+        // className="bg-transparent border-2 w-[600px] border-[#6320ee] px-5 py-2 rounded-full"
+        className="w-full border-none bg-transparent outline-none"
+        placeholder="Search Course"
         onChange={(event) => {
           clearTimeout(timeoutId);
           setQuery(event.target.value);
           const id = setTimeout(() => {
             startTransition(() => {
               if (event.target.value) {
-                router.push(
-                  `/dashboard/courses?courseName=${event.target.value}`
-                );
+                router.push(`/courses?query=${event.target.value}`);
               } else {
-                router.push("/dashboard/courses");
+                router.push("/courses");
               }
               setTimeoutId(undefined);
             });
@@ -50,4 +49,4 @@ const DashboardCourseSearch = ({
   );
 };
 
-export default DashboardCourseSearch;
+export default CourseSearch;

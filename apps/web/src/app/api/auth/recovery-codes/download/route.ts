@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { recoveryCodes, session } from "@/db/schema";
 import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 
+export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const authToken = cookies().get("auth-token")?.value;
