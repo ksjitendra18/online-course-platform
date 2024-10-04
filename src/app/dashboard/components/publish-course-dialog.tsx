@@ -1,5 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+
 import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,9 +16,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import toast from "react-hot-toast";
 
 type PublishCourseDialogProps = {
   triggerMsg: string;
@@ -35,7 +37,7 @@ const PublishCourseDialog = ({
       const res = await fetch(`/api/courses/${courseId}/publish`, {
         method: "POST",
       });
-      const json = await res.json();
+
       if (res.status === 200) {
         toast.success("Course published successfully");
       } else {
@@ -73,7 +75,7 @@ const PublishCourseDialog = ({
             </DialogClose>
 
             {isLoading ? (
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="mx-auto animate-spin" />
             ) : (
               <Button onClick={handlePublish}>Publish</Button>
             )}

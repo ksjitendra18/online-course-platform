@@ -1,8 +1,10 @@
 "use client";
-import { Search } from "lucide-react";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
+
+import { Search } from "lucide-react";
 
 const DashboardCourseSearch = ({
   existingSearchTerm,
@@ -13,13 +15,14 @@ const DashboardCourseSearch = ({
   const [isPending, startTransition] = useTransition();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
   const [query, setQuery] = useState("");
-  const isSearching = timeoutId || isPending;
+  const isSearching = !!timeoutId || isPending;
   return (
-    <div className="border-2 flex items-center w-[600px] border-blue-600 px-5 py-2 rounded-md">
+    <div className="flex w-[600px] items-center rounded-md border-2 border-blue-600 px-5 py-2">
       <input
         type="text"
-        className="bg-transparent w-full border-none outline-none"
+        className="w-full border-none bg-transparent outline-none"
         placeholder="Search Course"
+        disabled={isSearching}
         defaultValue={existingSearchTerm}
         onChange={(event) => {
           clearTimeout(timeoutId);
@@ -31,7 +34,7 @@ const DashboardCourseSearch = ({
                   `/dashboard/courses?courseName=${event.target.value}`
                 );
               } else {
-                router.push(`/dashboard/courses`);
+                router.push("/dashboard/courses");
               }
               setTimeoutId(undefined);
             });
@@ -41,7 +44,7 @@ const DashboardCourseSearch = ({
         }}
       />
       <Link href={query ? `/courses?query=${query}` : "#"}>
-        <Search className="text-blue-600 cursor-pointer" />
+        <Search className="cursor-pointer text-blue-600" />
       </Link>
     </div>
   );

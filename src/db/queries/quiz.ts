@@ -1,7 +1,9 @@
 import { unstable_cache } from "next/cache";
+
+import { desc, eq } from "drizzle-orm";
+
 import { db } from "..";
 import { course, quizAnswer, quizResponse } from "../schema";
-import { desc, eq } from "drizzle-orm";
 
 export const courseWithQuizData = unstable_cache(
   async (slug: string) => {

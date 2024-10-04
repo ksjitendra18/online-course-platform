@@ -7,6 +7,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
 import { article } from "./article";
 import { attachment } from "./attachment";
 import { user } from "./auth";
@@ -125,7 +126,7 @@ export const chapterLogs = sqliteTable(
   })
 );
 
-export const chapterLogsRelations = relations(chapterLogs, ({ one, many }) => ({
+export const chapterLogsRelations = relations(chapterLogs, ({ one }) => ({
   chapter: one(chapter, {
     fields: [chapterLogs.chapterId],
     references: [chapter.id],

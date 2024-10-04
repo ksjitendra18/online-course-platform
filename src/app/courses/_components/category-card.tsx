@@ -1,4 +1,14 @@
+import { type IconType } from "react-icons";
+import { FaJava } from "react-icons/fa";
+import { FaC, FaDatabase, FaNodeJs, FaPython, FaReact } from "react-icons/fa6";
+import {
+  FcEngineering,
+  FcMultipleDevices
+} from "react-icons/fc";
+import { MdWeb } from "react-icons/md";
+
 import { Category } from "@/db/schema";
+
 import { CategoryItem } from "./category-item";
 
 interface CategoriesCardProps {
@@ -6,20 +16,6 @@ interface CategoriesCardProps {
   currentCategoryId?: string;
   currentCategory?: string;
 }
-
-import {
-  FcEngineering,
-  FcFilmReel,
-  FcMultipleDevices,
-  FcMusic,
-  FcOldTimeCamera,
-  FcSalesPerformance,
-  FcSportsMode,
-} from "react-icons/fc";
-import { FaJava } from "react-icons/fa";
-import { MdEmojiPeople, MdWeb } from "react-icons/md";
-import { type IconType } from "react-icons";
-import { FaC, FaDatabase, FaNodeJs, FaPython, FaReact } from "react-icons/fa6";
 
 const iconMap: Record<Category["name"], IconType> = {
   "CS Core": FcMultipleDevices,

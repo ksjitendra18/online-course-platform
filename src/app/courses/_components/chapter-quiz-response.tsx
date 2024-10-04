@@ -42,11 +42,11 @@ const ChapterQuizResponse = ({ userResponse }: Props) => {
   const qNo = ["a", "b", "c", "d"];
 
   return (
-    <div className="flex  gap-5 flex-col">
+    <div className="flex flex-col gap-5">
       {userResponse.quizUserResponse.map((userResponse, index) => (
         <div
           key={userResponse.id}
-          className="flex flex-col shadow-md bg-white rounded-md px-5 py-3"
+          className="flex flex-col rounded-md bg-white px-5 py-3 shadow-md"
         >
           <h3 className="font-semibold">
             Q{index + 1}. {userResponse.question.questionText}
@@ -56,7 +56,7 @@ const ChapterQuizResponse = ({ userResponse }: Props) => {
           <div>
             <p className="my-3">Answer Choices</p>
 
-            <div className="grid grid-cols-2 gap-5 grid-rows-2">
+            <div className="grid grid-cols-2 grid-rows-2 gap-5">
               {userResponse.question.answers.map((answer, index) => (
                 <button
                   className={cn(
@@ -66,18 +66,18 @@ const ChapterQuizResponse = ({ userResponse }: Props) => {
                     !answer.isCorrect &&
                       answer.id === userResponse.answerId &&
                       "bg-[#fdb9b9]",
-                    " rounded-md transition-all duration-100  flex items-center px-3 py-3"
+                    "flex items-center rounded-md px-3 py-3 transition-all duration-100"
                   )}
                   key={answer.id}
                 >
                   {qNo[index]}. {answer.answerText}{" "}
                   {answer.isCorrect && (
-                    <div className="text-sm ml-2  rounded-md px-2 py-1 bg-green-600 text-white">
+                    <div className="ml-2 rounded-md bg-green-600 px-2 py-1 text-sm text-white">
                       Correct Answer
                     </div>
                   )}
                   {answer.id === userResponse.answerId && (
-                    <div className="text-sm ml-2  rounded-md px-2 py-1 bg-fuchsia-600 text-white">
+                    <div className="ml-2 rounded-md bg-fuchsia-600 px-2 py-1 text-sm text-white">
                       Your Selection
                     </div>
                   )}

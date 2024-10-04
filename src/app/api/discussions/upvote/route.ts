@@ -1,8 +1,10 @@
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { discussion, discussionVote } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
-import { and, eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {

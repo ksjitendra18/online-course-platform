@@ -1,11 +1,11 @@
-import { revalidate } from "@/app/layout";
-import { db } from "@/db";
-import { recoveryCodes, session } from "@/db/schema";
-import { aesDecrypt, aesEncrypt, EncryptionPurpose } from "@/lib/aes";
+import { NextRequest } from "next/server";
+
 import { eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
-import { revalidatePath } from "next/cache";
-import { NextRequest } from "next/server";
+
+import { db } from "@/db";
+import { recoveryCodes, session } from "@/db/schema";
+import { EncryptionPurpose, aesDecrypt, aesEncrypt } from "@/lib/aes";
 
 export async function POST(request: NextRequest) {
   try {

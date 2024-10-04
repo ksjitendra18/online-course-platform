@@ -1,4 +1,5 @@
 import React from "react";
+
 import VerifyTotpForm from "../_components/verify-totp";
 
 export const metadata = {

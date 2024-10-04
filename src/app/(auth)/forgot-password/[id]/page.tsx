@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+
 import SetNewPassword from "../../_components/set-new-password";
 
 export const metadata: Metadata = {

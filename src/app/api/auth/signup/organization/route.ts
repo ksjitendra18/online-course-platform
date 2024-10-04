@@ -1,15 +1,16 @@
+import { createId } from "@paralleldrive/cuid2";
 import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
 import {
+  password as dbPassword,
   organization,
   organizationMember,
   user,
-  password as dbPassword,
 } from "@/db/schema";
-import { db } from "@/db";
-import { createId } from "@paralleldrive/cuid2";
-import { OrganizationSignupSchema } from "@/validations/organization-signup";
 import { hashPassword, sendVerificationMail } from "@/lib/auth";
 import { rateLimit } from "@/lib/ratelimit";
+import { OrganizationSignupSchema } from "@/validations/organization-signup";
 
 export async function POST(request: Request) {
   const {

@@ -1,14 +1,17 @@
-import { db } from "@/db";
-import { getUserSessionRedis } from "@/db/queries/auth";
-import { loginLog, user } from "@/db/schema";
-import { capitalizeFirstWord, formatDateTime } from "@/lib/utils";
-import { desc, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+import { desc, eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { loginLog, user } from "@/db/schema";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
+import { capitalizeFirstWord, formatDateTime } from "@/lib/utils";
+
 import RevokeAcess from "./_components/revoke-access";
-import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
-import { Button } from "@/components/ui/button";
+import RevokeAllSessions from "./_components/revoke-all-sessions";
 
 export const metadata = {
   title: "Account",
@@ -38,6 +41,7 @@ const AccountPage = async () => {
           sessionId: true,
           strategy: true,
         },
+        limit: 10,
         orderBy: desc(loginLog.createdAt),
       },
       oauthProvider: true,
@@ -52,9 +56,6 @@ const AccountPage = async () => {
     sessionToken,
     EncryptionPurpose.SESSION_COOKIE
   );
-  const logs = userInfo.loginLog.sort((a, b) =>
-    a.sessionId === decryptedToken ? -1 : 1
-  );
 
   const strategiesMap = {
     google: "Google",
@@ -64,22 +65,22 @@ const AccountPage = async () => {
 
   return (
     <div className="px-6">
-      <h1 className="mt-10 mb-5  text-3xl font-bold text-center">Account</h1>
+      <h1 className="mb-5 mt-10 text-center text-3xl font-bold">Account</h1>
 
-      <div className="flex gap-5 flex-wrap">
-        <div className="border-2 border-sky-600 mt-5 flex items-center gap-3 w-fit rounded-full">
-          <p className="bg-sky-600 rounded-l-full px-5 py-2 text-white">
+      <div className="flex flex-wrap gap-5">
+        <div className="mt-5 flex w-fit items-center gap-3 rounded-full border-2 border-sky-600">
+          <p className="rounded-l-full bg-sky-600 px-5 py-2 text-white">
             Email
           </p>
           <p className="px-5 py-2">{userInfo.email}</p>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-5 flex-wrap">
-          <div className="border-2 border-fuchsia-600 mt-5 flex items-center gap-3 w-fit rounded-full">
-            <p className="bg-fuchsia-600 rounded-l-full px-5 py-2 text-white">
+        <div className="flex flex-wrap items-center gap-2 md:gap-5">
+          <div className="mt-5 flex w-fit items-center gap-3 rounded-full border-2 border-fuchsia-600">
+            <p className="rounded-l-full bg-fuchsia-600 px-5 py-2 text-white">
               Profile
             </p>
-            <Link className="px-5 py-2" href="/profile/update">
+            <Link className="px-5 py-2" href="/account/update">
               Edit Profile
             </Link>
           </div>
@@ -87,17 +88,17 @@ const AccountPage = async () => {
       </div>
 
       {userInfo.twoFactorEnabled ? (
-        <div className="flex gap-2 items-center">
-          <div className="border-2 border-emerald-600 mt-5 flex items-center gap-3 w-fit rounded-full ">
-            <p className="bg-emerald-600 rounded-l-full px-5 py-2 text-white">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="mt-5 flex w-fit items-center gap-3 rounded-full border-2 border-emerald-600">
+            <p className="rounded-l-full bg-emerald-600 px-5 py-2 text-white">
               Multi factor Enabled
             </p>
             <Link className="px-5 py-2" href="/two-factor/totp">
               Re Configure
             </Link>
           </div>
-          <div className="border-2 border-lime-600 mt-5 flex items-center gap-3 w-fit rounded-full ">
-            <p className="bg-lime-600 rounded-l-full px-5 py-2 text-white">
+          <div className="mt-5 flex w-fit items-center gap-3 rounded-full border-2 border-lime-600">
+            <p className="rounded-l-full bg-lime-600 px-5 py-2 text-white">
               Recovery codes
             </p>
             <Link className="px-5 py-2" href="/recovery-codes">
@@ -106,8 +107,8 @@ const AccountPage = async () => {
           </div>
         </div>
       ) : (
-        <div className="border-2 border-red-600 mt-5 flex items-center gap-3 w-fit rounded-full ">
-          <p className="bg-red-600 rounded-l-full px-5 py-2 text-white">
+        <div className="mt-5 flex w-fit items-center gap-3 rounded-full border-2 border-red-600">
+          <p className="rounded-l-full bg-red-600 px-5 py-2 text-white">
             Two factor Disabled
           </p>
           <Link className="px-5 py-2" href="/two-factor/totp">
@@ -118,28 +119,32 @@ const AccountPage = async () => {
 
       {userInfo.oauthProvider && userInfo.oauthProvider.length > 0 && (
         <div className="my-5">
-          <h2 className="text-xl my-3 font-semibold">Connected Accounts</h2>
+          <h2 className="my-3 text-xl font-semibold">Connected Accounts</h2>
 
-          <div className="flex gap-5 flex-wrap items-center">
+          <div className="flex flex-wrap items-center gap-5">
             {userInfo.oauthProvider.map((oauthProvider) => (
-              <></>
+              <>{oauthProvider.provider}</>
             ))}
           </div>
         </div>
       )}
 
-      <div className="my-5">
-        <h2 className="text-2xl my-3 font-semibold">Log in logs</h2>
+      <div className="my-5 mt-10">
+        <div className="flex items-center gap-3">
+          <h2 className="my-3 text-2xl font-semibold">Log in logs</h2>
+
+          <RevokeAllSessions />
+        </div>
 
         <div className="flex flex-col gap-5">
           {userInfo.loginLog?.map((log) => (
             <div
               key={log.id}
-              className="flex flex-col lg:flex-row justify-between items-center bg-slate-100 shadow-md rounded-md px-3 py-2"
+              className="flex flex-col items-center justify-between rounded-md bg-slate-100 px-3 py-2 shadow-md lg:flex-row"
             >
-              <div className="flex text-center flex-wrap justify-center items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-center">
                 {decryptedToken === log.sessionId && (
-                  <div className="bg-fuchsia-600 rounded-full text-white px-2 py-1 text-sm ">
+                  <div className="rounded-full bg-fuchsia-600 px-2 py-1 text-sm text-white">
                     This Device
                   </div>
                 )}
@@ -149,8 +154,8 @@ const AccountPage = async () => {
                 &nbsp;
                 {capitalizeFirstWord(log.browser)}
               </div>
-              <div className="flex items-center md:gap-5 gap-3 w-full lg:w-auto mt-2 flex-col md:flex-row flex-wrap">
-                <div className="bg-blue-700 rounded-md px-2 py-1 text-white text-sm">
+              <div className="mt-2 flex w-full flex-col flex-wrap items-center gap-3 md:flex-row md:gap-5 lg:w-auto">
+                <div className="rounded-md bg-blue-700 px-2 py-1 text-sm text-white">
                   Method: {strategiesMap[log.strategy]}
                 </div>
 

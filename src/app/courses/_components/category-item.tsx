@@ -1,7 +1,8 @@
+import Link from "next/link";
+
 import { type IconType } from "react-icons";
 
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 interface CategoryItemProps {
   label: string;
@@ -15,11 +16,8 @@ interface CategoryItemProps {
 
 export const CategoryItem = ({
   label,
-  id,
-  value,
   icon: Icon,
   slug,
-  currentCategoryId,
   currentCategory,
 }: CategoryItemProps) => {
   const isSelected = currentCategory === slug;
@@ -28,7 +26,7 @@ export const CategoryItem = ({
     <Link
       href={`/courses/category/${slug}`}
       className={cn(
-        "py-2 px-3 text-sm border border-slate-200 rounded-full flex items-center gap-x-1 hover:border-sky-700 transition",
+        "flex items-center gap-x-1 rounded-full border border-slate-200 px-3 py-2 text-sm transition hover:border-sky-700",
         isSelected && "border-sky-700 bg-sky-200/20 text-sky-800"
       )}
       type="button"

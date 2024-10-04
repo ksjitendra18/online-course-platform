@@ -1,10 +1,12 @@
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { password as DbPassword, session, user } from "@/db/schema";
 import { hashPassword } from "@/lib/auth";
 import redis from "@/lib/redis";
 import PasswordSchema from "@/validations/password";
-import { and, eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { id, password }: { id: string; password: string } =

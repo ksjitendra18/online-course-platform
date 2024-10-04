@@ -1,3 +1,9 @@
+import { redirect } from "next/navigation";
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { and, count, desc, eq, gte, lte, sum } from "drizzle-orm";
+
 import { DataCard } from "@/app/dashboard/(main)/analytics/_components/data-card";
 import {
   Table,
@@ -10,10 +16,6 @@ import {
 import { db } from "@/db";
 import { course, courseEnrollment, purchase } from "@/db/schema";
 import { cn } from "@/lib/utils";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import { and, count, desc, eq, gte, lte, sum } from "drizzle-orm";
-import { redirect } from "next/navigation";
 
 dayjs.extend(utc);
 export const metadata = {
@@ -90,7 +92,7 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
       <div
         className={cn(
           courseData.isFree ? "md:grid-cols-2" : "md:grid-cols-3",
-          "grid  grid-cols-1  gap-4 my-4"
+          "my-4 grid grid-cols-1 gap-4"
         )}
       >
         <DataCard label="Today Enrollments" value={todayEnrollment[0].count} />
@@ -108,7 +110,7 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
       </div>
 
       {courseData.enrollment.length > 0 && (
-        <div className="rounded-md my-5 bg-white border-2">
+        <div className="my-5 rounded-md border-2 bg-white">
           {courseData.isFree ? (
             <Table>
               <TableHeader>

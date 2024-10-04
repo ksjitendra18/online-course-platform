@@ -1,6 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
 import { course } from ".";
 
 export const discount = sqliteTable(
@@ -31,7 +32,7 @@ export const discount = sqliteTable(
   })
 );
 
-export const discountRelations = relations(discount, ({ many, one }) => ({
+export const discountRelations = relations(discount, ({ one }) => ({
   course: one(course, {
     fields: [discount.courseId],
     references: [course.id],

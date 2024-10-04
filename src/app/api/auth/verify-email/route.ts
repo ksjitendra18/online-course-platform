@@ -1,9 +1,11 @@
+import { NextRequest } from "next/server";
+
+import { xxh64 } from "@node-rs/xxhash";
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import redis from "@/lib/redis";
-import { xxh64 } from "@node-rs/xxhash";
-import { eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { id, code } = await request.json();
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
           {
             error: {
               code: "rate_limit",
-              message: `Verification limit exceeded`,
+              message: "Verification limit exceeded",
             },
           },
           { status: 429 }

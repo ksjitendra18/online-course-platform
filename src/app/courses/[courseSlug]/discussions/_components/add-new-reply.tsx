@@ -1,13 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2, Plus } from "lucide-react";
-import { revalidatePath, revalidateTag } from "next/cache";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
+
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { Button } from "@/components/ui/button";
 
 interface Props {
   numberOfReplies: number;
@@ -31,7 +30,6 @@ const AddNewReply = ({ numberOfReplies, discussionId }: Props) => {
         body: JSON.stringify({ reply, discussionId }),
       });
 
-      const resData = await res.json();
 
       if (res.status === 201) {
         router.refresh();
@@ -60,15 +58,15 @@ const AddNewReply = ({ numberOfReplies, discussionId }: Props) => {
       </div>
       <div className="my-5">
         {add && (
-          <form onSubmit={handleSubmit} className="flex gap-6 items-center">
+          <form onSubmit={handleSubmit} className="flex items-center gap-6">
             <textarea
               name="reply"
               autoFocus
               placeholder="Add a reply..."
-              className="border-2 w-full px-3 py-2"
+              className="w-full border-2 px-3 py-2"
             />
             <Button disabled={loading} className="px-7">
-              {loading ? <Loader2 className="animate-spin mx-auto" /> : "Add"}
+              {loading ? <Loader2 className="mx-auto animate-spin" /> : "Add"}
             </Button>
           </form>
         )}

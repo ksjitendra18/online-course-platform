@@ -1,4 +1,11 @@
 "use client";
+
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,16 +17,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 
 const ChapterStatus = ({
-  status,
   courseId,
   chapterId,
-  moduleId,
 }: {
   status: "draft" | "published" | "archived" | "deleted";
   courseId: string;
@@ -27,7 +28,7 @@ const ChapterStatus = ({
   moduleId: string;
 }) => {
   const router = useRouter();
-  let closeBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {
     try {
@@ -79,7 +80,7 @@ const ChapterStatus = ({
 
             <Button onClick={handleClick} variant="default">
               {loading ? (
-                <Loader2 className="animate-spin mx-auto" />
+                <Loader2 className="mx-auto animate-spin" />
               ) : (
                 <>Publish</>
               )}

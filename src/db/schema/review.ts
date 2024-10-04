@@ -7,6 +7,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
 import { user } from "./auth";
 import { course } from "./course";
 
@@ -49,7 +50,7 @@ export const review = sqliteTable(
   })
 );
 
-export const reviewRelations = relations(review, ({ one, many }) => ({
+export const reviewRelations = relations(review, ({ one }) => ({
   course: one(course, {
     fields: [review.courseId],
     references: [course.id],

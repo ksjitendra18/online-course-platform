@@ -1,19 +1,18 @@
 "use client";
 
-import { FormEvent, FormEventHandler, useState } from "react";
-
 import Link from "next/link";
+import { FormEvent, useState } from "react";
 
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
-import LoginForm from "./login-form";
+
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import EmailSchema from "@/validations/email";
-import { useRouter } from "next/navigation";
+
+import LoginForm from "./login-form";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -29,7 +28,6 @@ const Login = () => {
     }
   };
 
-  const router = useRouter();
   const handleMagicLinkLogin = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
@@ -65,8 +63,8 @@ const Login = () => {
     }
   };
   return (
-    <div className="flex mt-14 bg-white max-w-lg mx-auto my-10  px-8 border-2 rounded-md items-center justify-center flex-col">
-      <h1 className="text-3xl font-bold my-4">Log in</h1>
+    <div className="mx-auto my-10 mt-14 flex max-w-lg flex-col items-center justify-center rounded-md border-2 bg-white px-8">
+      <h1 className="my-4 text-3xl font-bold">Log in</h1>
       <div className="flex w-full flex-col items-center justify-center">
         <Button
           asChild
@@ -75,10 +73,10 @@ const Login = () => {
           }}
           variant="outline"
           disabled={loading}
-          className="w-full  mt-5 py-6"
+          className="mt-5 w-full py-6"
         >
           <Link
-            href={loading ? `#` : "/api/auth/google"}
+            href={loading ? "#" : "/api/auth/google"}
             onClick={() => {
               handleLinkClick();
             }}
@@ -94,10 +92,10 @@ const Login = () => {
           </Link>
         </Button>
 
-        <div className="mt-5 mb-3 w-full px-2 flex items-center justify-center">
-          <div className="before-or w-[100%] h-[2px] bg-gray-300 mr-2"></div>
-          <p className="text-gray-500 or">OR</p>
-          <div className="after-or w-[100%] h-[2px] bg-gray-300 ml-2"></div>
+        <div className="mb-3 mt-5 flex w-full items-center justify-center px-2">
+          <div className="before-or mr-2 h-[2px] w-[100%] bg-gray-300"></div>
+          <p className="or text-gray-500">OR</p>
+          <div className="after-or ml-2 h-[2px] w-[100%] bg-gray-300"></div>
         </div>
         <Tabs defaultValue="magic-link" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -115,7 +113,7 @@ const Login = () => {
                   required
                   className={cn(
                     error ? "border-red-600" : "border-slate-600",
-                    "px-3 w-full mt-4 py-2 rounded-md border-2"
+                    "mt-4 w-full rounded-md border-2 px-3 py-2"
                   )}
                 />
                 <Button
@@ -125,14 +123,14 @@ const Login = () => {
                   type="submit"
                 >
                   {loading ? (
-                    <Loader2 className="animate-spin mx-auto" />
+                    <Loader2 className="mx-auto animate-spin" />
                   ) : (
                     "Send Magic Link"
                   )}
                 </Button>
               </form>
               {success && (
-                <p className="bg-green-700 text-white px-2 py-1 rounded-md">
+                <p className="rounded-md bg-green-700 px-2 py-1 text-white">
                   Magic Link Sent
                 </p>
               )}
@@ -143,7 +141,7 @@ const Login = () => {
           </TabsContent>
         </Tabs>
       </div>
-      <p className="text-center my-5">
+      <p className="my-5 text-center">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-blue-700">
           Sign up

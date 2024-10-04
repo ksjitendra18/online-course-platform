@@ -1,10 +1,11 @@
-import { getUserSessionRedis } from "@/db/queries/auth";
-import { db } from "@/db";
-import { user } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import React from "react";
+
+import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { user } from "@/db/schema";
+
 import ProfileForm from "../_components/profile-form";
 
 export const metadata = {
@@ -16,7 +17,6 @@ export const dynamic = "force-dynamic";
 
 const UpdateProfile = async () => {
   const userSession = await getUserSessionRedis();
-  const sessionToken = cookies().get("auth-token")?.value;
   if (!userSession) {
     return redirect("/login");
   }
@@ -30,8 +30,8 @@ const UpdateProfile = async () => {
   }
   return (
     <>
-      <div className="flex mt-14 items-center justify-center flex-col">
-        <h1 className="text-3xl font-bold mb-5">Update Profile</h1>
+      <div className="mt-14 flex flex-col items-center justify-center">
+        <h1 className="mb-5 text-3xl font-bold">Update Profile</h1>
 
         <ProfileForm
           email={userInfo.email}

@@ -1,8 +1,9 @@
-import { db } from "@/db";
-import { organization, session } from "@/db/schema";
-import { OrgSlugSchema } from "@/validations/org-slug";
+
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+
+import { db } from "@/db";
+import { organization } from "@/db/schema";
+import { OrgSlugSchema } from "@/validations/org-slug";
 
 export async function POST(request: Request) {
   const {

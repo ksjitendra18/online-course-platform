@@ -1,11 +1,13 @@
-import { db } from "@/db";
-import { session } from "@/db/schema";
-import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
-import redis from "@/lib/redis";
-import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
-export async function GET(request: Request) {
+import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { session } from "@/db/schema";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
+import redis from "@/lib/redis";
+
+export async function GET() {
   const authToken = cookies().get("auth-token")?.value;
   try {
     if (authToken) {

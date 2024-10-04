@@ -1,8 +1,11 @@
-import { init, createId } from "@paralleldrive/cuid2";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
+
+import { createId, init } from "@paralleldrive/cuid2";
 import { createHash } from "node:crypto";
 import queryString from "query-string";
+
+import { env } from "@/utils/env/server";
 
 export async function GET(request: NextRequest) {
   const generateId = init({ length: 48 });
@@ -39,8 +42,8 @@ export async function GET(request: NextRequest) {
     query: {
       scope: "openid email profile",
       response_type: "code",
-      client_id: process.env.GOOGLE_AUTH_CLIENT,
-      redirect_uri: process.env.GOOGLE_AUTH_CALLBACK_URL,
+      client_id: env.GOOGLE_AUTH_CLIENT,
+      redirect_uri: env.GOOGLE_AUTH_CALLBACK_URL,
       state: googleOauthState,
       code_challenge: codeChallenge,
       code_challenge_method: "S256",

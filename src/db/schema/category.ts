@@ -1,6 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
 import { courseCategory } from "./course-category";
 
 export const category = sqliteTable("category", {

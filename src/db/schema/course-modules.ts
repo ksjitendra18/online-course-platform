@@ -7,6 +7,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
 import { user } from "./auth";
 import { chapter } from "./chapter";
 import { course } from "./course";
@@ -102,7 +103,7 @@ export const courseModuleRelations = relations(
 
 export const courseModuleLogsRelations = relations(
   courseModuleLogs,
-  ({ one, many }) => ({
+  ({ one }) => ({
     module: one(courseModule, {
       fields: [courseModuleLogs.moduleId],
       references: [courseModule.id],

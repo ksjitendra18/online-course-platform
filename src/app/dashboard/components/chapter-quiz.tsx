@@ -1,7 +1,10 @@
-import useQuizDataStore from "@/store/quiz-data";
-import { Check, Loader2, X } from "lucide-react";
 import { useEffect } from "react";
+
+import { Check, Loader2, X } from "lucide-react";
 import useSWR from "swr";
+
+import useQuizDataStore from "@/store/quiz-data";
+
 import ChapterQuizForm from "./chapter-quiz-form";
 import DeleteQuiz from "./quiz-delete";
 import QuizEdit from "./quiz-edit";
@@ -37,17 +40,14 @@ export type QData = {
 const ChapterQuiz = ({ moduleId, courseId, chapterSlug }: Props) => {
   const qNo = ["a", "b", "c", "d"];
 
-  const { questionLength, setQuestionLength } = useQuizDataStore();
+  const { setQuestionLength } = useQuizDataStore();
 
   const fetcher = () =>
     fetch(
       `/api/chapters/quiz/questions?moduleId=${moduleId}&courseId=${courseId}&chapterSlug=${chapterSlug}`
     ).then((res) => res.json());
 
-  const { data, isLoading, error } = useSWR<QData, boolean>(
-    `questions`,
-    fetcher
-  );
+  const { data, isLoading } = useSWR<QData, boolean>("questions", fetcher);
 
   useEffect(() => {
     if (data && data?.questions) {
@@ -68,7 +68,7 @@ const ChapterQuiz = ({ moduleId, courseId, chapterSlug }: Props) => {
       </div>
       {data?.questions ? (
         <>
-          <h3 className="text-xl my-3 font-bold">
+          <h3 className="my-3 text-xl font-bold">
             {" "}
             {data?.questions.length} Questions
           </h3>
@@ -76,9 +76,9 @@ const ChapterQuiz = ({ moduleId, courseId, chapterSlug }: Props) => {
             {data?.questions.map((question, index) => (
               <div
                 key={question.id}
-                className="flex justify-between items-start shadow-md bg-white rounded-md px-5 py-3"
+                className="flex items-start justify-between rounded-md bg-white px-5 py-3 shadow-md"
               >
-                <div className="flex flex-col w-full">
+                <div className="flex w-full flex-col">
                   <h3 className="font-semibold">
                     Q{index + 1}. {question.questionText}
                   </h3>
@@ -89,7 +89,7 @@ const ChapterQuiz = ({ moduleId, courseId, chapterSlug }: Props) => {
                     <div className="grid grid-cols-2 grid-rows-2">
                       {question.answers.map((answer, index) => (
                         <div
-                          className="flex items-center  gap-3"
+                          className="flex items-center gap-3"
                           key={answer.id}
                         >
                           {qNo[index]}.
@@ -125,7 +125,7 @@ const ChapterQuiz = ({ moduleId, courseId, chapterSlug }: Props) => {
         <>
           {isLoading && (
             <>
-              <Loader2 className="mx-auto animate-spin mt-10 mb-3" />
+              <Loader2 className="mx-auto mb-3 mt-10 animate-spin" />
               <p className="text-center">Loading Quiz Data...</p>
             </>
           )}

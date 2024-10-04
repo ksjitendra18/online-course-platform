@@ -7,6 +7,7 @@ import {
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
+
 import { user } from "./auth";
 import { course } from "./course";
 
@@ -133,20 +134,17 @@ export const discussionVote = sqliteTable(
   }
 );
 
-export const discussionVoteRelations = relations(
-  discussionVote,
-  ({ one, many }) => ({
-    user: one(user, {
-      fields: [discussionVote.userId],
-      references: [user.id],
-    }),
-    discussion: one(discussion, {
-      fields: [discussionVote.discussionId],
-      references: [discussion.id],
-    }),
-    discussionReply: one(discussionReply, {
-      fields: [discussionVote.discussionId],
-      references: [discussionReply.id],
-    }),
-  })
-);
+export const discussionVoteRelations = relations(discussionVote, ({ one }) => ({
+  user: one(user, {
+    fields: [discussionVote.userId],
+    references: [user.id],
+  }),
+  discussion: one(discussion, {
+    fields: [discussionVote.discussionId],
+    references: [discussion.id],
+  }),
+  discussionReply: one(discussionReply, {
+    fields: [discussionVote.discussionId],
+    references: [discussionReply.id],
+  }),
+}));

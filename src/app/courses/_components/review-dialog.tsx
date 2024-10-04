@@ -1,5 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
+import { Loader2, Star } from "lucide-react";
+import toast from "react-hot-toast";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,24 +15,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Loader2, Star } from "lucide-react";
-import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 
 const ReviewDialog = () => {
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hoverIndex, setHoverIndex] = useState(-1);
   const [reviewDesc, setReviewDesc] = useState("");
-  const reviewDescRef = useRef<HTMLTextAreaElement>(null);
+  // const reviewDescRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch("/api/courses/review");
       setLoading(true);
+      const res = await fetch("/api/courses/review");
+      if(res.status === 201) {
+        toast.success("Review submitted successfully");
+      }
     } catch (error) {
       toast.error("Error while submitting review");
     } finally {
@@ -52,7 +55,7 @@ const ReviewDialog = () => {
           <h2 className="text-xl font-bold">
             Rating {rating > 0 ? `${rating} / 5` : null}
           </h2>
-          <div className="flex items-center gap-3 justify-center">
+          <div className="flex items-center justify-center gap-3">
             {[...Array(5)].map((star, index) => (
               <label key={index}>
                 <input
@@ -66,9 +69,9 @@ const ReviewDialog = () => {
                   onMouseOver={() => setHoverIndex(index + 1)}
                   onMouseLeave={() => setHoverIndex(-1)}
                   className={cn(
-                    index + 1 <= rating && "fill-[#faaf00] ",
+                    index + 1 <= rating && "fill-[#faaf00]",
                     index + 1 <= hoverIndex && "fill-[#faaf00]",
-                    " hover:fill-[#faaf00] "
+                    "hover:fill-[#faaf00]"
                   )}
                 />
               </label>
@@ -77,7 +80,7 @@ const ReviewDialog = () => {
 
           <textarea
             onChange={(e) => setReviewDesc(e.target.value)}
-            className="my-5 border-2 w-full px-3 py-2"
+            className="my-5 w-full border-2 px-3 py-2"
             placeholder="Tell about your learning experience..."
           />
         </div>

@@ -1,30 +1,29 @@
 "use client";
 
-import { type ZodFormattedError } from "zod";
+import { usePathname, useRouter } from "next/navigation";
+import { FormEvent, useRef, useState } from "react";
 
 import {
   AlertTriangle,
-  Eye,
-  EyeOff,
-  Loader2,
-  Upload,
+  Check,
   Info,
   Loader,
-  Check,
+  Loader2,
+  Upload,
 } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { useRef, useState } from "react";
-import { ChapterInfoSchema } from "@/validations/chapter-info";
-import { usePathname, useRouter } from "next/navigation";
-import slugify from "slugify";
 import toast from "react-hot-toast";
-import ChapterAttachment from "./chapter-attachment";
-import ChapterQuiz, { QData } from "./chapter-quiz";
-import ChapterText from "./chapter-text";
-import useSWR from "swr";
-import useQuizDataStore from "@/store/quiz-data";
+import slugify from "slugify";
+import { type ZodFormattedError } from "zod";
+
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import useQuizDataStore from "@/store/quiz-data";
+import { env } from "@/utils/env/client";
+import { ChapterInfoSchema } from "@/validations/chapter-info";
+
+import ChapterAttachment from "./chapter-attachment";
+import ChapterQuiz from "./chapter-quiz";
+import ChapterText from "./chapter-text";
 
 const ChapterInformation = ({
   moduleId,
@@ -44,7 +43,7 @@ const ChapterInformation = ({
   moduleSlug: string;
   update?: boolean;
 }) => {
-  let videoInput = useRef<HTMLInputElement | null>(null);
+  const videoInput = useRef<HTMLInputElement | null>(null);
 
   const [chapterType, setChapterType] = useState<
     "video" | "quiz" | "article" | "attachment"
@@ -78,7 +77,7 @@ const ChapterInformation = ({
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleCreateCourse = async (e: any) => {
+  const handleCreateCourse = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFormErrors(null);
@@ -89,7 +88,7 @@ const ChapterInformation = ({
       router.refresh();
     }
 
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const chapterName = formData.get("chapterName");
     const chapterSlug = formData.get("chapterSlug");
@@ -143,7 +142,7 @@ const ChapterInformation = ({
     }
   };
 
-  const handleUpload = async (e: any) => {
+  const handleUpload = async () => {
     setVideoUploadError(false);
 
     const file = videoInput?.current?.files?.[0];
@@ -158,14 +157,11 @@ const ChapterInformation = ({
     formData.append("courseId", courseId!);
 
     try {
-      const vidUpload = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/video`,
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
-      );
+      const vidUpload = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/v1/video`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
       const vidUploadRes = await vidUpload.json();
 
       setVideoId(vidUploadRes.data.videoId);
@@ -224,10 +220,9 @@ const ChapterInformation = ({
         const originalUrl = pathname.split("/");
         originalUrl.shift();
         originalUrl.pop();
-        const editUrl =
-          "/" +
-          originalUrl.join("/") +
-          `/chapters/${resData.data.chapterSlug}/edit`;
+        const editUrl = `/${originalUrl.join(
+          "/"
+        )}/chapters/${resData.data.chapterSlug}/edit`;
 
         router.push(editUrl);
       }
@@ -256,13 +251,13 @@ const ChapterInformation = ({
 
   return (
     <>
-      <div className="auth-options w-full px-6 flex flex-col items-center justify-center">
+      <div className="auth-options flex w-full flex-col items-center justify-center px-6">
         <form
           ref={formRef}
           onSubmit={handleCreateCourse}
-          className="w-[100%] mx-auto md:w-3/4 lg:w-1/2"
+          className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
         >
-          <label htmlFor="chapterName" className=" mt-5 block text-gray-600">
+          <label htmlFor="chapterName" className="mt-5 block text-gray-600">
             Chapter Name
           </label>
           <input
@@ -278,14 +273,14 @@ const ChapterInformation = ({
               formErrors?.chapterName || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {formErrors?.chapterName && (
             <>
               {formErrors.chapterName._errors.map((err) => (
                 <div key={err}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <AlertTriangle />
                     {err}
                   </div>
@@ -294,7 +289,7 @@ const ChapterInformation = ({
             </>
           )}
 
-          <label htmlFor="chapterSlug" className=" mt-5 block text-gray-600">
+          <label htmlFor="chapterSlug" className="mt-5 block text-gray-600">
             Chapter Slug
           </label>
           <input
@@ -307,14 +302,14 @@ const ChapterInformation = ({
               formErrors?.chapterSlug || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {formErrors?.chapterSlug && (
             <>
               {formErrors.chapterSlug._errors.map((err, index) => (
                 <div key={index}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <AlertTriangle />
                     {err}
                   </div>
@@ -325,7 +320,7 @@ const ChapterInformation = ({
 
           <label
             htmlFor="chapterDescription"
-            className=" mt-5 block text-gray-600"
+            className="mt-5 block text-gray-600"
           >
             Chapter Description
           </label>
@@ -341,14 +336,14 @@ const ChapterInformation = ({
               formErrors?.chapterDescription || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {formErrors?.chapterDescription && (
             <>
               {formErrors.chapterDescription._errors.map((err) => (
                 <div key={err}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <AlertTriangle />
                     {err}
                   </div>
@@ -359,7 +354,7 @@ const ChapterInformation = ({
 
           {!isCourseFree && (
             <>
-              <label className=" mt-5 inline-flex text-gray-600">
+              <label className="mt-5 inline-flex text-gray-600">
                 This will be:
                 <span data-tooltip-target="tooltip-default" className="tooltip">
                   <Info />
@@ -369,7 +364,7 @@ const ChapterInformation = ({
               <div
                 id="tooltip-default"
                 role="tooltip"
-                className="absolute z-10 w-1/2 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+                className="tooltip invisible absolute z-10 inline-block w-1/2 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
               >
                 You can have some chapters for demo to be set as free. If you
                 want entire course to free then please set course to be free the
@@ -378,14 +373,14 @@ const ChapterInformation = ({
                 <div className="tooltip-arrow" data-popper-arrow></div>
               </div>
 
-              <div className="flex mt-2 items-center gap-4 ">
+              <div className="mt-2 flex items-center gap-4">
                 <div
                   onClick={() => setChapterPaid(true)}
                   className={cn(
                     chapterPaid
-                      ? "text-white bg-blue-500"
+                      ? "bg-blue-500 text-white"
                       : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                    " cursor-pointer  rounded-md px-3 py-1"
+                    "cursor-pointer rounded-md px-3 py-1"
                   )}
                 >
                   Paid Chapter
@@ -394,9 +389,9 @@ const ChapterInformation = ({
                   onClick={() => setChapterPaid(false)}
                   className={cn(
                     !chapterPaid
-                      ? "text-white bg-blue-500"
+                      ? "bg-blue-500 text-white"
                       : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                    " cursor-pointer  rounded-md px-3 py-1"
+                    "cursor-pointer rounded-md px-3 py-1"
                   )}
                 >
                   Free Chapter
@@ -405,10 +400,10 @@ const ChapterInformation = ({
             </>
           )}
 
-          <label className=" mt-5 inline-flex text-gray-600">
+          <label className="mt-5 inline-flex text-gray-600">
             Chapter Type:
           </label>
-          <div className="flex mt-2 items-center gap-4 ">
+          <div className="mt-2 flex items-center gap-4">
             <div
               onClick={() => {
                 if (!chapterTypeDisabled) {
@@ -419,9 +414,9 @@ const ChapterInformation = ({
               }}
               className={cn(
                 chapterType === "video"
-                  ? "text-white bg-blue-500"
+                  ? "bg-blue-500 text-white"
                   : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                " cursor-pointer  rounded-md px-3 py-1"
+                "cursor-pointer rounded-md px-3 py-1"
               )}
             >
               Video
@@ -437,9 +432,9 @@ const ChapterInformation = ({
               }}
               className={cn(
                 chapterType === "quiz"
-                  ? "text-white bg-blue-500"
+                  ? "bg-blue-500 text-white"
                   : "bg-gray-300 hover:bg-blue-500/80 hover:text-white",
-                " cursor-pointer  rounded-md px-3 py-1"
+                "cursor-pointer rounded-md px-3 py-1"
               )}
             >
               Quiz
@@ -485,7 +480,7 @@ const ChapterInformation = ({
               onClick={() => {
                 videoInput?.current?.click();
               }}
-              className="my-5 flex cursor-pointer items-center justify-center h-[400px] rounded-md border-2 border-slate-600 border-dashed"
+              className="my-5 flex h-[400px] cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-slate-600"
             >
               {!isVideoUploading && videoId.length < 1 ? (
                 <>
@@ -503,7 +498,7 @@ const ChapterInformation = ({
               ) : null}
               {isVideoUploading && !videoUploadError && (
                 <>
-                  <Loader className="animate-spin mr-2" />
+                  <Loader className="mr-2 animate-spin" />
                   Uploading the video...
                 </>
               )}
@@ -531,8 +526,8 @@ const ChapterInformation = ({
           {chapterType === "quiz" && (
             <>
               {quizLoading ? (
-                <div className="flex items-center justify-center my-10">
-                  <Loader2 className="animate-spin mr-2" /> Saving Chapter
+                <div className="my-10 flex items-center justify-center">
+                  <Loader2 className="mr-2 animate-spin" /> Saving Chapter
                   Information
                 </div>
               ) : (
@@ -547,7 +542,7 @@ const ChapterInformation = ({
           {chapterType === "article" && <ChapterText />}
 
           {customError && (
-            <div className="text-white flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 mt-3">
+            <div className="mt-3 flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 text-white">
               <AlertTriangle /> Server Error please try again.
             </div>
           )}
@@ -559,7 +554,7 @@ const ChapterInformation = ({
             className="my-5 w-full"
           >
             {loading ? (
-              <Loader2 className="animate-spin mz-auto" />
+              <Loader2 className="mz-auto animate-spin" />
             ) : (
               <>Create Chapter</>
             )}

@@ -1,29 +1,30 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
+
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Loading = () => {
   return (
-    <section className="px-6 py-3 w-full">
-      <div className="flex items-center  my-5 gap-2">
-        <Skeleton className="w-24 h-3 bg-gray-500" />
+    <section className="w-full px-6 py-3">
+      <div className="my-5 flex items-center gap-2">
+        <Skeleton className="h-3 w-24 bg-gray-500" />
         &gt;
-        <Skeleton className="w-48 h-3 bg-gray-500" />
+        <Skeleton className="h-3 w-48 bg-gray-500" />
         &gt;
-        <Skeleton className="w-24 underline h-3 bg-gray-500" />
+        <Skeleton className="h-3 w-24 bg-gray-500 underline" />
       </div>
 
-      <div className="flex justify-between md:justify-start gap-x-3 items-center">
-        <h1 className="text-2xl font-bold my-3">Modules</h1>
-        <Skeleton className="w-32 my-3 h-8 rounded-md bg-gray-400 flex justify-between" />
+      <div className="flex items-center justify-between gap-x-3 md:justify-start">
+        <h1 className="my-3 text-2xl font-bold">Modules</h1>
+        <Skeleton className="my-3 flex h-8 w-32 justify-between rounded-md bg-gray-400" />
       </div>
 
-      <div className=" w-full px-4 flex flex-col items-center justify-center">
-        <div className="w-[100%] mx-auto ">
-          <Skeleton className="w-full my-3 h-8 rounded-md bg-gray-400 flex justify-between" />
-          <Skeleton className="w-full mt-3 mb-5 h-8 rounded-md bg-gray-400" />
-          <Skeleton className="w-full mt-3 mb-5 h-8 rounded-md bg-gray-400" />
-          <Skeleton className="w-full mt-3 mb-5 h-8 rounded-md bg-gray-400" />
-          <Skeleton className="w-full mt-3 mb-5 h-8 rounded-md bg-gray-400" />
+      <div className="flex w-full flex-col items-center justify-center px-4">
+        <div className="mx-auto w-[100%]">
+          <Skeleton className="my-3 flex h-8 w-full justify-between rounded-md bg-gray-400" />
+          <Skeleton className="mb-5 mt-3 h-8 w-full rounded-md bg-gray-400" />
+          <Skeleton className="mb-5 mt-3 h-8 w-full rounded-md bg-gray-400" />
+          <Skeleton className="mb-5 mt-3 h-8 w-full rounded-md bg-gray-400" />
+          <Skeleton className="mb-5 mt-3 h-8 w-full rounded-md bg-gray-400" />
         </div>
       </div>
     </section>

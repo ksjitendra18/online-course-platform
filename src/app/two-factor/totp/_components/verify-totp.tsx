@@ -1,14 +1,18 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEventHandler, useState } from "react";
+
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 const VerifyTotpForm = () => {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -33,9 +37,7 @@ const VerifyTotpForm = () => {
         setSuccess(true);
         setMsg("Verification Success");
 
-        setTimeout(() => {
-          window.location.href = "/account";
-        }, 1000);
+        router.push("/account");
       }
     } catch (error) {
       setMsg("Server Error. Try again later.");
@@ -44,8 +46,8 @@ const VerifyTotpForm = () => {
     }
   };
   return (
-    <div className="flex max-w-[400px] mt-32 mx-auto items-center justify-center flex-col">
-      <h1 className="text-3xl font-bold text-center">2 Factor Verification</h1>
+    <div className="mx-auto mt-32 flex max-w-[400px] flex-col items-center justify-center">
+      <h1 className="text-center text-3xl font-bold">2 Factor Verification</h1>
 
       <form onSubmit={handleSubmit} className="mx-auto mt-8 w-full">
         <input
@@ -53,17 +55,17 @@ const VerifyTotpForm = () => {
           type="text"
           name="enteredCode"
           id="enteredCode"
-          className="border-2 border-slate-600 px-3 py-2 w-full rounded-md"
+          className="w-full rounded-md border-2 border-slate-600 px-3 py-2"
           required
         />
 
         <Button
           disabled={loading}
-          className="rounded-md my-4 flex items-center justify-center gap-1 bg-black px-5 py-3 w-full text-white"
+          className="my-4 flex w-full items-center justify-center gap-1 rounded-md bg-black px-5 py-3 text-white"
         >
           {loading ? (
             <>
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="mx-auto animate-spin" />
             </>
           ) : (
             "Verify"
@@ -78,12 +80,10 @@ const VerifyTotpForm = () => {
         </Link>
       </p>
 
-      <div className="flex items-center justify-center w-full">
+      <div className="flex w-full items-center justify-center">
         {msg && (
           <p
-            className={`
-          ${success ? "bg-green-600" : "bg-red-600"}
-           my-5 rounded-md w-fit px-2 py-2 text-white`}
+            className={` ${success ? "bg-green-600" : "bg-red-600"} my-5 w-fit rounded-md px-2 py-2 text-white`}
           >
             {msg}
           </p>

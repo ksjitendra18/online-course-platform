@@ -1,5 +1,15 @@
 import { redirect } from "next/navigation";
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { courseWithQuizData } from "@/db/queries/quiz";
+
 export const metadata = {
   title: "Quiz Response",
 };
@@ -11,16 +21,6 @@ type UserScores = {
     incorrect: number;
   };
 };
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
-import { courseWithQuizData } from "@/db/queries/quiz";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -54,7 +54,7 @@ const QuizResponses = async ({ params }: { params: { slug: string } }) => {
     <div className="p-6">
       <h1 className="text-2xl font-bold">Quiz Responses</h1>
 
-      <div className="rounded-md my-5 bg-white border-2">
+      <div className="my-5 rounded-md border-2 bg-white">
         <Table>
           <TableHeader>
             <TableRow>

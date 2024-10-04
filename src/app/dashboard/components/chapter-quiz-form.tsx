@@ -1,12 +1,18 @@
 "use client";
-import React, { FormEvent, RefObject, useRef, useState } from "react";
+
+import { useRouter } from "next/navigation";
+import React, { useRef, useState } from "react";
+
+import { Check, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { useSWRConfig } from "swr";
+import { ZodFormattedError } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -14,18 +20,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { Check, Loader2 } from "lucide-react";
-import { QuizSchema } from "@/validations/quiz-question";
-import { ZodFormattedError } from "zod";
 import useQuizDataStore from "@/store/quiz-data";
-import { useRouter } from "next/navigation";
-
-interface Option {
-  value: string;
-  correct: boolean;
-}
+import { QuizSchema } from "@/validations/quiz-question";
 
 interface Props {
   moduleId: string;
@@ -37,13 +34,14 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
   const { mutate } = useSWRConfig();
   const { incrQuestionLength } = useQuizDataStore();
   const [loading, setLoading] = useState(false);
-  const [questionType, setQuestionType] = useState<"mcq" | "true_false">("mcq");
-  const [questionTypeDisabled, setQuestionTypeDisabled] = useState(false);
+  // const [questionType, setQuestionType] = useState<"mcq" | "true_false">("mcq");
+  // const [questionTypeDisabled, setQuestionTypeDisabled] = useState(false);
 
   const [formErrors, setFormErrors] = useState<ZodFormattedError<
     QuizSchema,
     string
   > | null>(null);
+
   const modalCloseRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
@@ -96,11 +94,10 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
         method: "POST",
         body: JSON.stringify({ ...parsedResult.data }),
       });
-      const resData = await res.json();
 
       if (res.status === 201) {
         modalCloseRef.current?.click();
-        mutate(`questions`);
+        mutate("questions");
         setOptions([
           { option: "", isCorrect: false },
           { option: "", isCorrect: false },
@@ -155,17 +152,29 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
                 onClick={() => handleMarkAsCorrect(index)}
                 className={cn(
                   options[index].isCorrect &&
-                    "bg-green-600 text-white rounded-md transition-all duration-100 ease-in",
-                  "flex items-center col-span-1 px-2 py-2 "
+                    "rounded-md bg-green-600 text-white transition-all duration-100 ease-in",
+                  "col-span-1 flex items-center px-2 py-2"
                 )}
               >
                 <Check />
-                <span className="text-sm ml-2">Mark as Answer</span>
+                <span className="ml-2 text-sm">Mark as Answer</span>
               </button>
             </div>
           ))}
         </div>
         <DialogFooter>
+          {formErrors && (
+            <div className="flex flex-col gap-3">
+              {formErrors._errors.map((err) => (
+                <p
+                  key={err}
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
+                >
+                  {err}
+                </p>
+              ))}
+            </div>
+          )}
           <Button
             disabled={loading}
             variant="app"
@@ -173,7 +182,7 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
             type="submit"
           >
             {loading ? (
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="mx-auto animate-spin" />
             ) : (
               <>Add Question</>
             )}

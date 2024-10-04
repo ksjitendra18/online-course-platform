@@ -1,9 +1,12 @@
+import { redirect } from "next/navigation";
+import React from "react";
+
+import { and, eq, inArray } from "drizzle-orm";
+
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { course, courseMember } from "@/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import React from "react";
+
 import CourseDashboardSidebar from "../../components/course-dashboard-sidebar";
 
 export const revalidate = 0;
@@ -56,7 +59,7 @@ const DashboardLayout = async ({
         slug={params.slug}
         courseId={courseData.id}
       />
-      <div className=" h-full w-full">{children}</div>
+      <div className="h-full w-full">{children}</div>
     </div>
   );
 };

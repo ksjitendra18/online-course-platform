@@ -1,8 +1,9 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface VideoPlayerProps {
@@ -17,7 +18,6 @@ interface VideoPlayerProps {
 const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
   playbackId,
   autoPlay,
-  userId,
   chapterId,
   isEnrolled,
   courseId,
@@ -33,6 +33,7 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
     script.async = true;
 
     script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const player = new (window as any).playerjs.Player(
         document.getElementById("bunny-stream-embed")
       );
@@ -67,7 +68,7 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
   return (
     <>
       {isLoading ? (
-        <div className="h-full flex items-center justify-center w-full bg-red-800">
+        <div className="flex h-full w-full items-center justify-center bg-red-800">
           <Loader2 size={30} />
         </div>
       ) : (

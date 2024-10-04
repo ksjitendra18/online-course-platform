@@ -1,8 +1,10 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { sendMagicLink } from "@/lib/auth";
+import { env } from "@/utils/env/client";
 import EmailSchema from "@/validations/email";
-import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
 
     const res = await sendMagicLink({
       email: parsedData.data,
-      url: process.env.NEXT_PUBLIC_BASE_URL!,
+      url: env.NEXT_PUBLIC_BASE_URL!,
     });
 
     if (res.emailSendLimit) {
@@ -46,7 +48,7 @@ export async function POST(req: Request) {
         {
           error: {
             code: "rate_limit",
-            message: `Please wait for 24 hrs before sending new mail request`,
+            message: "Please wait for 24 hrs before sending new mail request",
           },
         },
         { status: 429 }

@@ -1,24 +1,25 @@
 "use client";
-import { cn } from "@/lib/utils";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
-import { MdCategory, MdDashboard, MdLibraryBooks } from "react-icons/md";
+
 import { IoMdAnalytics } from "react-icons/io";
-import { RxDashboard } from "react-icons/rx";
+import { MdDashboard, MdLibraryBooks } from "react-icons/md";
+
+import { cn } from "@/lib/utils";
 
 const DashboardSidebar = () => {
   const pathName = usePathname();
   return (
-    <div className="relative w-full max-w-60 min-h-[calc(100vh-5rem)] border-r-2  flex-shrink-0  hidden lg:block">
-      <div className="sticky top-0 h-auto px-3 my-5">
-        <div className="flex gap-3 flex-col items-center">
+    <div className="relative hidden min-h-[calc(100vh-5rem)] w-full max-w-60 flex-shrink-0 border-r-2 lg:block">
+      <div className="sticky top-0 my-5 h-auto px-3">
+        <div className="flex flex-col items-center gap-3">
           <Link
             className={cn(
               pathName === "/dashboard"
-                ? "bg-blue-500/20 text-blue-500 font-semibold"
-                : "text-slate-700 hover:text-black hover:bg-gray-200",
-              "px-2 flex items-center  gap-2 py-2 w-full rounded-md transition-all duration-100 ease-in cursor-pointer "
+                ? "bg-blue-500/20 font-semibold text-blue-500"
+                : "text-slate-700 hover:bg-gray-200 hover:text-black",
+              "flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 transition-all duration-100 ease-in"
             )}
             href="/dashboard"
           >
@@ -28,9 +29,9 @@ const DashboardSidebar = () => {
           <Link
             className={cn(
               pathName.includes("courses")
-                ? "bg-blue-500/20 text-blue-500 font-semibold"
-                : "text-slate-700 hover:text-black hover:bg-gray-200",
-              "px-2 flex items-center  gap-2 py-2 w-full rounded-md transition-all duration-100 ease-in cursor-pointer "
+                ? "bg-blue-500/20 font-semibold text-blue-500"
+                : "text-slate-700 hover:bg-gray-200 hover:text-black",
+              "flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 transition-all duration-100 ease-in"
             )}
             href="/dashboard/courses"
           >
@@ -41,9 +42,9 @@ const DashboardSidebar = () => {
           <Link
             className={cn(
               pathName === "/dashboard/analytics"
-                ? "bg-blue-500/20 text-blue-500 font-semibold"
-                : "text-slate-700 hover:text-black hover:bg-gray-200",
-              "px-2 flex items-center  gap-2 py-2 w-full rounded-md transition-all duration-100 ease-in cursor-pointer "
+                ? "bg-blue-500/20 font-semibold text-blue-500"
+                : "text-slate-700 hover:bg-gray-200 hover:text-black",
+              "flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 transition-all duration-100 ease-in"
             )}
             href="/dashboard/analytics"
           >

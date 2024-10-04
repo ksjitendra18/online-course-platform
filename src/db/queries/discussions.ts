@@ -1,9 +1,10 @@
 // TODO: IMPLEMENT PAGINATION
+import { unstable_cache } from "next/cache";
+
+import { desc, eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { discussion } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
 
 export const getDiscussions = unstable_cache(
   async (courseId: string) => {

@@ -1,11 +1,12 @@
+import { cookies } from "next/headers";
+
+import { and, eq, gte } from "drizzle-orm";
+
 import { db } from "@/db";
 import { recoveryCodes, session } from "@/db/schema";
-import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
-import { and, eq, gte } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const authToken = cookies().get("auth-token")?.value;
 
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let codes: string[] = [];
+    const codes: string[] = [];
 
     if (exisitingCode.length > 0) {
       exisitingCode.forEach((code) => {

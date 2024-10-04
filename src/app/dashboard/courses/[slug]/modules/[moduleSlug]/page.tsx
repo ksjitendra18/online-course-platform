@@ -1,12 +1,14 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { eq } from "drizzle-orm";
+import { FaHome } from "react-icons/fa";
+
 import ChapterStatus from "@/app/dashboard/components/chapter-status";
 import DeleteChapter from "@/app/dashboard/components/delete-chapter";
 import { db } from "@/db";
 import { chapter, course, courseModule } from "@/db/schema";
 import { cn, formatDuration } from "@/lib/utils";
-import { eq } from "drizzle-orm";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { FaHome } from "react-icons/fa";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -73,7 +75,7 @@ const ModuleSlugPage = async ({
   });
 
   if (!courseModuleWithChapters) {
-    return redirect(`/dashboard/courses`);
+    return redirect("/dashboard/courses");
   }
 
   if (courseModuleWithChapters.courseModule[0].chapter?.length < 1) {
@@ -83,9 +85,9 @@ const ModuleSlugPage = async ({
   }
   return (
     <>
-      <section className="px-6 py-3 w-full">
-        <div className="flex items-center gap-2 my-5">
-          <Link className="flex  ease-in items-center gap-3" href="/dashboard">
+      <section className="w-full px-6 py-3">
+        <div className="my-5 flex items-center gap-2">
+          <Link className="flex items-center gap-3 ease-in" href="/dashboard">
             <FaHome />
             Home &gt;
           </Link>
@@ -111,28 +113,28 @@ const ModuleSlugPage = async ({
           </Link>
         </div>
 
-        <div className="flex justify-between md:justify-start gap-x-3 items-center">
-          <h1 className="text-2xl font-bold my-3">
+        <div className="flex items-center justify-between gap-x-3 md:justify-start">
+          <h1 className="my-3 text-2xl font-bold">
             {courseModuleWithChapters.courseModule[0].title} {"  "}Module
             Chapters
           </h1>
 
           <Link
             href={`/dashboard/courses/${courseModuleWithChapters?.slug}/modules/${courseModuleWithChapters.courseModule[0].slug}/new`}
-            className="bg-blue-500 text-white rounded-md px-3 py-2"
+            className="rounded-md bg-blue-500 px-3 py-2 text-white"
           >
             Add New Chapter
           </Link>
         </div>
 
-        <div className="flex flex-col gap-y-3 mt-3">
+        <div className="mt-3 flex flex-col gap-y-3">
           {courseModuleWithChapters?.courseModule[0].chapter.map((chapter) => (
             <div
               key={chapter.id}
-              className="px-3 py-2 flex bg-slate-100  items-center justify-between rounded-md"
+              className="flex items-center justify-between rounded-md bg-slate-100 px-3 py-2"
             >
               <div className="flex gap-3">
-                <h3 className="font-semibold ">
+                <h3 className="font-semibold">
                   Chapter {chapter.modulePosition}: {chapter.title}
                 </h3>
                 <div
@@ -140,44 +142,44 @@ const ModuleSlugPage = async ({
                     chapter.status === "published"
                       ? "bg-green-600"
                       : "bg-fuchsia-600",
-                    " rounded-full px-2 py-1 text-white text-sm"
+                    "rounded-full px-2 py-1 text-sm text-white"
                   )}
                 >
                   {chapter.status === "published" ? "Published" : "Unpublished"}
                 </div>
-                <div className="text-sm flex items-center gap-4">
+                <div className="flex items-center gap-4 text-sm">
                   {!courseModuleWithChapters.isFree ? (
                     <>
                       {chapter.isFree ? (
-                        <div className="bg-green-500 px-3 rounded-md text-white py-1">
+                        <div className="rounded-md bg-green-500 px-3 py-1 text-white">
                           Free
                         </div>
                       ) : (
-                        <div className="bg-purple-600 px-3 rounded-md text-white py-1">
+                        <div className="rounded-md bg-purple-600 px-3 py-1 text-white">
                           Paid
                         </div>
                       )}
                     </>
                   ) : null}
 
-                  <div className="bg-emerald-800 px-3 rounded-md text-white py-1">
+                  <div className="rounded-md bg-emerald-800 px-3 py-1 text-white">
                     {chapter.type}
                   </div>
 
                   {chapter.videoData.length > 0 && (
-                    <div className="bg-fuchsia-600 px-3 rounded-md text-white py-1">
+                    <div className="rounded-md bg-fuchsia-600 px-3 py-1 text-white">
                       {formatDuration(Math.ceil(chapter.videoData[0].duration))}
                     </div>
                   )}
                   {chapter.type === "quiz" &&
                     chapter.quiz[0]?.questions.length > 0 && (
-                      <div className="bg-fuchsia-600 px-3 rounded-md text-white py-1">
+                      <div className="rounded-md bg-fuchsia-600 px-3 py-1 text-white">
                         {chapter.quiz[0]?.questions.length} Questions
                       </div>
                     )}
                 </div>
               </div>
-              <div className="flex gap-5 items-center">
+              <div className="flex items-center gap-5">
                 <Link
                   href={`/dashboard/courses/${courseModuleWithChapters.slug}/modules/${courseModuleWithChapters.courseModule[0].slug}/chapters/${chapter.slug}`}
                 >

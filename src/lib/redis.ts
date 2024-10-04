@@ -1,10 +1,12 @@
 import { Redis } from "ioredis";
 
+import { env } from "@/utils/env/server";
+
 const redis = new Redis({
   port: 6379,
-  host: process.env.REDIS_HOST,
+  host: env.REDIS_HOST,
   username: "default",
-  password: process.env.REDIS_PASSWORD,
+  password: env.REDIS_PASSWORD,
 });
 
 export default redis;

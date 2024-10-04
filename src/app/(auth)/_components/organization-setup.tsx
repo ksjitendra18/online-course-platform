@@ -1,26 +1,19 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+
+import { ImSpinner8 } from "react-icons/im";
+import slugify from "slugify";
 import { z } from "zod";
 
 import { cn } from "@/lib/utils";
-import { OrganizationSignupSchema } from "@/validations/organization-signup";
-import debounce from "lodash.debounce";
-import { Check, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ImSpinner8 } from "react-icons/im";
-import { LuEye, LuEyeOff } from "react-icons/lu";
-import slugify from "slugify";
 import { OrganizationSetupSchema } from "@/validations/organization-setup";
-interface Props {
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { OrganizationSignupSchema } from "@/validations/organization-signup";
 
 const OrganizationSetup = () => {
   const [orgName, setOrgName] = useState("");
   // const [orgSlug, setOrgSlug] = useState("");
-  const [orgSlug, setOrgSlug] = useState(slugify(orgName, { lower: true }));
   const [validationIssue, setValidationIssue] = useState<z.ZodFormattedError<
     z.infer<typeof OrganizationSignupSchema>,
     string
@@ -28,7 +21,6 @@ const OrganizationSetup = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
@@ -81,11 +73,11 @@ const OrganizationSetup = () => {
 
   return (
     <>
-      <div className="flex w-full  items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <form
           onSubmit={handleSignup}
           method="post"
-          className="w-[100%] mx-auto md:w-3/4 lg:w-1/3 "
+          className="mx-auto w-[100%] md:w-3/4 lg:w-1/3"
         >
           <label
             htmlFor="orgName"
@@ -110,7 +102,7 @@ const OrganizationSetup = () => {
               error || validationIssue?.orgName
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
@@ -119,7 +111,7 @@ const OrganizationSetup = () => {
               {validationIssue?.orgName?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -147,7 +139,7 @@ const OrganizationSetup = () => {
               error || validationIssue?.orgSlug
                 ? "border-red-600"
                 : "border-slate-600",
-              "px-3 w-full  py-2 rounded-md border-2"
+              "w-full rounded-md border-2 px-3 py-2"
             )}
           />
 
@@ -156,7 +148,7 @@ const OrganizationSetup = () => {
               {validationIssue?.orgSlug?._errors?.map((err, idx) => (
                 <p
                   key={idx}
-                  className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
                 >
                   {err}
                 </p>
@@ -165,7 +157,7 @@ const OrganizationSetup = () => {
           )}
 
           {error && (
-            <p className="mt-2 bg-red-500 text-white rounded-md px-3 py-2">
+            <p className="mt-2 rounded-md bg-red-500 px-3 py-2 text-white">
               {error}
             </p>
           )}
@@ -174,15 +166,13 @@ const OrganizationSetup = () => {
               disabled={loading}
               type="submit"
               className={cn(
-                loading
-                  ? "scale-95  bg-blue-500"
-                  : "bg-blue-600 hover:scale-95",
-                " mt-5 flex items-center justify-center w-full px-10 py-2 text-center rounded-md text-white  duration-100 ease-in"
+                loading ? "scale-95 bg-blue-500" : "bg-blue-600 hover:scale-95",
+                "mt-5 flex w-full items-center justify-center rounded-md px-10 py-2 text-center text-white duration-100 ease-in"
               )}
             >
               {loading ? (
                 <>
-                  <ImSpinner8 className="animate-spin  mr-2 " />
+                  <ImSpinner8 className="mr-2 animate-spin" />
                 </>
               ) : (
                 <>Create Organization</>

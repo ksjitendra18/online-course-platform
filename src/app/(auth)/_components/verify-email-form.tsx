@@ -1,8 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+
 import { FormEvent, useState } from "react";
-import { ImSpinner8 } from "react-icons/im";
+
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 const VerifyEmailForm = () => {
   const [verificationErr, setVerificationErr] = useState("");
@@ -31,6 +33,7 @@ const VerifyEmailForm = () => {
         setVerificationErr(resData.error.message);
         return;
       }
+      setVerificationSuccess(true);
 
       window.location.href = `/verify/${resData.data.verificationId}`;
     } catch (error) {
@@ -42,8 +45,8 @@ const VerifyEmailForm = () => {
 
   return (
     <>
-      <div className="flex max-w-[400px] mt-32 mx-auto items-center justify-center flex-col">
-        <h1 className="text-3xl font-bold text-center">Verify Email</h1>
+      <div className="mx-auto mt-32 flex max-w-[400px] flex-col items-center justify-center">
+        <h1 className="text-center text-3xl font-bold">Verify Email</h1>
         <p>Enter the email</p>
         <form onSubmit={handleSubmit} className="mx-auto mt-8 w-full">
           <input
@@ -51,13 +54,13 @@ const VerifyEmailForm = () => {
             type="email"
             name="email"
             id="email"
-            className="border-2 border-slate-600 px-3 py-2 w-full rounded-md"
+            className="w-full rounded-md border-2 border-slate-600 px-3 py-2"
             required
           />
 
-          <Button variant="app" disabled={loading} className="w-full my-5">
+          <Button variant="app" disabled={loading} className="my-5 w-full">
             {loading ? (
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="mx-auto animate-spin" />
             ) : (
               <>Send Mail</>
             )}
@@ -67,13 +70,13 @@ const VerifyEmailForm = () => {
         {/* <div>Didn't receive the code? Retry again</div> */}
 
         {verificationErr && (
-          <div className="bg-red-500 text-white px-3 py-2 rounded-md my-3">
+          <div className="my-3 rounded-md bg-red-500 px-3 py-2 text-white">
             {verificationErr}
           </div>
         )}
 
         {verificationSuccess && (
-          <div className="bg-green-600 text-white px-3 py-2 rounded-md my-3">
+          <div className="my-3 rounded-md bg-green-600 px-3 py-2 text-white">
             <p>Verification Success. Now you can login</p>
           </div>
         )}

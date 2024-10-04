@@ -1,11 +1,14 @@
 "use client";
+
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+
+import { Loader2 } from "lucide-react";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import DiscussionSchema from "@/validations/discussion";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
-import { z } from "zod";
 
 const NewDiscussionForm = ({
   courseSlug,
@@ -36,8 +39,6 @@ const NewDiscussionForm = ({
     const question = formData.get("question");
     const description = formData.get("description");
 
-    console.log("question", question);
-
     try {
       const safeParsedData = DiscussionSchema.safeParse({
         question,
@@ -59,7 +60,7 @@ const NewDiscussionForm = ({
         setError("Internal Server Error. Try again later");
         return;
       }
-      const resData = await res.json();
+      // const resData = await res.json();
 
       if (res.status === 201) {
         router.push(`/courses/${courseSlug}/discussions`);
@@ -75,7 +76,7 @@ const NewDiscussionForm = ({
     <form
       onSubmit={handleSubmit}
       method="post"
-      className="w-[100%] mx-auto md:w-3/4 lg:w-1/2 "
+      className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
     >
       <label
         htmlFor="question"
@@ -95,7 +96,7 @@ const NewDiscussionForm = ({
           error || validationIssue?.question
             ? "border-red-600"
             : "border-slate-600",
-          "px-3 w-full  py-2 rounded-md border-2"
+          "w-full rounded-md border-2 px-3 py-2"
         )}
       />
 
@@ -104,7 +105,7 @@ const NewDiscussionForm = ({
           {validationIssue?.question?._errors?.map((err, idx) => (
             <p
               key={idx}
-              className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+              className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
             >
               {err}
             </p>
@@ -130,7 +131,7 @@ const NewDiscussionForm = ({
           error || validationIssue?.description
             ? "border-red-600"
             : "border-slate-600",
-          "px-3 w-full  py-2 rounded-md border-2"
+          "w-full rounded-md border-2 px-3 py-2"
         )}
       />
 
@@ -139,14 +140,14 @@ const NewDiscussionForm = ({
           {validationIssue?.description?._errors?.map((err, idx) => (
             <p
               key={idx}
-              className="my-5 bg-red-500  text-white rounded-md px-3 py-2"
+              className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
             >
               {err}
             </p>
           ))}
         </div>
       )}
-      <Button disabled={loading} className="w-full my-5" variant="app">
+      <Button disabled={loading} className="my-5 w-full" variant="app">
         {loading ? <Loader2 className="mx-auto animate-spin" /> : <>Submit</>}
       </Button>
     </form>

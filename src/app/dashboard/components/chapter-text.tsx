@@ -8,7 +8,7 @@
 
 const ChapterText = () => {
   return (
-    <div className="w-full my-5 ">
+    <div className="my-5 w-full">
       {/* <textarea className="block w-full border-2 px-4 py-2"></textarea> */}
 
       {/* <ContentEditor /> */}

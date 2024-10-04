@@ -1,10 +1,10 @@
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { chapter } from "@/db/schema";
 import { quiz, quizAnswer, quizQuestion } from "@/db/schema/quiz";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { QuizSchema } from "@/validations/quiz-question";
-
-import { and, eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {

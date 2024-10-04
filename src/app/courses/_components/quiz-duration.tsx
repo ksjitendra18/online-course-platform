@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import useQuizStore from "@/store/quiz";
-import { useEffect } from "react";
+
 import Countdown from "./countdown";
 
 interface Props {
@@ -22,7 +22,7 @@ const QuizDuration = ({ duration }: Props) => {
             setHasStarted();
             setDuration(duration);
           }}
-          className="bg-blue-600 text-white  "
+          className="bg-blue-600 text-white"
         >
           Start Quiz | {duration} Minutes
         </Button>

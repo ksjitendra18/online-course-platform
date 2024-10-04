@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { ImSpinner8 } from "react-icons/im";
-import { z } from "zod";
+
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 const VerifyEmailCode = ({ verificationId }: { verificationId: string }) => {
   const [verificationErr, setVerificationErr] = useState("");
@@ -60,8 +60,8 @@ const VerifyEmailCode = ({ verificationId }: { verificationId: string }) => {
 
   return (
     <>
-      <div className="flex max-w-[400px] mt-32 mx-auto items-center justify-center flex-col">
-        <h1 className="text-3xl font-bold text-center">Verify</h1>
+      <div className="mx-auto mt-32 flex max-w-[400px] flex-col items-center justify-center">
+        <h1 className="text-center text-3xl font-bold">Verify</h1>
         <p>Enter the code received on email</p>
         <form onSubmit={handleSubmit} className="mx-auto mt-8 w-full">
           <input
@@ -69,7 +69,7 @@ const VerifyEmailCode = ({ verificationId }: { verificationId: string }) => {
             type="text"
             name="code"
             id="code"
-            className="border-2 border-slate-600 px-3 py-2 w-full rounded-md"
+            className="w-full rounded-md border-2 border-slate-600 px-3 py-2"
           />
 
           <Button className="my-5 w-full" variant="app" disabled={loading}>
@@ -94,13 +94,13 @@ const VerifyEmailCode = ({ verificationId }: { verificationId: string }) => {
         </div>
 
         {verificationErr && (
-          <div className="bg-red-500 text-white px-3 py-2 rounded-md my-3">
+          <div className="my-3 rounded-md bg-red-500 px-3 py-2 text-white">
             {verificationErr}
           </div>
         )}
 
         {verificationSuccess && (
-          <div className="bg-green-600 text-white px-3 py-2 rounded-md my-3">
+          <div className="my-3 rounded-md bg-green-600 px-3 py-2 text-white">
             <p>
               Verification Success. Now you can{" "}
               <Link href="/login">Log in. Redirecting to login page...</Link>

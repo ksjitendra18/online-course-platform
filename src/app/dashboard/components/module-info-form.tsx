@@ -1,18 +1,16 @@
 "use client";
-// import { AlertTriangle, Info, Loader2 } from "lucide-solid";
-import { FiAlertTriangle, FiInfo } from "react-icons/fi";
-import { ImSpinner8 } from "react-icons/im";
-import { type ZodFormattedError } from "zod";
 
-import slugify from "slugify";
-import { cn } from "@/lib/utils";
-import { ChangeEvent, FormEvent, useState } from "react";
-import { BasicInfoSchema } from "@/validations/basic-info";
 import { useRouter } from "next/navigation";
-import { ModuleInfoSchema } from "@/validations/module-info";
-import { Button } from "@/components/ui/button";
+import { ChangeEvent, FormEvent, useState } from "react";
+
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
+import slugify from "slugify";
+import { type ZodFormattedError } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { ModuleInfoSchema } from "@/validations/module-info";
 
 // this same component is responsible for both editing and
 // creating that's why it is accepting these props
@@ -44,13 +42,13 @@ const ModuleInformation = ({
     string
   > | null>(null);
 
-  const handleCreateModule = async (e: any) => {
+  const handleCreateModule = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFormErrors(null);
     setCustomError(false);
     setSlugExists(false);
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const moduleName = formData.get("moduleName");
     const moduleSlug = formData.get("moduleSlug");
@@ -109,12 +107,12 @@ const ModuleInformation = ({
 
   return (
     <>
-      <div className="auth-options w-full px-6 flex flex-col items-center justify-center">
+      <div className="auth-options flex w-full flex-col items-center justify-center px-6">
         <form
           onSubmit={handleCreateModule}
-          className="w-[100%] mx-auto md:w-3/4 lg:w-1/2"
+          className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
         >
-          <label htmlFor="moduleName" className=" mt-5 block text-gray-600">
+          <label htmlFor="moduleName" className="mt-5 block text-gray-600">
             Module Name
           </label>
           <input
@@ -128,14 +126,14 @@ const ModuleInformation = ({
               formErrors?.moduleName || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {formErrors?.moduleName && (
             <>
               {formErrors.moduleName._errors.map((err) => (
                 <div key={err}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
                     {err}
                   </div>
@@ -143,7 +141,7 @@ const ModuleInformation = ({
               ))}
             </>
           )}
-          <label htmlFor="moduleSlug" className=" mt-5 block text-gray-600">
+          <label htmlFor="moduleSlug" className="mt-5 block text-gray-600">
             Module Slug
           </label>
           <input
@@ -156,12 +154,12 @@ const ModuleInformation = ({
               formErrors?.moduleSlug || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           />
 
           {slugExists && (
             <>
-              <div className="flex items-center gap-3 bg-red-600 text-white rounded-md px-3 py-1 mt-2">
+              <div className="mt-2 flex items-center gap-3 rounded-md bg-red-600 px-3 py-1 text-white">
                 <FiAlertTriangle className="mr-2" />A module with this slug
                 already exists for the given course.
               </div>
@@ -171,7 +169,7 @@ const ModuleInformation = ({
             <>
               {formErrors.moduleSlug._errors.map((err, index) => (
                 <div key={index}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
                     {err}
                   </div>
@@ -182,7 +180,7 @@ const ModuleInformation = ({
 
           <label
             htmlFor="moduleDescription"
-            className=" mt-5 block text-gray-600"
+            className="mt-5 block text-gray-600"
           >
             Module Description
           </label>
@@ -195,13 +193,13 @@ const ModuleInformation = ({
               formErrors?.moduleDescription || customError
                 ? "border-red-600"
                 : "border-slate-400"
-            } px-3 w-full  py-2 rounded-md border-2 `}
+            } w-full rounded-md border-2 px-3 py-2`}
           ></textarea>
           {formErrors?.moduleDescription && (
             <>
               {formErrors.moduleDescription._errors.map((err, index) => (
                 <div key={index}>
-                  <div className="flex items-center gap-3 text-red-600 py-1 mt-2">
+                  <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
                     {err}
                   </div>
@@ -211,7 +209,7 @@ const ModuleInformation = ({
           )}
 
           {customError && (
-            <div className="text-white flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 mt-3">
+            <div className="mt-3 flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 text-white">
               <FiAlertTriangle /> Server Error please try again.
             </div>
           )}
@@ -225,7 +223,7 @@ const ModuleInformation = ({
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="animate-spin mx-auto" />
+                  <Loader2 className="mx-auto animate-spin" />
                 </>
               ) : (
                 <>{update ? "Update Module" : "Create Module"}</>

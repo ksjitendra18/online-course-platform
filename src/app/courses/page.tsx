@@ -1,9 +1,9 @@
 import { Suspense } from "react";
+
+import CategoryLoading from "./_components/category-loading";
+import CourseLoading from "./_components/course-loading";
 import FetchCategories from "./fetch-categories";
 import FetchCourse from "./fetch-courses";
-import { Skeleton } from "@/components/ui/skeleton";
-import CourseLoading from "./_components/course-loading";
-import CategoryLoading from "./_components/category-loading";
 
 export const metadata = {
   title: "Courses",

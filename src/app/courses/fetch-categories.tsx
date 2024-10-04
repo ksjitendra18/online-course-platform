@@ -1,4 +1,5 @@
 import { db } from "@/db";
+
 import CategoryCard from "./_components/category-card";
 
 const FetchCategories = async ({

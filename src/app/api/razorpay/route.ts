@@ -1,14 +1,16 @@
-import { db } from "@/db";
-import { course, session } from "@/db/schema";
-import { checkAuth } from "@/lib/auth";
+
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 import Razorpay from "razorpay";
+
+import { db } from "@/db";
+import { course } from "@/db/schema";
+import { checkAuth } from "@/lib/auth";
+import { env } from "@/utils/env/server";
 
 export async function POST(request: Request) {
   const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY!,
-    key_secret: process.env.RAZORPAY_SECRET,
+    key_id: env.RAZORPAY_KEY!,
+    key_secret: env.RAZORPAY_SECRET,
   });
 
   const { courseId } = await request.json();

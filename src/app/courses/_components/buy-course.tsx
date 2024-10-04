@@ -1,10 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { formatPrice } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import { Loader2 } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
+import { formatPrice } from "@/lib/utils";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 interface Props {
   coursePrice: number | null;
@@ -13,8 +18,10 @@ interface Props {
   userName: string;
   email: string;
 }
+
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Razorpay: any;
   }
 }
@@ -24,13 +31,7 @@ type PaymentData = {
   courseId: string;
   // coursePrice: number;
 };
-const BuyCourse = ({
-  coursePrice,
-  courseId,
-  userId,
-  email,
-  userName,
-}: Props) => {
+const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonText, setButtonText] = useState("Course purchase in progress");
   const router = useRouter();
@@ -62,7 +63,7 @@ const BuyCourse = ({
     });
   };
 
-  const [checkForEnroll, setCheckForEnroll] = useState(false);
+  // const [checkForEnroll, setCheckForEnroll] = useState(false);
   let checkId: NodeJS.Timeout;
   const makePayment = async (paymentData: PaymentData) => {
     try {
@@ -80,8 +81,7 @@ const BuyCourse = ({
 
       const paymentResData = await paymentRes.json();
 
-      var options = {
-        key: process.env.RAZORPAY_KEY,
+      const options = {
         name: "Course Platform",
         currency: paymentResData.currency,
         amount: +paymentResData.amount,
@@ -96,11 +96,11 @@ const BuyCourse = ({
           setButtonText("Processing Payment");
           checkId = setInterval(async () => {
             const res = await fetch(`/api/enroll/check?courseId=${courseId}`);
-            const resData = await res.json();
+            await res.json();
             if (res.status === 200) {
               setButtonLoading(false);
               router.refresh();
-              setCheckForEnroll(true);
+              // setCheckForEnroll(true);
             }
           }, 5000);
         },
@@ -127,7 +127,7 @@ const BuyCourse = ({
       <button
         disabled={buttonLoading}
         onClick={onPayment}
-        className="px-8 my-2 hover:bg-blue-600 text-white bg-blue-700 py-3  rounded-full flex items-center justify-center gap-2"
+        className="my-2 flex items-center justify-center gap-2 rounded-full bg-blue-700 px-8 py-3 text-white hover:bg-blue-600"
       >
         {buttonLoading ? (
           <>

@@ -1,10 +1,13 @@
+import { redirect } from "next/navigation";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getCourseData } from "@/db/queries/courses";
 import { courseEnrollment, discussion } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
-import { and, eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
+
 import AddNewReply from "../_components/add-new-reply";
 import UpvoteBtn from "../_components/upvote-btn";
 
@@ -49,9 +52,9 @@ const DiscussionIdPage = async ({
     redirect(`/courses/${params.courseSlug}`);
   }
 
-  let isInstructor = discussionInfo.courseId === courseData.id;
+  const isInstructor = discussionInfo.courseId === courseData.id;
 
-  let userHasUpvoted = !!discussionInfo?.votes.find(
+  const userHasUpvoted = !!discussionInfo?.votes.find(
     (vote) => vote.userId === userSession?.userId
   );
 
@@ -71,7 +74,7 @@ const DiscussionIdPage = async ({
     <div className="my-6 px-6">
       <section>
         <h2 className="text-3xl font-bold">{discussionInfo.question}</h2>
-        <div className="flex items-center gap-5 mt-1 mb-3">
+        <div className="mb-3 mt-1 flex items-center gap-5">
           <p>{formatDate(discussionInfo.createdAt!)}</p>
 
           <span> &#x25CF; By {discussionInfo.user.name}</span>
@@ -86,7 +89,7 @@ const DiscussionIdPage = async ({
           />
         </div>
 
-        <div className="mb-3 bg-white rounded-md px-3 py-2">
+        <div className="mb-3 rounded-md bg-white px-3 py-2">
           {discussionInfo.description}
         </div>
       </section>
@@ -98,16 +101,16 @@ const DiscussionIdPage = async ({
       {discussionInfo.answers.length > 0 && (
         <section className="flex flex-col gap-5">
           {discussionInfo.answers.map((reply) => (
-            <div className="px-3 py-2 rounded-md bg-white" key={reply.id}>
+            <div className="rounded-md bg-white px-3 py-2" key={reply.id}>
               <h3>
                 <span className="mr-1 font-semibold">{reply.user.name}</span>
                 {isInstructor && (
-                  <span className="bg-emerald-600 text-sm text-white px-2 rounded-md py-1">
+                  <span className="rounded-md bg-emerald-600 px-2 py-1 text-sm text-white">
                     Instructor
                   </span>
                 )}
               </h3>
-              <p className="text-gray-600 text-sm  mb-1">
+              <p className="mb-1 text-sm text-gray-600">
                 {formatDate(reply.createdAt!)}
               </p>
               <div className="">{reply.reply}</div>

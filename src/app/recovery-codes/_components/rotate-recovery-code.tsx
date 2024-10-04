@@ -1,10 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { Button } from "@/components/ui/button";
 
 export default function RotateRecoveryCode() {
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ export default function RotateRecoveryCode() {
   return (
     <Button onClick={handleClick} disabled={loading} variant="destructive">
       {loading ? (
-        <Loader2 className="animate-spin mx-auto" />
+        <Loader2 className="mx-auto animate-spin" />
       ) : (
         "Rotate Recovery Codes"
       )}

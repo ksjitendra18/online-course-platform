@@ -1,5 +1,7 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 
+import { env } from "@/utils/env/server";
+
 const algorithm = "aes-256-gcm";
 const ivLength = 12;
 const tagLength = 16;
@@ -14,7 +16,7 @@ export enum EncryptionPurpose {
 
 export function aesEncrypt(plaintext: string, purpose: EncryptionPurpose) {
   try {
-    const SECRET_KEY = process.env[purpose]!;
+    const SECRET_KEY = env[purpose]!;
 
     const iv = randomBytes(ivLength);
     const cipher = createCipheriv(algorithm, SECRET_KEY, iv);
@@ -32,7 +34,7 @@ export function aesEncrypt(plaintext: string, purpose: EncryptionPurpose) {
 
 export function aesDecrypt(ciphertext: string, purpose: EncryptionPurpose) {
   try {
-    const SECRET_KEY = process.env[purpose];
+    const SECRET_KEY = env[purpose];
 
     if (!SECRET_KEY) {
       throw new Error("Secret key not found");

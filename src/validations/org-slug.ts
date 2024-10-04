@@ -1,4 +1,4 @@
-import { object, string, z } from "zod";
+import { z } from "zod";
 
 export const OrgSlugSchema = z
   .string({ required_error: "Organisation Slug is required" })

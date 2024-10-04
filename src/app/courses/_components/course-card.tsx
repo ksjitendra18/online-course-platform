@@ -1,7 +1,10 @@
-import { course, type Course } from "@/db/schema";
-import { BookOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
+import { BookOpen } from "lucide-react";
+
+import { type Course } from "@/db/schema";
+
 interface Props {
   courseInfo: Pick<Course, "title" | "imageUrl" | "isFree" | "price" | "slug">;
   moduleLength: number;
@@ -11,8 +14,8 @@ const CourseCard = ({ courseInfo, moduleLength }: Props) => {
   return (
     <>
       <Link href={`/courses/${courseInfo.slug}`}>
-        <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
-          <div className="relative w-full aspect-video rounded-md overflow-hidden">
+        <div className="group h-full overflow-hidden rounded-lg border p-3 transition hover:shadow-sm">
+          <div className="relative aspect-video w-full overflow-hidden rounded-md">
             <Image
               fill
               className="object-cover"
@@ -24,13 +27,13 @@ const CourseCard = ({ courseInfo, moduleLength }: Props) => {
             />
           </div>
           <div className="flex flex-col pt-2">
-            <div className="text-lg md:text-base font-medium group-hover:text-sky-700 transition line-clamp-2">
+            <div className="line-clamp-2 text-lg font-medium transition group-hover:text-sky-700 md:text-base">
               {courseInfo.title}
             </div>
           </div>
 
-          <div className="flex my-2 items-center gap-x-1 text-slate-500">
-            <div className="rounded-full flex items-center justify-center bg-sky-100 p-1">
+          <div className="my-2 flex items-center gap-x-1 text-slate-500">
+            <div className="flex items-center justify-center rounded-full bg-sky-100 p-1">
               <BookOpen size={18} />
             </div>
             <span className="text-sm">
@@ -38,7 +41,7 @@ const CourseCard = ({ courseInfo, moduleLength }: Props) => {
             </span>
           </div>
 
-          <div className="bg-blue-700 my-5 w-fit text-white px-2 py-1 rounded-md">
+          <div className="my-5 w-fit rounded-md bg-blue-700 px-2 py-1 text-white">
             {courseInfo.isFree ? (
               <span>Free</span>
             ) : (

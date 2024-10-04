@@ -1,6 +1,7 @@
+import { and, eq, inArray } from "drizzle-orm";
+
 import { db } from "@/db";
 import { chapter, courseModule, courseProgress } from "@/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
 
 export const getProgress = async (userId: string, courseId: string) => {
   try {

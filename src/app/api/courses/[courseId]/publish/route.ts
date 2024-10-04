@@ -1,8 +1,9 @@
+import { eq } from "drizzle-orm";
+
 import { clearCourseData } from "@/actions/clear-course-data";
 import { db } from "@/db";
 import { course } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
-import { eq } from "drizzle-orm";
 
 export async function POST(
   request: Request,
@@ -29,6 +30,7 @@ export async function POST(
       where: eq(course.id, courseId),
       columns: {
         id: true,
+        slug: true,
         isFree: true,
         status: true,
       },
@@ -58,7 +60,7 @@ export async function POST(
       .set({ status: "published" })
       .where(eq(course.id, courseId));
 
-    await clearCourseData(courseId);
+    await clearCourseData(courseInfo.slug);
 
     return Response.json({
       data: {

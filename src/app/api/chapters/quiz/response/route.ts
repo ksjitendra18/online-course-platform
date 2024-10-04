@@ -1,3 +1,7 @@
+import { NextRequest } from "next/server";
+
+import { and, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import {
   chapter,
@@ -8,8 +12,6 @@ import {
 } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { QuizResponsesSchema } from "@/validations/quiz-response";
-import { and, eq } from "drizzle-orm";
-import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {

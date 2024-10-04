@@ -1,14 +1,13 @@
-import { getUserSessionRedis } from "@/db/queries/auth";
-import ChapterEditForm from "@/app/dashboard/components/chapter-edit-form";
-import ChapterInformation from "@/app/dashboard/components/chapter-info-form";
-import { db } from "@/db";
-import { chapter, course, courseMember } from "@/db/schema";
-import { cn } from "@/lib/utils";
-import { and, eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
+
+import { and, eq } from "drizzle-orm";
 import { FaHome } from "react-icons/fa";
+
+import ChapterEditForm from "@/app/dashboard/components/chapter-edit-form";
+import { db } from "@/db";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { chapter, course, courseMember } from "@/db/schema";
 
 export const metadata = {
   title: "Edit Chapter",
@@ -84,9 +83,9 @@ const EditChapter = async ({
 
   return (
     <>
-      <section className="px-6 py-3 w-full">
-        <div className="flex items-center gap-2 my-5">
-          <Link className="flex  ease-in items-center gap-3" href="/dashboard">
+      <section className="w-full px-6 py-3">
+        <div className="my-5 flex items-center gap-2">
+          <Link className="flex items-center gap-3 ease-in" href="/dashboard">
             <FaHome />
             Home &gt;
           </Link>
@@ -126,8 +125,8 @@ const EditChapter = async ({
           </Link>
         </div>
 
-        <div className="flex justify-between md:justify-start gap-x-3 items-center">
-          <h1 className="text-2xl font-bold my-3">Edit Chapter</h1>
+        <div className="flex items-center justify-between gap-x-3 md:justify-start">
+          <h1 className="my-3 text-2xl font-bold">Edit Chapter</h1>
         </div>
         <ChapterEditForm
           moduleSlug={params.moduleSlug}

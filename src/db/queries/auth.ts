@@ -1,9 +1,11 @@
+import { cookies } from "next/headers";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { session } from "@/db/schema";
-import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 import redis from "@/lib/redis";
-import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
 interface CurrentUser {
   userId: string;

@@ -1,14 +1,13 @@
-import Bowser from "bowser";
-import { and, eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+
+import { hash } from "@node-rs/argon2";
 // import murmurHash from "murmurhash3js";
 import { xxh32, xxh64 } from "@node-rs/xxhash";
-
+import Bowser from "bowser";
+import { and, eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 
 import { db } from "@/db";
-import { hash } from "@node-rs/argon2";
-import redis from "./redis";
-
 import {
   courseMember,
   loginLog,
@@ -17,15 +16,18 @@ import {
   session,
   user,
 } from "@/db/schema";
-import { cookies } from "next/headers";
-import { aesDecrypt, EncryptionPurpose } from "./aes";
+import { env } from "@/utils/env/server";
+
+import { EncryptionPurpose, aesDecrypt } from "./aes";
+import redis from "./redis";
 
 type NewUserArgs = {
   email: string;
   userName: string;
   name: string;
-  profilePhoto: string;
+  avatar?: string;
   emailVerified: boolean;
+  trx?: typeof db;
 };
 
 type UserExistArgs = {
@@ -45,31 +47,26 @@ type NewLogsArgs = {
   strategy: "google" | "credentials" | "magic_link";
 };
 
-type TokenArgs = {
-  userId: string;
-  strategy: "google";
-  refreshToken: string;
-  accessToken: string;
-};
-
 const expiresAt = new Date();
 expiresAt.setDate(expiresAt.getDate() + 14);
 
 export const createUser = async ({
   email,
   name,
-  profilePhoto,
+  avatar,
   userName,
   emailVerified,
+  trx = db,
 }: NewUserArgs) => {
   try {
-    const newUser = await db
+    const newUser = await trx
       .insert(user)
       .values({
         name,
         userName,
         email,
         emailVerified,
+        avatar,
       })
       .returning({ id: user.id });
 
@@ -128,14 +125,15 @@ export const createOauthProvider = async ({
   providerId,
   userId,
   strategy,
+  trx = db,
 }: {
   providerId: string | number;
   userId: string;
-
   strategy: "google";
+  trx?: typeof db;
 }) => {
   try {
-    await db.insert(oauthProvider).values({
+    await trx.insert(oauthProvider).values({
       providerUserId: String(providerId),
       userId,
       provider: strategy,
@@ -265,7 +263,7 @@ export const sendVerificationMail = async ({ email }: { email: string }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${process.env.ZOHO_MAIL_TOKEN}`,
+          Authorization: `${env.ZOHO_MAIL_TOKEN}`,
         },
         // to: email,
         body: JSON.stringify({
@@ -368,7 +366,7 @@ export const sendPasswordResetMail = async ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${process.env.ZOHO_MAIL_TOKEN}`,
+          Authorization: `${env.ZOHO_MAIL_TOKEN}`,
         },
         body: JSON.stringify({
           from: { address: "auth-donotreply@learningapp.link" },
@@ -379,7 +377,7 @@ export const sendPasswordResetMail = async ({
               },
             },
           ],
-          subject: `Password Reset Request`,
+          subject: "Password Reset Request",
           htmlbody: `<div>Reset your password </div>
           <a href=${url}/forgot-password/${verificationId}>Reset Password</a>
           <div>The link is valid for only 1 hour</div>
@@ -532,7 +530,7 @@ export const sendMagicLink = async ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${process.env.ZOHO_MAIL_TOKEN}`,
+          Authorization: `${env.ZOHO_MAIL_TOKEN}`,
         },
         body: JSON.stringify({
           from: { address: "auth-donotreply@learningapp.link" },
@@ -543,7 +541,7 @@ export const sendMagicLink = async ({
               },
             },
           ],
-          subject: `Log in to Learning App`,
+          subject: "Log in to Learning App",
           htmlbody: `<div>Log in as ${email} </div>
           <a href="${url}/magic-link/${verificationId}">Log in</a>
           <div>The link is valid for 2 hours</div>

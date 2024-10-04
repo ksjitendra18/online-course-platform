@@ -1,13 +1,17 @@
+import { headers } from "next/headers";
+import { NextRequest } from "next/server";
+
+import { eq } from "drizzle-orm";
+import { createHmac } from "node:crypto";
+
 import { db } from "@/db";
 import { course, courseEnrollment, purchase, user } from "@/db/schema";
 import { formatPrice } from "@/lib/utils";
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { NextRequest } from "next/server";
-import { createHmac } from "node:crypto";
+import { env } from "@/utils/env/server";
+
 export async function POST(request: NextRequest) {
   try {
-    const webhookSecret = process.env.WEBHOOK_SECRET;
+    const webhookSecret = env.RAZORPAY_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
       return Response.json(
@@ -69,7 +73,7 @@ export async function POST(request: NextRequest) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${process.env.ZOHO_MAIL_TOKEN}`,
+            Authorization: `${env.ZOHO_MAIL_TOKEN}`,
           },
           body: JSON.stringify({
             from: { address: "orders-donotreply@learningapp.link" },
@@ -80,7 +84,7 @@ export async function POST(request: NextRequest) {
                 },
               },
             ],
-            subject: `Order Confirmation`,
+            subject: "Order Confirmation",
             htmlbody: `<h2>
             Start your learning journey
             </h2>

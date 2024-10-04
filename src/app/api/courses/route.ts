@@ -1,11 +1,13 @@
-import { db } from "@/db";
-import { course, courseLogs, courseMember, session } from "@/db/schema";
-import { aesDecrypt, EncryptionPurpose } from "@/lib/aes";
-import { BasicInfoSchema } from "@/validations/basic-info";
-import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
-export async function GET(request: Request) {
+import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { course, courseLogs, courseMember, session } from "@/db/schema";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
+import { BasicInfoSchema } from "@/validations/basic-info";
+
+export async function GET() {
   const allCourses = await db.query.course.findMany({
     columns: {
       id: true,

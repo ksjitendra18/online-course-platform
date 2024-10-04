@@ -1,7 +1,9 @@
 "use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import { Loader2 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const VerifyMagicLink = ({ id }: { id: string }) => {
@@ -43,23 +45,23 @@ const VerifyMagicLink = ({ id }: { id: string }) => {
   return (
     <div>
       {loading && (
-        <div className="my-20 flex justify-center items-center">
-          <Loader2 className="animate-spin h-10 w-10  rounded-full" />
+        <div className="my-20 flex items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin rounded-full" />
           Verifying magic link...
         </div>
       )}
 
       {success && (
-        <div className="my-20 flex justify-center items-center">
-          <p className="bg-green-700 text-white rounded-md px-4 py-2 ">
+        <div className="my-20 flex items-center justify-center">
+          <p className="rounded-md bg-green-700 px-4 py-2 text-white">
             Logged in successfully. Redirecting...
           </p>
         </div>
       )}
 
       {error && (
-        <div className="my-20 flex justify-center items-center">
-          <p className="bg-red-700 text-white rounded-md px-4 py-2 ">{error}</p>
+        <div className="my-20 flex items-center justify-center">
+          <p className="rounded-md bg-red-700 px-4 py-2 text-white">{error}</p>
         </div>
       )}
     </div>

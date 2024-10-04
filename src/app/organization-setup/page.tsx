@@ -1,8 +1,8 @@
-import React from "react";
-import OrganizationSetup from "../(auth)/_components/organization-setup";
-import { getUserSessionRedis } from "@/db/queries/auth";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+
+import { getUserSessionRedis } from "@/db/queries/auth";
+
+import OrganizationSetup from "../(auth)/_components/organization-setup";
 
 export const metadata = {
   title: "Organization Setup",
@@ -22,7 +22,7 @@ const OrganizationSetupPage = async () => {
   // }
   return (
     <>
-      <h1 className="text-3xl my-5 font-bold text-center">
+      <h1 className="my-5 text-center text-3xl font-bold">
         Organization Setup
       </h1>
       <OrganizationSetup />
