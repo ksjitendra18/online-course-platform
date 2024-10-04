@@ -1,9 +1,8 @@
-import { cookies } from "next/headers";
 
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { session, user } from "@/db/schema";
+import { user } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { ProfileSchema } from "@/validations/profile";
 

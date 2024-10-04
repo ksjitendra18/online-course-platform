@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 const DeleteCourse = ({ courseId }: { courseId: string }) => {
-  let closeBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {

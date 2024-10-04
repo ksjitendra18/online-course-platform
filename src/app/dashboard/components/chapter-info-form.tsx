@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 
 import {
   AlertTriangle,
@@ -77,7 +77,7 @@ const ChapterInformation = ({
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleCreateCourse = async (e: any) => {
+  const handleCreateCourse = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFormErrors(null);
@@ -88,7 +88,7 @@ const ChapterInformation = ({
       router.refresh();
     }
 
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const chapterName = formData.get("chapterName");
     const chapterSlug = formData.get("chapterSlug");
@@ -142,7 +142,7 @@ const ChapterInformation = ({
     }
   };
 
-  const handleUpload = async (e: any) => {
+  const handleUpload = async () => {
     setVideoUploadError(false);
 
     const file = videoInput?.current?.files?.[0];

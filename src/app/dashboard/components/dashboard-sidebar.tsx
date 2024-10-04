@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
 
 import { IoMdAnalytics } from "react-icons/io";
-import { MdCategory, MdDashboard, MdLibraryBooks } from "react-icons/md";
-import { RxDashboard } from "react-icons/rx";
+import { MdDashboard, MdLibraryBooks } from "react-icons/md";
 
 import { cn } from "@/lib/utils";
 

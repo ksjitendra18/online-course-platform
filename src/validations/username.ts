@@ -1,4 +1,4 @@
-import { object, string, z } from "zod";
+import { z } from "zod";
 
 export const UsernameSchema = z
   .string({ required_error: "username is required" })

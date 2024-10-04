@@ -1,9 +1,8 @@
-import { cookies } from "next/headers";
 
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { course, session } from "@/db/schema";
+import { course } from "@/db/schema";
 import { discussion } from "@/db/schema/discussion";
 import { checkAuth } from "@/lib/auth";
 import DiscussionSchema from "@/validations/discussion";
@@ -63,7 +62,7 @@ export async function POST(request: Request) {
     });
     return Response.json({ success: true }, { status: 201 });
   } catch (error) {
-    console.log(`error POST Discussions `, error);
+    console.log("error POST Discussions ", error);
     return Response.json(
       { error: { code: "server_error", message: "Server Error" } },
       { status: 500 }

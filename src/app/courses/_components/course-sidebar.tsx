@@ -28,14 +28,13 @@ const CourseSidebar = ({
   chapterSlug,
   moduleSlug,
   userHasEnrolled,
-  userId,
   progressCount,
   completedChapterIds,
 }: {
   courseSlug: string;
   courseData: CourseData;
   purchaseInfo?: Purchase;
-  isPartOfCourse: any;
+  isPartOfCourse: boolean;
   chapterSlug: string;
   moduleSlug: string;
   userHasEnrolled: boolean;

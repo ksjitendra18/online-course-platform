@@ -32,7 +32,7 @@ export const discount = sqliteTable(
   })
 );
 
-export const discountRelations = relations(discount, ({ many, one }) => ({
+export const discountRelations = relations(discount, ({ one }) => ({
   course: one(course, {
     fields: [discount.courseId],
     references: [course.id],

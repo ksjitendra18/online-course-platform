@@ -2,7 +2,7 @@
   "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
   "plugins": ["check-file", "n"],
   "rules": {
-    "no-console": "warn",
+    // "no-console": "warn",
     "prefer-arrow-callback": ["error"],
     "prefer-template": ["error"],
     "semi": ["error"],

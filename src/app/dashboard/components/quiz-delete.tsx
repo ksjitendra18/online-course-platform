@@ -7,7 +7,6 @@ import { Loader2, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { mutate } from "swr";
 
-import { AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +26,7 @@ const DeleteQuiz = ({
   quizId: string;
   questionId: string;
 }) => {
-  let closeBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {

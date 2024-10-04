@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -14,7 +13,6 @@ const MagicLinkForm = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSucess] = useState(false);
-  const router = useRouter();
   const handleMagicLinkLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {

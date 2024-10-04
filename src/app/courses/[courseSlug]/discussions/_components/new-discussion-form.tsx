@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
@@ -39,8 +39,6 @@ const NewDiscussionForm = ({
     const question = formData.get("question");
     const description = formData.get("description");
 
-    console.log("question", question);
-
     try {
       const safeParsedData = DiscussionSchema.safeParse({
         question,
@@ -62,7 +60,7 @@ const NewDiscussionForm = ({
         setError("Internal Server Error. Try again later");
         return;
       }
-      const resData = await res.json();
+      // const resData = await res.json();
 
       if (res.status === 201) {
         router.push(`/courses/${courseSlug}/discussions`);

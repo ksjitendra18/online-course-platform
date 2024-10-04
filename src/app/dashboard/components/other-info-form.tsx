@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 
 import { AlertTriangle, Loader2, Upload } from "lucide-react";
 import toast from "react-hot-toast";
@@ -23,7 +23,6 @@ const OtherInformation = ({
   exisitingImage,
   teacherName,
   validity,
-  currentCategory,
   existingCategories,
 }: {
   courseSlug?: string;
@@ -40,7 +39,7 @@ const OtherInformation = ({
   existingCategories: string[];
   validity: number | null;
 }) => {
-  let imageRef = useRef<HTMLInputElement | null>(null);
+  const imageRef = useRef<HTMLInputElement | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(exisitingImage ?? "");
@@ -57,12 +56,12 @@ const OtherInformation = ({
   > | null>(null);
 
   const router = useRouter();
-  const handleCreateCourse = async (e: any) => {
+  const handleCreateCourse = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFormErrors(null);
     setCustomError(false);
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const coursePrice = formData.get("coursePrice");
     const teacherName = formData.get("teacherName");

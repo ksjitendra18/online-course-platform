@@ -75,7 +75,7 @@ const ModuleSlugPage = async ({
   });
 
   if (!courseModuleWithChapters) {
-    return redirect(`/dashboard/courses`);
+    return redirect("/dashboard/courses");
   }
 
   if (courseModuleWithChapters.courseModule[0].chapter?.length < 1) {

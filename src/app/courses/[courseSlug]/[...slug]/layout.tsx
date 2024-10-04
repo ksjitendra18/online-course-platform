@@ -10,11 +10,8 @@ import { getCourseData } from "@/db/queries/courses";
 import {
   CourseEnrollment,
   Purchase,
-  chapter,
-  course,
   courseEnrollment,
-  courseModule,
-  purchase,
+  purchase
 } from "@/db/schema";
 
 import CourseSidebar from "../../_components/course-sidebar";
@@ -99,7 +96,7 @@ const CourseLayout = async ({
       <CourseSidebar
         courseData={courseData}
         courseSlug={params.courseSlug}
-        isPartOfCourse={isPartOfCourse}
+        isPartOfCourse={!!isPartOfCourse}
         purchaseInfo={purchaseInfo}
         chapterSlug={params.slug[1]}
         moduleSlug={params.slug[0]}

@@ -1,19 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 import { Check, Loader2, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { ImSpinner2, ImSpinner8 } from "react-icons/im";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { useDebounce } from "use-debounce";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import LoginSchema from "@/validations/login";
 import { StudentSignupSchema } from "@/validations/student-signup";
 import { UsernameSchema } from "@/validations/username";
 
@@ -23,7 +20,6 @@ interface Props {
 }
 
 const StudentSignupForm = ({ loading, setLoading }: Props) => {
-  const [unverifiedEmail, setUnverifiedEmail] = useState(false);
   const [validationIssue, setValidationIssue] = useState<z.ZodFormattedError<
     z.infer<typeof StudentSignupSchema>,
     string
@@ -75,9 +71,6 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
       if (res.status === 201) {
         router.replace(`/verify/${resData.data.id}`);
       } else {
-        if (resData.error.code === "email_unverified") {
-          setUnverifiedEmail(true);
-        }
         setError(resData.error.message);
       }
     } catch (error) {
@@ -87,7 +80,7 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
     }
   };
 
-  const [checkingUsername, setCheckingUsername] = useState(false);
+  // const [checkingUsername, setCheckingUsername] = useState(false);
 
   const [usernameState, setUsernameState] = useState({
     isChecked: false,
@@ -101,7 +94,7 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
 
   const handleUserNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewUserName(e.target.value);
-    setCheckingUsername(true);
+    // setCheckingUsername(true);
   };
 
   useEffect(() => {
@@ -158,7 +151,7 @@ const StudentSignupForm = ({ loading, setLoading }: Props) => {
         toast.error("Error while checking username");
         setError("Server Error");
       } finally {
-        setCheckingUsername(false);
+        // setCheckingUsername(false);
       }
     };
     checkUsername();

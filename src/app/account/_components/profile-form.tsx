@@ -1,10 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
-import debounce from "lodash.debounce";
-import { Check, Loader, Loader2, Router, X } from "lucide-react";
+import { Check, Loader2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDebounce } from "use-debounce";
 import { z } from "zod";
@@ -71,7 +70,7 @@ const ProfileForm = ({ email, name, userName }: Props) => {
       }
 
       if (res.status === 200) {
-        router.replace(`/profile`);
+        router.replace("/profile");
         router.refresh();
       }
     } catch (error) {

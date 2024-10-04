@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { sendPasswordResetMail, sendVerificationMail } from "@/lib/auth";
+import { sendPasswordResetMail } from "@/lib/auth";
 import EmailSchema from "@/validations/email";
 
 export async function POST(request: NextRequest) {
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         {
           error: {
             code: "rate_limit",
-            message: `Please wait for 24 hrs before sending new mail request`,
+            message: "Please wait for 24 hrs before sending new mail request",
           },
         },
         { status: 429 }

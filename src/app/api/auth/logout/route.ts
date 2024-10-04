@@ -7,7 +7,7 @@ import { session } from "@/db/schema";
 import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 import redis from "@/lib/redis";
 
-export async function GET(request: Request) {
+export async function GET() {
   const authToken = cookies().get("auth-token")?.value;
   try {
     if (authToken) {

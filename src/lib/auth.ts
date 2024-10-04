@@ -47,13 +47,6 @@ type NewLogsArgs = {
   strategy: "google" | "credentials" | "magic_link";
 };
 
-type TokenArgs = {
-  userId: string;
-  strategy: "google";
-  refreshToken: string;
-  accessToken: string;
-};
-
 const expiresAt = new Date();
 expiresAt.setDate(expiresAt.getDate() + 14);
 
@@ -384,7 +377,7 @@ export const sendPasswordResetMail = async ({
               },
             },
           ],
-          subject: `Password Reset Request`,
+          subject: "Password Reset Request",
           htmlbody: `<div>Reset your password </div>
           <a href=${url}/forgot-password/${verificationId}>Reset Password</a>
           <div>The link is valid for only 1 hour</div>
@@ -548,7 +541,7 @@ export const sendMagicLink = async ({
               },
             },
           ],
-          subject: `Log in to Learning App`,
+          subject: "Log in to Learning App",
           htmlbody: `<div>Log in as ${email} </div>
           <a href="${url}/magic-link/${verificationId}">Log in</a>
           <div>The link is valid for 2 hours</div>

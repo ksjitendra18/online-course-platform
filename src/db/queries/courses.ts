@@ -33,8 +33,8 @@ export const getCourseInfo = unstable_cache(
       ),
     });
   },
-  [`get-course-info`],
-  { revalidate: 7200, tags: [`get-course-info`] }
+  ["get-course-info"],
+  { revalidate: 7200, tags: ["get-course-info"] }
 );
 
 type GetCourseDataParams = {
@@ -88,8 +88,8 @@ export const getCourseData = unstable_cache(
       },
     });
   },
-  [`get-course-data`],
-  { revalidate: 7200, tags: [`get-course-data`] }
+  ["get-course-data"],
+  { revalidate: 7200, tags: ["get-course-data"] }
 );
 
 export const getAllCoursesByUserId = unstable_cache(
@@ -127,8 +127,8 @@ export const getAllCoursesByUserId = unstable_cache(
       },
     });
   },
-  [`get-all-courses-admin`],
-  { revalidate: 7200, tags: [`get-all-courses-admin`] }
+  ["get-all-courses-admin"],
+  { revalidate: 7200, tags: ["get-all-courses-admin"] }
 );
 export const getDynamicCoursesByUserId = async (
   userId: string,
@@ -215,8 +215,8 @@ export const getPublishedCourses = unstable_cache(
       ),
     });
   },
-  [`get-published-course`],
-  { revalidate: 7200, tags: [`get-published-courses`] }
+  ["get-published-course"],
+  { revalidate: 7200, tags: ["get-published-courses"] }
 );
 
 export const getTotalEnrollments = unstable_cache(

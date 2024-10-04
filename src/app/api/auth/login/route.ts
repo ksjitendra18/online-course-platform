@@ -176,7 +176,7 @@ export async function POST(request: Request) {
     });
     return Response.json({ success: true });
   } catch (error) {
-    console.log(`error LOGIN`, error);
+    console.log("error LOGIN", error);
     return Response.json(
       { error: { code: "server_error", message: "Server Error" } },
       { status: 500 }

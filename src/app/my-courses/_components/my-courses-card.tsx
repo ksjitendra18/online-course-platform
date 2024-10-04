@@ -1,10 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { BookOpen } from "lucide-react";
-
 import CourseProgress from "@/app/courses/_components/course-progress";
-import { type Course, course } from "@/db/schema";
 
 import { CourseWithProgress } from "../page";
 

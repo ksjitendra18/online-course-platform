@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 
-import { customAlphabet } from "nanoid";
-
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getCourseData } from "@/db/queries/courses";
 

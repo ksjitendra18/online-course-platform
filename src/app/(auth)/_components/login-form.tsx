@@ -28,8 +28,6 @@ const LoginForm = ({ loading, setLoading }: Props) => {
 
   const redirectUrl = searchParams.get("next");
 
-  console.log("redirectUrl", redirectUrl);
-
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();

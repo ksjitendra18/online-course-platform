@@ -48,7 +48,7 @@ export const purchase = sqliteTable(
   }
 );
 
-export const purchaseRelations = relations(purchase, ({ many, one }) => ({
+export const purchaseRelations = relations(purchase, ({ one }) => ({
   course: one(course, {
     fields: [purchase.courseId],
     references: [course.id],

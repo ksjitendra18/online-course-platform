@@ -117,21 +117,18 @@ export async function POST(request: Request) {
         playbackId: parsedData.data.resourceData,
       });
     } else if (parsedData.data.type === "quiz") {
-      const newChapter = await db
-        .insert(chapter)
-        .values({
-          moduleId: moduleId,
-          position: allChapters[0].count + 1,
-          modulePosition: moduleChapters[0].count + 1,
-          description: parsedData.data.chapterDescription,
-          title: parsedData.data.chapterName,
-          slug: parsedData.data.chapterSlug,
-          isFree: parsedData.data.isFree,
-          type: parsedData.data.type,
-          status: "draft",
-          courseId,
-        })
-        .returning({ id: chapter.id });
+      await db.insert(chapter).values({
+        moduleId: moduleId,
+        position: allChapters[0].count + 1,
+        modulePosition: moduleChapters[0].count + 1,
+        description: parsedData.data.chapterDescription,
+        title: parsedData.data.chapterName,
+        slug: parsedData.data.chapterSlug,
+        isFree: parsedData.data.isFree,
+        type: parsedData.data.type,
+        status: "draft",
+        courseId,
+      });
     }
 
     return Response.json(null, { status: 201 });

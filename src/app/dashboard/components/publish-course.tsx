@@ -116,7 +116,7 @@ const PublishCourse = ({
                 </Button>
               </DialogClose>
 
-              <Button variant="outline" disabled onClick={() => {}}>
+              <Button variant="outline" disabled={isLoading} onClick={() => {}}>
                 Publish
               </Button>
             </DialogFooter>

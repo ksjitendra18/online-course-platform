@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { eq } from "drizzle-orm";
 import { authenticator } from "otplib";
@@ -7,7 +6,7 @@ import qrcode from "qrcode";
 
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
-import { recoveryCodes, user } from "@/db/schema";
+import { user } from "@/db/schema";
 
 import TwoFactorForm from "../../(auth)/_components/two-factor-form";
 

@@ -3,7 +3,6 @@
 import { FormEvent, useState } from "react";
 
 import { Loader2 } from "lucide-react";
-import { ImSpinner8 } from "react-icons/im";
 
 import { Button } from "@/components/ui/button";
 

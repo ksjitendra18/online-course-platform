@@ -1,4 +1,4 @@
-import { object, string } from "zod";
+import { string } from "zod";
 
 const PasswordSchema = string({ required_error: "Password is required" })
   .min(8, "Password should be more than 8 characters")

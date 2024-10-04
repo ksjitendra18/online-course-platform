@@ -6,7 +6,6 @@ import { useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,7 +25,7 @@ const DeleteChapter = ({
   chapterId: string;
   courseId: string;
 }) => {
-  let closeBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {

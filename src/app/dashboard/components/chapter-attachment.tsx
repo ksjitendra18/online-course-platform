@@ -16,7 +16,7 @@ interface Props {
 
 const ChapterAttachment = ({ exisitingImage }: Props) => {
   const { setResource } = useChapterStore();
-  let assetRef = useRef<HTMLInputElement | null>(null);
+  const assetRef = useRef<HTMLInputElement | null>(null);
 
   const [imageUrl, setImageUrl] = useState(exisitingImage ?? "");
   const [imageUploading, setImageUploading] = useState(false);
@@ -46,6 +46,7 @@ const ChapterAttachment = ({ exisitingImage }: Props) => {
 
       toast.success("File Uploaded Successfully");
     } catch (error) {
+      setCustomError(true);
     } finally {
       setImageUploading(false);
     }

@@ -1,12 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { FormEvent, useState } from "react";
 
-import debounce from "lodash.debounce";
-import { Check, Loader2 } from "lucide-react";
 import { ImSpinner8 } from "react-icons/im";
-import { LuEye, LuEyeOff } from "react-icons/lu";
 import slugify from "slugify";
 import { z } from "zod";
 
@@ -14,15 +11,9 @@ import { cn } from "@/lib/utils";
 import { OrganizationSetupSchema } from "@/validations/organization-setup";
 import { OrganizationSignupSchema } from "@/validations/organization-signup";
 
-interface Props {
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 const OrganizationSetup = () => {
   const [orgName, setOrgName] = useState("");
   // const [orgSlug, setOrgSlug] = useState("");
-  const [orgSlug, setOrgSlug] = useState(slugify(orgName, { lower: true }));
   const [validationIssue, setValidationIssue] = useState<z.ZodFormattedError<
     z.infer<typeof OrganizationSignupSchema>,
     string
@@ -30,7 +21,6 @@ const OrganizationSetup = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {

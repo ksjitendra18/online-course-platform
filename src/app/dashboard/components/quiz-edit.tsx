@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { FormEvent, RefObject, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { Check, Edit, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -13,7 +13,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -22,13 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import useQuizDataStore from "@/store/quiz-data";
 import { QuizEditSchema, QuizSchema } from "@/validations/quiz-question";
-
-interface Option {
-  value: string;
-  correct: boolean;
-}
 
 interface Props {
   questionId: string;
@@ -42,10 +35,10 @@ interface Props {
 
 const QuizEdit = ({ quizId, questionId, quesOptions, quizQuestion }: Props) => {
   const { mutate } = useSWRConfig();
-  const { incrQuestionLength } = useQuizDataStore();
+  // const { incrQuestionLength } = useQuizDataStore();
   const [loading, setLoading] = useState(false);
-  const [questionType, setQuestionType] = useState<"mcq" | "true_false">("mcq");
-  const [questionTypeDisabled, setQuestionTypeDisabled] = useState(false);
+  // const [questionType, setQuestionType] = useState<"mcq" | "true_false">("mcq");
+  // const [questionTypeDisabled, setQuestionTypeDisabled] = useState(false);
 
   const [formErrors, setFormErrors] = useState<ZodFormattedError<
     QuizSchema,
@@ -95,7 +88,7 @@ const QuizEdit = ({ quizId, questionId, quesOptions, quizQuestion }: Props) => {
         method: "PATCH",
         body: JSON.stringify({ ...parsedResult.data }),
       });
-      const resData = await res.json();
+      // await res.json();
 
       if (res.status === 200) {
         modalCloseRef.current?.click();
@@ -167,6 +160,18 @@ const QuizEdit = ({ quizId, questionId, quesOptions, quizQuestion }: Props) => {
           ))}
         </div>
         <DialogFooter>
+          {formErrors && (
+            <div className="flex flex-col gap-3">
+              {formErrors._errors.map((err, idx) => (
+                <p
+                  key={idx}
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
+                >
+                  {err}
+                </p>
+              ))}
+            </div>
+          )}
           <Button
             disabled={loading}
             variant="app"

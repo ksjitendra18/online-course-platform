@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 
 const ModuleStatus = ({
-  status,
+  // status,
   courseId,
   moduleId,
 }: {
@@ -28,7 +28,7 @@ const ModuleStatus = ({
   moduleId: string;
 }) => {
   const router = useRouter();
-  let closeBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {
     try {

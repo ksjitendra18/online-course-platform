@@ -19,12 +19,12 @@ import VideoPlayer from "@/app/courses/_components/video-player";
 import { Button } from "@/components/ui/button";
 import { capitalizeFirstWord, cn } from "@/lib/utils";
 import useQuizDataStore from "@/store/quiz-data";
+import { env } from "@/utils/env/client";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
 
 import ChapterAttachment from "./chapter-attachment";
 import ChapterQuiz from "./chapter-quiz";
 import ChapterText from "./chapter-text";
-import { env } from "@/utils/env/client";
 
 const ChapterEditForm = ({
   moduleId,
@@ -55,7 +55,7 @@ const ChapterEditForm = ({
 }) => {
   const videoInput = useRef<HTMLInputElement | null>(null);
 
-  const [chapterType, setChapterType] = useState(type);
+  const [chapterType] = useState(type);
 
   const router = useRouter();
 
@@ -66,7 +66,7 @@ const ChapterEditForm = ({
   const [isVideoUploading, setIsVideoUploading] = useState(false);
   const [videoId, setVideoId] = useState(videoData?.playbackId ?? "");
   const [newVideoId, setNewVideoId] = useState("");
-  const [updateVideo, setUpdateVideo] = useState(false);
+  const [updateVideo] = useState(false);
   const [videoDuration, setVideoDuration] = useState(videoData?.duration ?? 0);
   const [customError, setCustomError] = useState(false);
   const [chapterPaid, setChapterPaid] = useState(!isChapterFree);
@@ -78,7 +78,7 @@ const ChapterEditForm = ({
 
   // disable the button if the question length is less than 1
   // modal increases or decreases the question
-  const { questionLength, setQuestionLength } = useQuizDataStore();
+  const { questionLength } = useQuizDataStore();
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -149,7 +149,7 @@ const ChapterEditForm = ({
     }
   };
 
-  const handleUpload = async (e: any) => {
+  const handleUpload = async () => {
     setVideoUploadError(false);
 
     const file = videoInput?.current?.files?.[0];
@@ -399,10 +399,12 @@ const ChapterEditForm = ({
                 </>
               ) : (
                 <div className="my-5 flex flex-col items-center justify-between gap-3">
-                  <VideoPlayer
-                    autoPlay={false}
-                    playbackId={videoData?.playbackId!}
-                  />
+                  {videoData && (
+                    <VideoPlayer
+                      autoPlay={false}
+                      playbackId={videoData.playbackId}
+                    />
+                  )}
 
                   <button
                     className="mt-5 rounded-md bg-red-600 px-4 py-1 text-white"

@@ -3,14 +3,9 @@ import { FaJava } from "react-icons/fa";
 import { FaC, FaDatabase, FaNodeJs, FaPython, FaReact } from "react-icons/fa6";
 import {
   FcEngineering,
-  FcFilmReel,
-  FcMultipleDevices,
-  FcMusic,
-  FcOldTimeCamera,
-  FcSalesPerformance,
-  FcSportsMode,
+  FcMultipleDevices
 } from "react-icons/fc";
-import { MdEmojiPeople, MdWeb } from "react-icons/md";
+import { MdWeb } from "react-icons/md";
 
 import { Category } from "@/db/schema";
 

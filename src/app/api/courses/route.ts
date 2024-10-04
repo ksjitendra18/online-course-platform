@@ -7,7 +7,7 @@ import { course, courseLogs, courseMember, session } from "@/db/schema";
 import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 import { BasicInfoSchema } from "@/validations/basic-info";
 
-export async function GET(request: Request) {
+export async function GET() {
   const allCourses = await db.query.course.findMany({
     columns: {
       id: true,

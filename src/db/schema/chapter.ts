@@ -126,7 +126,7 @@ export const chapterLogs = sqliteTable(
   })
 );
 
-export const chapterLogsRelations = relations(chapterLogs, ({ one, many }) => ({
+export const chapterLogsRelations = relations(chapterLogs, ({ one }) => ({
   chapter: one(chapter, {
     fields: [chapterLogs.chapterId],
     references: [chapter.id],

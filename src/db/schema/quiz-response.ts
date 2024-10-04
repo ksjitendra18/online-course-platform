@@ -9,7 +9,6 @@ import {
 } from "drizzle-orm/sqlite-core";
 
 import { user } from "./auth";
-import { chapter } from "./chapter";
 import { course } from "./course";
 import { quiz, quizAnswer, quizQuestion } from "./quiz";
 
@@ -94,7 +93,7 @@ export const quizUserResponse = sqliteTable(
 
 export const quizUserResponseRelations = relations(
   quizUserResponse,
-  ({ one, many }) => ({
+  ({ one }) => ({
     quizResponse: one(quizResponse, {
       fields: [quizUserResponse.quizResponseId],
       references: [quizResponse.id],

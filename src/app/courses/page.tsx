@@ -1,7 +1,5 @@
 import { Suspense } from "react";
 
-import { Skeleton } from "@/components/ui/skeleton";
-
 import CategoryLoading from "./_components/category-loading";
 import CourseLoading from "./_components/course-loading";
 import FetchCategories from "./fetch-categories";

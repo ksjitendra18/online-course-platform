@@ -16,11 +16,8 @@ interface CategoryItemProps {
 
 export const CategoryItem = ({
   label,
-  id,
-  value,
   icon: Icon,
   slug,
-  currentCategoryId,
   currentCategory,
 }: CategoryItemProps) => {
   const isSelected = currentCategory === slug;

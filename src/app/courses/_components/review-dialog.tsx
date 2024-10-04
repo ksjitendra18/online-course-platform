@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import { Loader2, Star } from "lucide-react";
 import toast from "react-hot-toast";
@@ -15,8 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 const ReviewDialog = () => {
@@ -24,12 +22,15 @@ const ReviewDialog = () => {
   const [loading, setLoading] = useState(false);
   const [hoverIndex, setHoverIndex] = useState(-1);
   const [reviewDesc, setReviewDesc] = useState("");
-  const reviewDescRef = useRef<HTMLTextAreaElement>(null);
+  // const reviewDescRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch("/api/courses/review");
       setLoading(true);
+      const res = await fetch("/api/courses/review");
+      if(res.status === 201) {
+        toast.success("Review submitted successfully");
+      }
     } catch (error) {
       toast.error("Error while submitting review");
     } finally {

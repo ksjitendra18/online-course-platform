@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
@@ -73,8 +73,6 @@ const ChapterQuizQuestion = ({
   };
 
   const router = useRouter();
-
-  const pathname = usePathname();
 
   const handleSubmit = async () => {
     setLoading(true);

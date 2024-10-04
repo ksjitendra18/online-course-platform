@@ -23,5 +23,6 @@ export const env = createEnv({
     NODE_ENV: z.enum(["development", "production", "test"]),
   },
 
+  // eslint-disable-next-line n/no-process-env
   experimental__runtimeEnv: process.env,
 });

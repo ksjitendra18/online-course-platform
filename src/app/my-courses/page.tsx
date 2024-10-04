@@ -27,7 +27,7 @@ const MyCourses = async () => {
     (purchase) => purchase.course
   ) as CourseWithProgress[];
 
-  for (let course of courses) {
+  for (const course of courses) {
     const progress = await getProgress(userSession.userId, course.id);
     course["progress"] = progress.progressPercentage ?? 0;
   }

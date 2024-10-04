@@ -1,15 +1,12 @@
 import { redirect } from "next/navigation";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 import { eq } from "drizzle-orm";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/db";
-import { category, courseCategory } from "@/db/schema";
+import { category } from "@/db/schema";
 
-import CategoriesCard from "../../_components/category-card";
 import CategoryLoading from "../../_components/category-loading";
-import CourseCard from "../../_components/course-card";
 import CourseLoading from "../../_components/course-loading";
 import FetchCategories from "../../fetch-categories";
 import FetchCategoryCourses from "../_components/fetch-category-courses";

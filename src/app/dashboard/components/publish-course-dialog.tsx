@@ -37,7 +37,7 @@ const PublishCourseDialog = ({
       const res = await fetch(`/api/courses/${courseId}/publish`, {
         method: "POST",
       });
-      const json = await res.json();
+
       if (res.status === 200) {
         toast.success("Course published successfully");
       } else {

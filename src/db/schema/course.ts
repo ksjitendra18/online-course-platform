@@ -117,7 +117,7 @@ export const courseRelations = relations(course, ({ many, one }) => ({
   chapterLogs: many(chapterLogs),
 }));
 
-export const courseLogsRelations = relations(courseLogs, ({ one, many }) => ({
+export const courseLogsRelations = relations(courseLogs, ({ one }) => ({
   course: one(course, {
     fields: [courseLogs.courseId],
     references: [course.id],

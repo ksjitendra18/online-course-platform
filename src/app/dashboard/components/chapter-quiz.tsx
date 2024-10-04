@@ -40,17 +40,14 @@ export type QData = {
 const ChapterQuiz = ({ moduleId, courseId, chapterSlug }: Props) => {
   const qNo = ["a", "b", "c", "d"];
 
-  const { questionLength, setQuestionLength } = useQuizDataStore();
+  const { setQuestionLength } = useQuizDataStore();
 
   const fetcher = () =>
     fetch(
       `/api/chapters/quiz/questions?moduleId=${moduleId}&courseId=${courseId}&chapterSlug=${chapterSlug}`
     ).then((res) => res.json());
 
-  const { data, isLoading, error } = useSWR<QData, boolean>(
-    `questions`,
-    fetcher
-  );
+  const { data, isLoading } = useSWR<QData, boolean>("questions", fetcher);
 
   useEffect(() => {
     if (data && data?.questions) {

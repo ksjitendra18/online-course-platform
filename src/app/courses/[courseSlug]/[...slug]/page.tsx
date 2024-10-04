@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { and, desc, eq } from "drizzle-orm";
-import { Check, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
@@ -16,7 +14,6 @@ import {
   courseEnrollment,
   courseModule,
   purchase,
-  quiz,
   quizResponse,
 } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
@@ -24,7 +21,6 @@ import { formatDate } from "@/lib/utils";
 import BuyCourse from "../../_components/buy-course";
 import ChapterQuiz from "../../_components/chapter-quiz";
 import QuizDuration from "../../_components/quiz-duration";
-import VideoPlayer from "../../_components/video-player";
 import VideoPlayerWithProgress from "../../_components/video-player-progress";
 
 export const revalidate = 0;
@@ -175,7 +171,7 @@ const ChapterPage = async ({
                   <>
                     <p className="rounded-md bg-blue-600 px-4 py-2 text-white">
                       Attempted at:{" "}
-                      {formatDate(chapterInfo?.quiz[0].response[0].createdAt!)}
+                      {formatDate(chapterInfo.quiz[0].response[0].createdAt)}
                     </p>
                   </>
                 ) : (
@@ -265,7 +261,7 @@ const ChapterPage = async ({
               </>
             ) : (
               <BuyCourse
-                coursePrice={courseData?.price!}
+                coursePrice={courseData.price}
                 courseId={courseData.id}
                 email={userSession.email}
                 userId={userSession.userId!}

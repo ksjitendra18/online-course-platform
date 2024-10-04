@@ -1,19 +1,15 @@
 "use client";
 
-// import { AlertTriangle, Info, Loader2 } from "lucide-solid";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { FiAlertTriangle, FiInfo } from "react-icons/fi";
-import { ImSpinner8 } from "react-icons/im";
+import { FiAlertTriangle } from "react-icons/fi";
 import slugify from "slugify";
 import { type ZodFormattedError } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { BasicInfoSchema } from "@/validations/basic-info";
 import { ModuleInfoSchema } from "@/validations/module-info";
 
 // this same component is responsible for both editing and
@@ -46,13 +42,13 @@ const ModuleInformation = ({
     string
   > | null>(null);
 
-  const handleCreateModule = async (e: any) => {
+  const handleCreateModule = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFormErrors(null);
     setCustomError(false);
     setSlugExists(false);
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
 
     const moduleName = formData.get("moduleName");
     const moduleSlug = formData.get("moduleSlug");

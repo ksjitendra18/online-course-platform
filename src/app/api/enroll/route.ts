@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
             },
           },
         ],
-        subject: `Enrollment Confirmation`,
+        subject: "Enrollment Confirmation",
         htmlbody: `<h2>
         Start your learning journey
         </h2>

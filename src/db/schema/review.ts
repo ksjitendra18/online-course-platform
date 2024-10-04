@@ -50,7 +50,7 @@ export const review = sqliteTable(
   })
 );
 
-export const reviewRelations = relations(review, ({ one, many }) => ({
+export const reviewRelations = relations(review, ({ one }) => ({
   course: one(course, {
     fields: [review.courseId],
     references: [course.id],

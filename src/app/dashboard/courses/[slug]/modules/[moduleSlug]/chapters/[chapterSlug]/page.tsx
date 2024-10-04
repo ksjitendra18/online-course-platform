@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { and, eq } from "drizzle-orm";
 import { Check, X } from "lucide-react";
@@ -11,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { chapter, course, courseMember } from "@/db/schema";
-import { capitalizeFirstWord, cn } from "@/lib/utils";
+import { capitalizeFirstWord } from "@/lib/utils";
 
 export const metadata = {
   title: "View Chapter",

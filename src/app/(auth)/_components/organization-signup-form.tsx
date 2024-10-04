@@ -22,7 +22,7 @@ interface Props {
 }
 
 const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
-  const [orgName, setOrgName] = useState("");
+  const [orgName,] = useState("");
   // const [orgSlug, setOrgSlug] = useState("");
   const [orgSlug, setOrgSlug] = useState(slugify(orgName, { lower: true }));
   const [validationIssue, setValidationIssue] = useState<z.ZodFormattedError<
@@ -92,7 +92,6 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
     }
   };
 
-  const [checkingUsername, setCheckingUsername] = useState(false);
 
   const [usernameState, setUsernameState] = useState({
     isChecked: false,
@@ -106,7 +105,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
 
   const handleUserNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewUserName(e.target.value);
-    setCheckingUsername(true);
+    // setCheckingUsername(true);
   };
 
   useEffect(() => {
@@ -163,7 +162,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
         toast.error("Error while checking username");
         // setError("Server Error");
       } finally {
-        setCheckingUsername(false);
+        // setCheckingUsername(false);
       }
     };
     checkUsername();
@@ -173,7 +172,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
 
   const handleOrgChange = (e: ChangeEvent<HTMLInputElement>) => {
     setOrgSlug(slugify(e.target.value, { lower: true }));
-    setCheckingUsername(true);
+    // setCheckingUsername(true);
   };
 
   const [orgState, setOrgState] = useState({
@@ -237,7 +236,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
         toast.error("Error while checking username");
         // setError("Server Error");
       } finally {
-        setCheckingUsername(false);
+        // setCheckingUsername(false);
       }
     };
     checkOrgSlug();

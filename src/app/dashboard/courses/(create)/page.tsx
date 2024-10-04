@@ -1,11 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getUserSessionRedis } from "@/db/queries/auth";
 import {
-  getAllCoursesByUserId,
-  getDynamicCoursesByUserId,
+  getAllCoursesByUserId
 } from "@/db/queries/courses";
 import { formatPrice } from "@/lib/utils";
 

@@ -1,15 +1,12 @@
 "use client";
 
-import { revalidatePath, revalidateTag } from "next/cache";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 interface Props {
   numberOfReplies: number;
@@ -33,7 +30,6 @@ const AddNewReply = ({ numberOfReplies, discussionId }: Props) => {
         body: JSON.stringify({ reply, discussionId }),
       });
 
-      const resData = await res.json();
 
       if (res.status === 201) {
         router.refresh();

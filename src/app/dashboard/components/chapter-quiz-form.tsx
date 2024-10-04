@@ -34,14 +34,14 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
   const { mutate } = useSWRConfig();
   const { incrQuestionLength } = useQuizDataStore();
   const [loading, setLoading] = useState(false);
-  const [questionType, setQuestionType] = useState<"mcq" | "true_false">("mcq");
-  const [questionTypeDisabled, setQuestionTypeDisabled] = useState(false);
+  // const [questionType, setQuestionType] = useState<"mcq" | "true_false">("mcq");
+  // const [questionTypeDisabled, setQuestionTypeDisabled] = useState(false);
 
   const [formErrors, setFormErrors] = useState<ZodFormattedError<
     QuizSchema,
     string
   > | null>(null);
-  
+
   const modalCloseRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
@@ -94,7 +94,6 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
         method: "POST",
         body: JSON.stringify({ ...parsedResult.data }),
       });
-      const resData = await res.json();
 
       if (res.status === 201) {
         modalCloseRef.current?.click();
@@ -164,6 +163,18 @@ const ChapterQuizForm = ({ moduleId, courseId, chapterSlug }: Props) => {
           ))}
         </div>
         <DialogFooter>
+          {formErrors && (
+            <div className="flex flex-col gap-3">
+              {formErrors._errors.map((err) => (
+                <p
+                  key={err}
+                  className="my-5 rounded-md bg-red-500 px-3 py-2 text-white"
+                >
+                  {err}
+                </p>
+              ))}
+            </div>
+          )}
           <Button
             disabled={loading}
             variant="app"

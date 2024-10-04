@@ -1,6 +1,4 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { getUserSessionRedis } from "@/db/queries/auth";
 

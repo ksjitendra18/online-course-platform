@@ -1,16 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { and, eq } from "drizzle-orm";
 import { FaHome } from "react-icons/fa";
 
 import ChapterEditForm from "@/app/dashboard/components/chapter-edit-form";
-import ChapterInformation from "@/app/dashboard/components/chapter-info-form";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { chapter, course, courseMember } from "@/db/schema";
-import { cn } from "@/lib/utils";
 
 export const metadata = {
   title: "Edit Chapter",

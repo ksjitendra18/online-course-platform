@@ -37,7 +37,7 @@ const DiscussionPage = async ({
     ),
   });
 
-  let isInstructor = await db.query.courseMember.findFirst({
+  const isInstructor = await db.query.courseMember.findFirst({
     where: eq(courseMember.courseId, courseData.id),
   });
 

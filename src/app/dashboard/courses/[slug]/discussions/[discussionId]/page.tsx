@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { and, eq } from "drizzle-orm";
 
 import AddNewReply from "@/app/courses/[courseSlug]/discussions/_components/add-new-reply";
 import UpvoteBtn from "@/app/courses/[courseSlug]/discussions/_components/upvote-btn";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getCourseInfo } from "@/db/queries/courses";
@@ -27,7 +25,7 @@ const DiscussionIdPage = async ({
   const userSession = await getUserSessionRedis();
 
   if (!userSession) {
-    return redirect(`/dashboard/courses`);
+    return redirect("/dashboard/courses");
   }
   const courseData = await getCourseInfo(params.slug, userSession.userId);
   const discussionInfo = await db.query.discussion.findFirst({
@@ -53,9 +51,9 @@ const DiscussionIdPage = async ({
   if (!discussionInfo || !courseData || !userSession) {
     redirect("/");
   }
-  let isInstructor = discussionInfo.courseId === courseData.id;
+  const isInstructor = discussionInfo.courseId === courseData.id;
 
-  let userHasUpvoted = !!discussionInfo?.votes.find(
+  const userHasUpvoted = !!discussionInfo?.votes.find(
     (vote) => vote.userId === userSession?.userId
   );
 
@@ -65,6 +63,8 @@ const DiscussionIdPage = async ({
       eq(courseEnrollment.userId, userSession.userId)
     ),
   });
+
+  // TODO: FIX ALLOW UPVOTE AND COMMENTS FROM ENROLLED
 
   if (!isInstructor) {
     return redirect(`/courses/${params.slug}`);
@@ -93,10 +93,12 @@ const DiscussionIdPage = async ({
         </div>
       </section>
 
-      <AddNewReply
-        discussionId={discussionInfo.id}
-        numberOfReplies={discussionInfo.answers.length}
-      />
+      {isEnrolled && (
+        <AddNewReply
+          discussionId={discussionInfo.id}
+          numberOfReplies={discussionInfo.answers.length}
+        />
+      )}
       {discussionInfo.answers.length > 0 && (
         <section className="flex flex-col gap-5">
           {discussionInfo.answers.map((reply) => (

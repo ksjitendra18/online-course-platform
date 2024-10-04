@@ -30,6 +30,7 @@ export async function POST(
       where: eq(course.id, courseId),
       columns: {
         id: true,
+        slug: true,
         isFree: true,
         status: true,
       },
@@ -59,7 +60,7 @@ export async function POST(
       .set({ status: "published" })
       .where(eq(course.id, courseId));
 
-    await clearCourseData(courseId);
+    await clearCourseData(courseInfo.slug);
 
     return Response.json({
       data: {

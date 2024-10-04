@@ -10,8 +10,6 @@ import { Button } from "@/components/ui/button";
 
 const EnrollCourse = ({
   courseId,
-  isFree,
-  price,
 }: {
   courseId: string;
   isFree: boolean;

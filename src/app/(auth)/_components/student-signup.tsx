@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import toast from "react-hot-toast";
-import { FaGithub } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 
 import StudentSignupForm from "./student-signup-form";
@@ -25,7 +24,7 @@ const StudentSignup = () => {
       <h1 className="text-3xl font-bold">Sign up</h1>
       <div className="flex w-full flex-col items-center justify-center">
         <Link
-          href={loading ? `#` : "/api/auth/google"}
+          href={loading ? "#" : "/api/auth/google"}
           onClick={() => {
             handleLinkClick();
           }}

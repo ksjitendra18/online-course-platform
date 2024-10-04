@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 
 import { formatPrice } from "@/lib/utils";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 interface Props {
   coursePrice: number | null;
   userId: string;
@@ -29,12 +31,7 @@ type PaymentData = {
   courseId: string;
   // coursePrice: number;
 };
-const BuyCourse = ({
-  coursePrice,
-  courseId,
-  email,
-  userName,
-}: Props) => {
+const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonText, setButtonText] = useState("Course purchase in progress");
   const router = useRouter();
@@ -66,7 +63,7 @@ const BuyCourse = ({
     });
   };
 
-  const [checkForEnroll, setCheckForEnroll] = useState(false);
+  // const [checkForEnroll, setCheckForEnroll] = useState(false);
   let checkId: NodeJS.Timeout;
   const makePayment = async (paymentData: PaymentData) => {
     try {
@@ -99,11 +96,11 @@ const BuyCourse = ({
           setButtonText("Processing Payment");
           checkId = setInterval(async () => {
             const res = await fetch(`/api/enroll/check?courseId=${courseId}`);
-             await res.json();
+            await res.json();
             if (res.status === 200) {
               setButtonLoading(false);
               router.refresh();
-              setCheckForEnroll(true);
+              // setCheckForEnroll(true);
             }
           }, 5000);
         },

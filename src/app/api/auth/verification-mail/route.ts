@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         {
           error: {
             code: "rate_limit",
-            message: `Please wait for 24 hrs before sending new mail request`,
+            message: "Please wait for 24 hrs before sending new mail request",
           },
         },
         { status: 429 }

@@ -20,12 +20,12 @@ const DiscussionsPage = async ({ params }: { params: { slug: string } }) => {
   const userSession = await getUserSessionRedis();
 
   if (!userSession) {
-    return redirect(`/dashboard/courses`);
+    return redirect("/dashboard/courses");
   }
   const courseData = await getCourseInfo(params.slug, userSession.userId);
 
   if (!courseData) {
-    return redirect(`/dashboard/courses`);
+    return redirect("/dashboard/courses");
   }
   const allDiscussions = await getDiscussions(courseData.id);
 

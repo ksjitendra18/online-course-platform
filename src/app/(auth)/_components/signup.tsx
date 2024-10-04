@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 const Signup = () => {
-  const [loading, setLoading] = useState(false);
   return (
     <>
       <div className="mt-5 flex flex-col items-center justify-center px-3">

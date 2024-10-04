@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
           {
             error: {
               code: "rate_limit",
-              message: `Verification limit exceeded`,
+              message: "Verification limit exceeded",
             },
           },
           { status: 429 }

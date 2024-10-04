@@ -15,13 +15,14 @@ const DashboardCourseSearch = ({
   const [isPending, startTransition] = useTransition();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
   const [query, setQuery] = useState("");
-  const isSearching = timeoutId || isPending;
+  const isSearching = !!timeoutId || isPending;
   return (
     <div className="flex w-[600px] items-center rounded-md border-2 border-blue-600 px-5 py-2">
       <input
         type="text"
         className="w-full border-none bg-transparent outline-none"
         placeholder="Search Course"
+        disabled={isSearching}
         defaultValue={existingSearchTerm}
         onChange={(event) => {
           clearTimeout(timeoutId);
@@ -33,7 +34,7 @@ const DashboardCourseSearch = ({
                   `/dashboard/courses?courseName=${event.target.value}`
                 );
               } else {
-                router.push(`/dashboard/courses`);
+                router.push("/dashboard/courses");
               }
               setTimeoutId(undefined);
             });

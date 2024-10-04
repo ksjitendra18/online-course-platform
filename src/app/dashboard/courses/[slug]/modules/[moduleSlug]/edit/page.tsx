@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { eq } from "drizzle-orm";
 import { FaHome } from "react-icons/fa";
@@ -9,7 +8,6 @@ import { FaHome } from "react-icons/fa";
 import ModuleInformation from "@/app/dashboard/components/module-info-form";
 import { db } from "@/db";
 import { course, courseModule } from "@/db/schema";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Edit Module",

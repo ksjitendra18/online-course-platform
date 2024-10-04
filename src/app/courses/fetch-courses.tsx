@@ -1,8 +1,5 @@
-import React, { Suspense } from "react";
-
 import { and, eq, like } from "drizzle-orm";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/db";
 import { course } from "@/db/schema";
 

@@ -121,7 +121,7 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
       <CourseSidebar
         courseData={courseData}
         courseSlug={params.courseSlug}
-        isPartOfCourse={isPartOfCourse}
+        isPartOfCourse={!!isPartOfCourse}
         purchaseInfo={purchaseInfo}
         chapterSlug=""
         moduleSlug=""

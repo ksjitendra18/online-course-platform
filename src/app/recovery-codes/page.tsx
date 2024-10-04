@@ -1,16 +1,13 @@
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { eq } from "drizzle-orm";
-import { customAlphabet } from "nanoid";
 
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { recoveryCodes, user } from "@/db/schema";
-import { EncryptionPurpose, aesDecrypt, aesEncrypt } from "@/lib/aes";
+import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 
 import RotateRecoveryCode from "./_components/rotate-recovery-code";
 

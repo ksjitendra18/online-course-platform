@@ -18,7 +18,6 @@ interface VideoPlayerProps {
 const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
   playbackId,
   autoPlay,
-  userId,
   chapterId,
   isEnrolled,
   courseId,
@@ -34,6 +33,7 @@ const VideoPlayerWithProgress: React.FC<VideoPlayerProps> = ({
     script.async = true;
 
     script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const player = new (window as any).playerjs.Player(
         document.getElementById("bunny-stream-embed")
       );

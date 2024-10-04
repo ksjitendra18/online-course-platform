@@ -52,9 +52,9 @@ const DiscussionIdPage = async ({
     redirect(`/courses/${params.courseSlug}`);
   }
 
-  let isInstructor = discussionInfo.courseId === courseData.id;
+  const isInstructor = discussionInfo.courseId === courseData.id;
 
-  let userHasUpvoted = !!discussionInfo?.votes.find(
+  const userHasUpvoted = !!discussionInfo?.votes.find(
     (vote) => vote.userId === userSession?.userId
   );
 

@@ -19,10 +19,8 @@ import {
 } from "@/components/ui/dialog";
 
 const ChapterStatus = ({
-  status,
   courseId,
   chapterId,
-  moduleId,
 }: {
   status: "draft" | "published" | "archived" | "deleted";
   courseId: string;
@@ -30,7 +28,7 @@ const ChapterStatus = ({
   moduleId: string;
 }) => {
   const router = useRouter();
-  let closeBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {
     try {

@@ -1,6 +1,4 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import React from "react";
 
 import { eq } from "drizzle-orm";
 
@@ -19,7 +17,6 @@ export const dynamic = "force-dynamic";
 
 const UpdateProfile = async () => {
   const userSession = await getUserSessionRedis();
-  const sessionToken = cookies().get("auth-token")?.value;
   if (!userSession) {
     return redirect("/login");
   }

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { BookOpen } from "lucide-react";
 
-import { type Course, course } from "@/db/schema";
+import { type Course } from "@/db/schema";
 
 interface Props {
   courseInfo: Pick<Course, "title" | "imageUrl" | "isFree" | "price" | "slug">;

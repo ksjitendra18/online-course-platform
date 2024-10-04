@@ -73,7 +73,7 @@ const DiscussionLayout = async ({
       <CourseSidebar
         courseData={courseData}
         courseSlug={params.courseSlug}
-        isPartOfCourse={isPartOfCourse}
+        isPartOfCourse={!!isPartOfCourse}
         purchaseInfo={purchaseInfo}
         chapterSlug=""
         moduleSlug=""

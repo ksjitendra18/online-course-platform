@@ -1,17 +1,12 @@
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import {
-  chapter,
-  courseMember,
-  courseModule,
   quiz,
   quizAnswer,
-  quizQuestion,
-  session,
+  quizQuestion
 } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { QuizEditSchema } from "@/validations/quiz-question";

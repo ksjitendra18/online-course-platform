@@ -7,7 +7,9 @@ export const env = createEnv({
     NEXT_PUBLIC_BASE_URL: z.string().url(),
   },
   runtimeEnv: {
+    // eslint-disable-next-line n/no-process-env
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    // eslint-disable-next-line n/no-process-env
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   },
 });
