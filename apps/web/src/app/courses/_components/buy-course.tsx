@@ -64,7 +64,7 @@ const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
   };
 
   // const [checkForEnroll, setCheckForEnroll] = useState(false);
-  let checkId: NodeJS.Timeout;
+  let checkId: NodeJS.Timer;
   const makePayment = async (paymentData: PaymentData) => {
     try {
       const res = await initializeRazorpay();

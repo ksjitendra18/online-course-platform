@@ -5,45 +5,60 @@ on:
     branches:
       - dev
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.DEV_TURBO_TEAM }}
+  TURBO_API: ${{ secrets.TURBO_API }}
+  TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v3
         with:
           version: 9
           run_install: false
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Cache Next.js build
-        uses: actions/cache@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          path: |
-            ~/.pnpm-store
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+          bun-version: latest
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Create .env file
         run: |
-          echo "${{ secrets.ENV_DEV_FILE }}" > .env.production
+          npm install -g turbo
+          pnpm install
 
-      - name: Build application
-        run: pnpm run build
+      - name: Load env files
+        run: |
+          echo "${{ secrets.DEV_WEB_ENV_FILE }}" > apps/web/.env
+          echo "${{ secrets.DEV_API_ENV_FILE }}" > apps/upload-api/.env
+          echo "${{ secrets.DEV_REDIS_ENV_FILE }}" > packages/redis/.env
+
+      - name: Build Redis package
+        run: pnpm turbo run build --filter=@learningapp/redis
+
+      - name: Build entire project
+        run: pnpm turbo run build
 
       - name: Deploy
         env:
@@ -55,16 +70,19 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./.next/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/learningapp-dev/.next/
-
           ssh -o StrictHostKeyChecking=no "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" << 'EOF'
-            cd ~/learningapp-dev
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            echo "Node version: $(node --version)"
-            echo "NPM version: $(npm --version)"
-            git pull origin dev
-            pnpm install
-            pm2 restart learningapp-dev
+          cd ~/dev-online-course-platform
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          if ! command -v pnpm &> /dev/null; then
+            echo "pnpm not found. Installing..."
+            npm install -g pnpm
+          fi
+          echo "PNPM version: $(pnpm --version)"
+          git pull
+          pnpm install
+          pnpm run build
+          pm2 restart all
           EOF

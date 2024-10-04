@@ -1,0 +1,19 @@
+{
+  "name": "@learningapp/redis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": "true",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.4.1"
+  }
+}
