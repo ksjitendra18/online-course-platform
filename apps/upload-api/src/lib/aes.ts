@@ -1,8 +1,7 @@
 import {
-  BinaryLike,
   createCipheriv,
   createDecipheriv,
-  randomBytes,
+  randomBytes
 } from "crypto";
 
 const algorithm = "aes-256-gcm";
@@ -10,8 +9,6 @@ const ivLength = 12;
 const tagLength = 16;
 
 const SECRET_KEY = process.env.SESSION_COOKIE_SECRET!;
-
-console.log("secret key", SECRET_KEY);
 
 export async function encryptCookie(plaintext: string) {
   const iv = randomBytes(ivLength);
