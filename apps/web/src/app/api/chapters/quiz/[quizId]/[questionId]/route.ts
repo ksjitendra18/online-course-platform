@@ -3,11 +3,7 @@ import { NextRequest } from "next/server";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import {
-  quiz,
-  quizAnswer,
-  quizQuestion
-} from "@/db/schema";
+import { quiz, quizAnswer, quizQuestion } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { QuizEditSchema } from "@/validations/quiz-question";
 
@@ -114,6 +110,15 @@ export async function PATCH(
     return Response.json({ success: true });
   } catch (error) {
     console.log("Error while deleting quiz", params.quizId, error);
+    return Response.json(
+      {
+        error: {
+          code: "server_error",
+          message: "Server Error",
+        },
+      },
+      { status: 500 }
+    );
   }
 }
 

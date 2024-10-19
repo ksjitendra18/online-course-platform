@@ -6,8 +6,6 @@ const algorithm = "aes-256-gcm";
 const ivLength = 12;
 const tagLength = 16;
 
-// CURRENTLY THIS IS BEING USED FOR ENCRYPTING RECOVERY CODES, TWO FA SECRET CODES
-// FOR EACH DIFFERENT SECRET IS USED
 export enum EncryptionPurpose {
   RECOVERY_CODE = "RECOVERY_CODE_SECRET",
   TWO_FA_SECRET = "TWO_FA_SECRET",

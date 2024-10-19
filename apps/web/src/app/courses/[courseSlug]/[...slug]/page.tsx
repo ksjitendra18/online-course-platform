@@ -18,7 +18,6 @@ import {
 } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
 
-import BuyCourse from "../../_components/buy-course";
 import ChapterQuiz from "../../_components/chapter-quiz";
 import QuizDuration from "../../_components/quiz-duration";
 import VideoPlayerWithProgress from "../../_components/video-player-progress";
@@ -260,13 +259,9 @@ const ChapterPage = async ({
                 </Link>
               </>
             ) : (
-              <BuyCourse
-                coursePrice={courseData.price}
-                courseId={courseData.id}
-                email={userSession.email}
-                userId={userSession.userId!}
-                userName={userSession.name}
-              />
+              <Button variant="app" asChild className="my-5">
+                <Link href={`/courses/${courseData.slug}`}>Buy Course</Link>
+              </Button>
             )}
           </div>
         )}

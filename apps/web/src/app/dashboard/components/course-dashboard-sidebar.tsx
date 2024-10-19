@@ -11,6 +11,7 @@ import { RiFolderVideoFill, RiQuestionAnswerLine } from "react-icons/ri";
 
 import { cn } from "@/lib/utils";
 
+import { FaTag } from "react-icons/fa";
 import PublishCourse from "./publish-course";
 
 const CourseDashboardSidebar = ({
@@ -95,6 +96,18 @@ const CourseDashboardSidebar = ({
           <BsInfoCircle />
           Other Info
         </Link>
+    {true &&    <Link
+          className={cn(
+            pathName.includes("discounts")
+              ? "bg-blue-500/20 font-semibold text-blue-500"
+              : "text-slate-700 hover:bg-gray-200 hover:text-black",
+            "flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 transition-all duration-100 ease-in"
+          )}
+          href={`/dashboard/courses/${slug}/discounts`}
+        >
+          <FaTag />
+          Discounts
+        </Link>}
         <Link
           className={cn(
             pathName.includes("enrollments")

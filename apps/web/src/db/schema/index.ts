@@ -17,3 +17,5 @@ export * from "./discussion";
 export * from "./enrollment";
 export * from "./discount";
 export * from "./course-progress";
+export * from "./discount";
+export * from "./course-discount";

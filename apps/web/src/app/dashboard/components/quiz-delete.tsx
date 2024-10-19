@@ -26,9 +26,9 @@ const DeleteQuiz = ({
   quizId: string;
   questionId: string;
 }) => {
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const handleClick = async () => {
     try {
       setLoading(true);
@@ -38,7 +38,6 @@ const DeleteQuiz = ({
       });
 
       if (res.status === 200) {
-        closeBtnRef.current?.click();
         mutate("questions");
         toast.success("Chapter Deleted Successfully");
         router.refresh();
@@ -52,7 +51,7 @@ const DeleteQuiz = ({
 
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="destructive">
             <Trash2 />
@@ -67,7 +66,7 @@ const DeleteQuiz = ({
           </DialogHeader>
           <DialogFooter className="flex items-center">
             <DialogClose asChild>
-              <Button ref={closeBtnRef}>Cancel</Button>
+              <Button>Cancel</Button>
             </DialogClose>
 
             <Button onClick={handleClick} variant="destructive">

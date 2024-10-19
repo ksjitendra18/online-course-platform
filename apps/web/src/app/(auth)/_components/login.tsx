@@ -15,23 +15,29 @@ import EmailSchema from "@/validations/email";
 import LoginForm from "./login-form";
 
 const Login = () => {
-  const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
+  const [credentialsLoading, setCredentialsLoading] = useState(false);
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+
+  const isLoading = oauthLoading || credentialsLoading || magicLinkLoading;
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const handleLinkClick = () => {
-    if (loading) {
+    if (isLoading) {
       toast.error(
         "Login already in progress.You can't perform this function right now."
       );
     } else {
-      setLoading(true);
+      setOauthLoading(true);
     }
   };
 
   const handleMagicLinkLogin = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      setLoading(true);
+      setMagicLinkLoading(true);
+      setError("");
       const formData = new FormData(e.currentTarget);
       const email = formData.get("email");
 
@@ -42,6 +48,8 @@ const Login = () => {
         toast.error("Invalid email");
         return;
       }
+
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       const res = await fetch("/api/auth/magic-link", {
         method: "POST",
         body: JSON.stringify({ email: email }),
@@ -59,7 +67,7 @@ const Login = () => {
       setError("Error while login. Please try again later");
       toast.error("Error while login. Please try again later");
     } finally {
-      setLoading(false);
+      setMagicLinkLoading(false);
     }
   };
   return (
@@ -72,17 +80,17 @@ const Login = () => {
             handleLinkClick();
           }}
           variant="outline"
-          disabled={loading}
+          disabled={isLoading}
           className="mt-5 w-full py-6"
         >
           <Link
-            href={loading ? "#" : "/api/auth/google"}
+            href={isLoading ? "#" : "/api/auth/google"}
             onClick={() => {
               handleLinkClick();
             }}
           >
             <span className="mr-2">
-              {loading ? (
+              {oauthLoading ? (
                 <Loader2 className="size-6 animate-spin" />
               ) : (
                 <FcGoogle className="size-6" />
@@ -100,7 +108,9 @@ const Login = () => {
         <Tabs defaultValue="magic-link" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="magic-link">Magic Link</TabsTrigger>
-            <TabsTrigger value="password">Password</TabsTrigger>
+            <TabsTrigger disabled={isLoading} value="password">
+              Password
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="magic-link">
             <div className="space-y-4">
@@ -117,12 +127,12 @@ const Login = () => {
                   )}
                 />
                 <Button
-                  disabled={loading}
+                  disabled={isLoading}
                   variant="app"
                   className="w-full"
                   type="submit"
                 >
-                  {loading ? (
+                  {magicLinkLoading ? (
                     <Loader2 className="mx-auto animate-spin" />
                   ) : (
                     "Send Magic Link"
@@ -134,10 +144,19 @@ const Login = () => {
                   Magic Link Sent
                 </p>
               )}
+
+              {error && (
+                <p className="rounded-md bg-red-600 px-2 py-1 text-white">
+                  {error}
+                </p>
+              )}
             </div>
           </TabsContent>
           <TabsContent value="password">
-            <LoginForm loading={loading} setLoading={setLoading} />
+            <LoginForm
+              loading={credentialsLoading}
+              setLoading={setCredentialsLoading}
+            />
           </TabsContent>
         </Tabs>
       </div>

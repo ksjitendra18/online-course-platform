@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { db } from "@/db/index";
 import { courseModule } from "@/db/schema";
@@ -60,10 +60,10 @@ export async function POST(
       );
     }
 
-    const [courseModules] = await db
-      .select({ count: count(courseModule.id) })
-      .from(courseModule)
-      .where(eq(courseModule.courseId, params.courseId));
+    const courseModulesCount = await db.$count(
+      courseModule,
+      eq(courseModule.courseId, params.courseId)
+    );
 
     const newModule = await db
       .insert(courseModule)
@@ -73,7 +73,7 @@ export async function POST(
         slug: parsedData.data.moduleSlug,
         courseId: params.courseId,
         status: "draft",
-        position: courseModules.count + 1,
+        position: courseModulesCount + 1,
       })
       .returning({
         id: courseModule.id,

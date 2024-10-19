@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -25,8 +25,8 @@ const DeleteModule = ({
   moduleId: string;
   courseId: string;
 }) => {
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {
     try {
@@ -37,7 +37,7 @@ const DeleteModule = ({
       });
 
       if (res.status === 200) {
-        closeBtnRef.current?.click();
+        setOpen(false);
         toast.success("Module Deleted Successfully");
         router.refresh();
       }
@@ -50,7 +50,7 @@ const DeleteModule = ({
 
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="destructive">Delete</Button>
         </DialogTrigger>
@@ -63,7 +63,7 @@ const DeleteModule = ({
           </DialogHeader>
           <DialogFooter className="flex items-center">
             <DialogClose asChild>
-              <Button ref={closeBtnRef}>Cancel</Button>
+              <Button>Cancel</Button>
             </DialogClose>
 
             <Button onClick={handleClick} variant="destructive">

@@ -12,7 +12,6 @@ const corsOrigin =
     ? "learningapp.link"
     : "http://localhost:3000";
 
-console.log("corsOrigin", corsOrigin);
 
 const app = new Elysia({
   serve: {

@@ -1,0 +1,1 @@
+ALTER TABLE `discount` ADD `is_global` integer DEFAULT false NOT NULL;

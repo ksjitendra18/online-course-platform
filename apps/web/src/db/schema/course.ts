@@ -6,15 +6,15 @@ import {
   chapter,
   chapterLogs,
   courseEnrollment,
-  discount,
   organization,
   purchase,
   quiz,
   quizResponse,
   user,
-  videoData,
+  videoData
 } from ".";
 import { courseCategory } from "./course-category";
+import { courseDiscount } from "./course-discount";
 import { courseMember } from "./course-member";
 import { courseModule, courseModuleLogs } from "./course-modules";
 import { discussion } from "./discussion";
@@ -109,7 +109,8 @@ export const courseRelations = relations(course, ({ many, one }) => ({
   videos: many(videoData),
   chapter: many(chapter),
   enrollment: many(courseEnrollment),
-  discount: many(discount),
+  // discount: many(discount),
+  courseDiscount: many(courseDiscount),
   quiz: many(quiz),
   quizResponse: many(quizResponse),
   logs: many(courseLogs),

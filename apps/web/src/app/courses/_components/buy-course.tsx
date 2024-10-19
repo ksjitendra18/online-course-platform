@@ -11,12 +11,19 @@ import { formatPrice } from "@/lib/utils";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 interface Props {
   coursePrice: number | null;
   userId: string;
   courseId: string;
   userName: string;
   email: string;
+  discountCode: string | string[] | undefined;
 }
 
 declare global {
@@ -27,11 +34,15 @@ declare global {
 }
 
 type PaymentData = {
-  // userId: string;
   courseId: string;
-  // coursePrice: number;
 };
-const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
+const BuyCourse = ({
+  coursePrice,
+  courseId,
+  email,
+  userName,
+  discountCode,
+}: Props) => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonText, setButtonText] = useState("Course purchase in progress");
   const router = useRouter();
@@ -52,6 +63,7 @@ const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       // document.body.appendChild(script);
 
+      console.log("init script", new Date());
       script.onload = () => {
         resolve(true);
       };
@@ -64,7 +76,7 @@ const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
   };
 
   // const [checkForEnroll, setCheckForEnroll] = useState(false);
-  let checkId: NodeJS.Timer;
+  let checkId: ReturnType<typeof setInterval>;
   const makePayment = async (paymentData: PaymentData) => {
     try {
       const res = await initializeRazorpay();
@@ -76,8 +88,15 @@ const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
 
       const paymentRes: any = await fetch("/api/razorpay", {
         method: "POST",
-        body: JSON.stringify({ courseId: paymentData.courseId }),
+        body: JSON.stringify({
+          courseId: paymentData.courseId,
+          discountCode: discountCode,
+        }),
       });
+
+      if (paymentRes.status !== 200) {
+        setButtonLoading(false);
+      }
 
       const paymentResData = await paymentRes.json();
 
@@ -110,6 +129,7 @@ const BuyCourse = ({ coursePrice, courseId, email, userName }: Props) => {
       paymentObject.open();
     } catch (error) {
       toast.error("Failed to process payment");
+      setButtonLoading(false);
     } finally {
       // setButtonLoading(false);
       router.refresh();

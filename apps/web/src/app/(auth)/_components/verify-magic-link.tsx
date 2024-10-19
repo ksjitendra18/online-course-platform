@@ -23,10 +23,11 @@ const VerifyMagicLink = ({ id }: { id: string }) => {
 
       if (res.status === 200) {
         setSuccess(true);
-        router.push("/dashboard");
+        router.push("/");
         router.refresh();
       } else if (res.status === 302) {
         router.push(resData.redirect);
+        router.refresh();
         return;
       } else {
         setError(resData.error.message);

@@ -20,7 +20,7 @@ const OrganizationSignup = () => {
             setLoading(true);
             router.push(loading ? "#" : "/api/auth/google?type=organization");
           }}
-          className="mt-5 flex w-full max-w-full items-center justify-center rounded-md bg-black px-6 py-2 text-white transition-all duration-75 ease-in-out hover:scale-95 md:w-3/4 lg:w-1/3"
+          className="mt-5 flex w-full max-w-full items-center justify-center rounded-md bg-black px-6 py-2 text-white transition-all duration-75 ease-in-out hover:scale-95 md:w-3/4 xl:w-1/3"
         >
           <span className="mr-2">
             <FcGoogle className="h-8 w-8" />
@@ -28,7 +28,7 @@ const OrganizationSignup = () => {
           Sign up with Google
         </button>
 
-        <div className="mb-3 mt-5 flex w-full items-center justify-center md:w-3/4 lg:w-1/3">
+        <div className="mb-3 mt-5 flex w-full items-center justify-center md:w-3/4 xl:w-1/3">
           <div className="before-or mr-2 h-[2px] w-[100%] bg-gray-300"></div>
           <p className="or text-gray-500">OR</p>
           <div className="after-or ml-2 h-[2px] w-[100%] bg-gray-300"></div>

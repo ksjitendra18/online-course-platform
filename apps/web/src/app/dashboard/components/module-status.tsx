@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -28,8 +28,8 @@ const ModuleStatus = ({
   moduleId: string;
 }) => {
   const router = useRouter();
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const handleClick = async () => {
     try {
       setLoading(true);
@@ -42,7 +42,6 @@ const ModuleStatus = ({
       });
 
       if (res.status === 200) {
-        closeBtnRef.current?.click();
         toast.success("Module Deleted Successfully");
         router.refresh();
       }
@@ -54,7 +53,7 @@ const ModuleStatus = ({
   };
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="app">Publish</Button>
         </DialogTrigger>
@@ -68,9 +67,7 @@ const ModuleStatus = ({
           </DialogHeader>
           <DialogFooter className="flex items-center">
             <DialogClose asChild>
-              <Button variant={"ghost"} ref={closeBtnRef}>
-                Cancel
-              </Button>
+              <Button variant={"ghost"}>Cancel</Button>
             </DialogClose>
 
             <Button onClick={handleClick} variant="default">
