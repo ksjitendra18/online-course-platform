@@ -14,18 +14,18 @@ const RevokeAllSessions = () => {
   const handleClick = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch("/api/auth/revoke", {
+      const res = await fetch("/api/auth/revoke/all", {
         method: "POST",
       });
 
       if (res.status === 200) {
+        router.refresh();
         toast.success("Revoked Access");
       }
     } catch (error) {
       toast.error("Error while revoking access");
     } finally {
       setIsLoading(false);
-      router.refresh();
     }
   };
   return (

@@ -2,13 +2,14 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { and, count, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getProgress } from "@/db/queries/course-progress";
 import { getCourseData } from "@/db/queries/courses";
+import { getDiscountedPrice } from "@/db/queries/discount";
 import {
   CourseEnrollment,
   Purchase,
@@ -23,6 +24,8 @@ import BuyCourse from "../_components/buy-course";
 import CourseSidebar from "../_components/course-sidebar";
 import EnrollCourse from "../_components/enroll-course";
 import ReviewDialog from "../_components/review-dialog";
+import ApplyDiscount from "./apply-discount";
+import ShowDiscountCode from "./show-discount-code";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -39,7 +42,13 @@ export async function generateMetadata({
   };
 }
 
-const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
+const CoursePage = async ({
+  params,
+  searchParams,
+}: {
+  params: { courseSlug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
   const userSession = await getUserSessionRedis();
 
   const courseData = await getCourseData({
@@ -53,28 +62,24 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
 
   const { videosCount, quizzesCount, videoDuration } = await db.transaction(
     async (tx) => {
-      const videoCount = await tx
-        .select({ count: count(chapter.id) })
-        .from(chapter)
-        .where(
-          and(eq(chapter.courseId, courseData.id), eq(chapter.type, "video"))
-        );
+      const videoCount = await tx.$count(
+        chapter,
+        and(eq(chapter.courseId, courseData.id), eq(chapter.type, "video"))
+      );
 
       const videoDuration = await tx
         .select({ duration: videoData.duration })
         .from(videoData)
         .where(eq(videoData.courseId, courseData.id));
 
-      const quizCount = await tx
-        .select({ count: count(chapter.id) })
-        .from(chapter)
-        .where(
-          and(eq(chapter.courseId, courseData.id), eq(chapter.type, "quiz"))
-        );
+      const quizCount = await tx.$count(
+        chapter,
+        and(eq(chapter.courseId, courseData.id), eq(chapter.type, "quiz"))
+      );
 
       return {
-        videosCount: videoCount[0].count,
-        quizzesCount: quizCount[0].count,
+        videosCount: videoCount,
+        quizzesCount: quizCount,
         videoDuration,
       };
     }
@@ -116,8 +121,16 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
     0
   );
 
+  const discountCode = Array.isArray(searchParams.discountCode)
+    ? searchParams.discountCode[0]
+    : searchParams.discountCode;
+
+  const { newPrice, discountData } = await getDiscountedPrice({
+    courseId: courseData.id,
+    code: discountCode,
+  });
   return (
-    <div className="flex">
+    <div className="flex flex-col-reverse md:flex-row">
       <CourseSidebar
         courseData={courseData}
         courseSlug={params.courseSlug}
@@ -129,12 +142,36 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
         userHasEnrolled={!!userHasEnrolled}
         completedChapterIds={completedChapterIds}
       />
-      <div className="mx-auto mt-5 w-full">
-        <div className="rounded-md bg-[#213147] px-7 py-5 text-white">
-          <h2 className="text-3xl">{courseData.title}</h2>
-          <p className="my-2">{courseData.description}</p>
+      <div className="mx-auto mt-5 w-full md:px-4">
+        <div className="bg-[#213147] px-4 py-5 text-white md:rounded-md md:px-7">
+          <h2 className="text-center text-2xl font-bold md:text-left md:text-3xl">
+            {courseData.title}
+          </h2>
+          <p className="mt-5">{courseData.description}</p>
 
-          <div className="my-5 flex">
+          {!courseData.isFree && !userHasEnrolled ? (
+            <>
+              {discountData ? (
+                <div className="flex items-center gap-3 md:gap-6">
+                  <div className="flex items-center gap-2">
+                    <p className="my-3 text-2xl font-bold">₹{newPrice}</p>
+                    <p className="my-3 text-2xl font-bold text-gray-200 line-through">
+                      ₹{courseData.price}
+                    </p>
+                  </div>
+              
+
+                  <ShowDiscountCode code={discountData.code} />
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 md:gap-6">
+                  <p className="my-3 text-2xl font-bold">₹{courseData.price}</p>
+                </div>
+              )}
+            </>
+          ) : null}
+
+          <div className="my-5 flex flex-col items-center gap-5 md:flex-row">
             {userSession ? (
               <>
                 {userHasEnrolled || isPartOfCourse ? (
@@ -158,32 +195,47 @@ const CoursePage = async ({ params }: { params: { courseSlug: string } }) => {
                         price={courseData.price!}
                       />
                     ) : (
-                      <BuyCourse
-                        courseId={courseData.id}
-                        email={userSession.email}
-                        userName={userSession.name}
-                        userId={userSession.userId}
-                        coursePrice={courseData.price!}
-                      />
+                      <>
+                        <BuyCourse
+                          courseId={courseData.id}
+                          email={userSession.email}
+                          userName={userSession.name}
+                          userId={userSession.userId}
+                          coursePrice={newPrice}
+                          discountCode={discountCode}
+                        />
+                        <ApplyDiscount
+                          price={courseData.price!}
+                          courseId={courseData.id}
+                        />
+                      </>
                     )}
                   </>
                 )}
               </>
             ) : (
-              <Button variant="app" asChild>
-                <Link
-                  href={`/login?next${encodeURIComponent(
-                    `/courses/${params.courseSlug}`
-                  )}`}
-                >
-                  Log in
-                </Link>
-              </Button>
+              <>
+                <Button variant="app" asChild>
+                  <Link
+                    href={`/login?next=${encodeURIComponent(
+                      `/courses/${params.courseSlug}`
+                    )}`}
+                  >
+                    Buy Now
+                  </Link>
+                </Button>
+                <ApplyDiscount
+                  price={courseData.price!}
+                  courseId={courseData.id}
+                />
+              </>
             )}
           </div>
 
-          <div className="mt-8 flex items-center gap-8">
-            <p>{capitalizeFirstWord(courseData.level)}</p>
+          <div className="mt-8 grid grid-cols-2 items-center gap-8 md:grid-cols-5">
+            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
+              Level: {capitalizeFirstWord(courseData.level)}
+            </p>
 
             <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
               {courseData.courseModule.length} Modules

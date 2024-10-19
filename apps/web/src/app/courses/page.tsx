@@ -9,8 +9,9 @@ export const metadata = {
   title: "Courses",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+// !REMOVED CACHE
+// export const revalidate = 0;
+// export const dynamic = "force-dynamic";
 
 const CoursesPage = async ({
   searchParams,

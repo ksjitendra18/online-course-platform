@@ -54,7 +54,7 @@ const CourseSidebar = ({
 
   if (!isMounted) return null;
   return (
-    <nav className="relative hidden w-full max-w-sm flex-shrink-0 lg:block">
+    <nav className="relative w-full max-w-sm flex-shrink-0 lg:block">
       <div className="sticky top-0 h-auto">
         <ScrollArea className="relative h-[calc(100vh-0rem)] overflow-hidden pb-9 pt-2">
           <div className="mx-3 mt-3 rounded-md bg-white pt-5">

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { and, count, desc, eq, gte, lte, sum } from "drizzle-orm";
+import { and, desc, eq, gte, lte, sum } from "drizzle-orm";
 
 import { DataCard } from "@/app/dashboard/(main)/analytics/_components/data-card";
 import {
@@ -65,25 +65,22 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
 
   const nextGmtDate = dayjs().utc().startOf("day").add(1, "day").unix();
 
-  const todayEnrollment = await db
-    .select({
-      count: count(courseEnrollment.id),
-    })
-    .from(courseEnrollment)
-    .where(
-      and(
-        eq(courseEnrollment.courseId, courseData.id),
-        lte(courseEnrollment.createdAt, nextGmtDate),
-        gte(courseEnrollment.createdAt, gmtDate)
-      )
-    );
-
+  const todayEnrollment = await db.$count(
+    courseEnrollment,
+    and(
+      eq(courseEnrollment.courseId, courseData.id),
+      lte(courseEnrollment.createdAt, nextGmtDate),
+      gte(courseEnrollment.createdAt, gmtDate)
+    )
+  );
   const totalEarning = await db
     .select({
       earning: sum(purchase.coursePrice),
     })
     .from(purchase)
     .where(eq(purchase.courseId, courseData.id));
+
+  console.log("enrollments", courseData);
 
   return (
     <div className="p-6">
@@ -95,7 +92,7 @@ const Enrollments = async ({ params }: { params: { slug: string } }) => {
           "my-4 grid grid-cols-1 gap-4"
         )}
       >
-        <DataCard label="Today Enrollments" value={todayEnrollment[0].count} />
+        <DataCard label="Today Enrollments" value={todayEnrollment} />
         <DataCard
           label="All Enrollments"
           value={courseData.enrollment.length}

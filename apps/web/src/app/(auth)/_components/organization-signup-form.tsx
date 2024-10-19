@@ -22,7 +22,7 @@ interface Props {
 }
 
 const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
-  const [orgName,] = useState("");
+  const [orgName] = useState("");
   // const [orgSlug, setOrgSlug] = useState("");
   const [orgSlug, setOrgSlug] = useState(slugify(orgName, { lower: true }));
   const [validationIssue, setValidationIssue] = useState<z.ZodFormattedError<
@@ -91,7 +91,6 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
       setLoading(false);
     }
   };
-
 
   const [usernameState, setUsernameState] = useState({
     isChecked: false,
@@ -184,7 +183,21 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
 
   useEffect(() => {
     const checkOrgSlug = async () => {
-      if (orgSlug === "") {
+      setValidationIssue(null);
+      if (deboundedOrgSlug === "") {
+        return;
+      }
+
+      if (deboundedOrgSlug.trim().length < 4) {
+        const PartialOrgSchema = OrganizationSignupSchema.partial();
+
+        const parsedSlug = PartialOrgSchema.safeParse({
+          orgSlug: deboundedOrgSlug,
+        });
+
+        if (!parsedSlug.success) {
+          setValidationIssue(parsedSlug.error.format());
+        }
         return;
       }
 
@@ -230,13 +243,10 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
           }));
 
           toast.error("Error while checking username");
-          // setError("Server Error");
         }
       } catch (error) {
         toast.error("Error while checking username");
-        // setError("Server Error");
       } finally {
-        // setCheckingUsername(false);
       }
     };
     checkOrgSlug();
@@ -248,7 +258,7 @@ const OrganizationSignupForm = ({ loading, setLoading }: Props) => {
         <form
           onSubmit={handleSignup}
           method="post"
-          className="mx-auto w-[100%] md:w-3/4 lg:w-1/3"
+          className="mx-auto w-[100%] md:w-3/4 xl:w-1/3"
         >
           <label
             htmlFor="orgName"

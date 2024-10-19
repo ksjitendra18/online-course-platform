@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 
@@ -5,7 +6,13 @@ import { eq } from "drizzle-orm";
 import { createHmac } from "node:crypto";
 
 import { db } from "@/db";
-import { course, courseEnrollment, purchase, user } from "@/db/schema";
+import {
+  course,
+  courseEnrollment,
+  discount,
+  purchase,
+  user,
+} from "@/db/schema";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/utils/env/server";
 
@@ -28,6 +35,7 @@ export async function POST(request: NextRequest) {
       const razorPaySignature = headers().get("X-RazorPay-Signature");
 
       const stringifiedBody = JSON.stringify(webhookBody);
+
       const generatedSignature = createHmac("sha256", webhookSecret)
         .update(stringifiedBody)
         .digest("hex");
@@ -57,13 +65,54 @@ export async function POST(request: NextRequest) {
           return Response.json({ success: false });
         }
 
-        await db.insert(purchase).values({
-          courseId: courseData.id,
-          coursePrice: webhookBody?.payload?.payment.entity.amount / 100,
-          userId: userData.id,
-          razorpayPaymentId: webhookBody?.payload?.payment.entity.id,
-          razorpayOrderId: webhookBody?.payload?.payment.entity.order_id,
-        });
+        if (
+          Boolean(
+            webhookBody?.payload?.payment.entity.notes.discountCodeUsed
+          ) &&
+          webhookBody?.payload?.payment.entity.notes.discountCodeId !== null
+        ) {
+          await db.transaction(async (trx) => {
+            await trx.insert(purchase).values({
+              courseId: courseData.id,
+              coursePrice: webhookBody?.payload?.payment.entity.amount / 100,
+              userId: userData.id,
+              razorpayPaymentId: webhookBody?.payload?.payment.entity.id,
+              razorpayOrderId: webhookBody?.payload?.payment.entity.order_id,
+              discountUsed: true,
+              discountCode:
+                webhookBody?.payload?.payment.entity.notes.discountCode,
+            });
+
+            const discountData = await trx.query.discount.findFirst({
+              where: eq(
+                discount.id,
+                webhookBody?.payload?.payment.entity.notes.discountCodeId
+              ),
+              columns: {
+                id: true,
+                currentUsage: true,
+              },
+            });
+
+            // quite sure that discount data will exist
+            if (discountData) {
+              await trx
+                .update(discount)
+                .set({
+                  currentUsage: discountData.currentUsage + 1,
+                })
+                .where(eq(discount.id, discountData.id));
+            }
+          });
+        } else {
+          await db.insert(purchase).values({
+            courseId: courseData.id,
+            coursePrice: webhookBody?.payload?.payment.entity.amount / 100,
+            userId: userData.id,
+            razorpayPaymentId: webhookBody?.payload?.payment.entity.id,
+            razorpayOrderId: webhookBody?.payload?.payment.entity.order_id,
+          });
+        }
 
         await db.insert(courseEnrollment).values({
           courseId: courseData.id,
@@ -76,7 +125,10 @@ export async function POST(request: NextRequest) {
             Authorization: `${env.ZOHO_MAIL_TOKEN}`,
           },
           body: JSON.stringify({
-            from: { address: "orders-donotreply@learningapp.link" },
+            from: {
+              name: `${env.FROM_NAME}`,
+              address: `${env.ORDER_EMAIL_ADDRESS}`,
+            },
             to: [
               {
                 email_address: {
@@ -103,10 +155,14 @@ export async function POST(request: NextRequest) {
             <p>You have received this email because you have purchased <span>${
               courseData.title
             }</span> on LearningApp.</p>
-            <p>If you think this is a mistake, please contact us at <a href="mailto:support@learningapp.link">support@learningapp.link</a>.</p>
+            <p>If you think this is a mistake, please contact us at <a href="mailto:${env.SUPPORT_EMAIL}">${env.SUPPORT_EMAIL}</a>.</p>
           `,
           }),
         });
+
+        revalidateTag("get-enrolled-courses");
+        revalidateTag("get-total-enrollments");
+
         return Response.json({ success: true });
       } else {
         return Response.json(
@@ -122,6 +178,9 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.log("error in webhooks", error);
-    return Response.json({ message: "server_erorr" }, { status: 500 });
+    return Response.json(
+      { error: { code: "server_error", message: "Server Error" } },
+      { status: 500 }
+    );
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -27,8 +27,8 @@ const ChapterStatus = ({
   chapterId: string;
   moduleId: string;
 }) => {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const [loading, setLoading] = useState(false);
   const handleClick = async () => {
     try {
@@ -48,7 +48,7 @@ const ChapterStatus = ({
       );
 
       if (res.status === 200) {
-        closeBtnRef.current?.click();
+        setOpen(false);
         toast.success("Chapter published successfully");
         router.refresh();
       }
@@ -60,7 +60,7 @@ const ChapterStatus = ({
   };
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="app">Publish</Button>
         </DialogTrigger>
@@ -73,9 +73,7 @@ const ChapterStatus = ({
           </DialogHeader>
           <DialogFooter className="flex items-center">
             <DialogClose asChild>
-              <Button ref={closeBtnRef} variant={"outline"}>
-                Cancel
-              </Button>
+              <Button variant={"outline"}>Cancel</Button>
             </DialogClose>
 
             <Button onClick={handleClick} variant="default">

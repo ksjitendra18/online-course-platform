@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -62,22 +61,22 @@ export function capitalizeFirstWord(text: string) {
 export function formatDuration(durationInSeconds: number) {
   const hours = Math.floor(durationInSeconds / 3600);
   const minutes = Math.floor((durationInSeconds % 3600) / 60);
-  const seconds = durationInSeconds % 60;
+  const seconds = Math.floor(durationInSeconds % 60);
 
   let formattedDuration = "";
   if (hours > 0) {
-    formattedDuration += `${hours  }h`;
+    formattedDuration += `${hours}h`;
     if (minutes > 0) {
-      formattedDuration += ` ${  Math.ceil(minutes)  }min`;
+      formattedDuration += ` ${Math.ceil(minutes)}min`;
     }
   } else {
     if (minutes > 0) {
-      formattedDuration += `${minutes  }min`;
+      formattedDuration += `${minutes}min`;
       if (seconds > 0) {
-        formattedDuration += ` ${  Math.ceil(seconds)  }s`;
+        formattedDuration += ` ${Math.ceil(seconds)}s`;
       }
     } else {
-      formattedDuration += `${seconds  }s`;
+      formattedDuration += `${seconds}s`;
     }
   }
 

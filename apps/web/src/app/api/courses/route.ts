@@ -7,21 +7,6 @@ import { course, courseLogs, courseMember, session } from "@/db/schema";
 import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 import { BasicInfoSchema } from "@/validations/basic-info";
 
-export async function GET() {
-  const allCourses = await db.query.course.findMany({
-    columns: {
-      id: true,
-      title: true,
-      slug: true,
-      description: true,
-      isFree: true,
-      level: true,
-    },
-  });
-
-  return Response.json(allCourses, { status: 200 });
-}
-
 export async function POST(request: Request) {
   try {
     const { courseName, courseSlug, courseDescription, isFree, level } =
@@ -78,6 +63,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // ! GET USER ORGANIZATION INFO
     const userOrgInfo = sessionExists.user.organizationMember.filter(
       (org) => org.role === "owner" || org.role === "admin"
     );

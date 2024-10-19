@@ -78,6 +78,7 @@ export default function Navbar({ currentUser }: NavbarProps) {
               <GraduationCap className="h-8 w-8 text-primary" />
               <span className="ml-2 text-xl font-bold">LearningApp</span>
             </Link>
+
           </div>
 
           <div className="hidden items-center space-x-4 md:flex">

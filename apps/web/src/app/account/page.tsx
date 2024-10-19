@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { desc, eq } from "drizzle-orm";
+import { FaGoogle } from "react-icons/fa6";
 
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
@@ -123,7 +124,13 @@ const AccountPage = async () => {
 
           <div className="flex flex-wrap items-center gap-5">
             {userInfo.oauthProvider.map((oauthProvider) => (
-              <>{oauthProvider.provider}</>
+              <div
+                key={oauthProvider.id}
+                className="flex items-center gap-2 rounded-full border-2 px-4 py-2"
+              >
+                <FaGoogle />
+                {strategiesMap[oauthProvider.provider]}
+              </div>
             ))}
           </div>
         </div>

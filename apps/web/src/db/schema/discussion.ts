@@ -59,7 +59,7 @@ export const discussionRelations = relations(discussion, ({ one, many }) => ({
 }));
 
 export const discussionReply = sqliteTable(
-  "discussion-reply",
+  "discussion_reply",
   {
     id: text("id")
       .$defaultFn(() => createId())

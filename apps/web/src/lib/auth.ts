@@ -267,7 +267,10 @@ export const sendVerificationMail = async ({ email }: { email: string }) => {
         },
         // to: email,
         body: JSON.stringify({
-          from: { address: "auth-noreply@learningapp.link" },
+          from: {
+            name: `${env.FROM_NAME}`,
+            address: `${env.AUTH_EMAIL_ADDRESS}`,
+          },
           to: [
             {
               email_address: {
@@ -369,7 +372,10 @@ export const sendPasswordResetMail = async ({
           Authorization: `${env.ZOHO_MAIL_TOKEN}`,
         },
         body: JSON.stringify({
-          from: { address: "auth-donotreply@learningapp.link" },
+          from: {
+            name: `${env.FROM_NAME}`,
+            address: `${env.AUTH_EMAIL_ADDRESS}`,
+          },
           to: [
             {
               email_address: {
@@ -444,6 +450,7 @@ export const checkAuth = async () => {
 
     const decryptedCookie = aesDecrypt(token, EncryptionPurpose.SESSION_COOKIE);
 
+    // ! TODO CHECK IF USER HAS BEEN BANNED OR DELETED OR LIMITED
     const sessionExists = await db.query.session.findFirst({
       columns: { id: true },
       where: eq(session.id, decryptedCookie),
@@ -533,7 +540,10 @@ export const sendMagicLink = async ({
           Authorization: `${env.ZOHO_MAIL_TOKEN}`,
         },
         body: JSON.stringify({
-          from: { address: "auth-donotreply@learningapp.link" },
+          from: {
+            name: `${env.FROM_NAME}`,
+            address: `${env.AUTH_EMAIL_ADDRESS}`,
+          },
           to: [
             {
               email_address: {
@@ -544,10 +554,15 @@ export const sendMagicLink = async ({
           subject: "Log in to Learning App",
           htmlbody: `<div>Log in as ${email} </div>
           <a href="${url}/magic-link/${verificationId}">Log in</a>
+
+          <div>If you wish to copy the link, here is the link</div>
+          <div>
+          ${url}/magic-link/${verificationId}
+          </div>
           <div>The link is valid for 2 hours</div>
           <div>You have received this email because you or someone tried to signup on the website </div>
           <div>If you didn't signup, kindly ignore this email.</div>
-          <div>For support contact us at support@learningapp.link</div>
+          <div>For support contact us at ${env.SUPPORT_EMAIL}</div>
           `,
         }),
       });

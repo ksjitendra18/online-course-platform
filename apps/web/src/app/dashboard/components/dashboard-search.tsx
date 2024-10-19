@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 const DashboardCourseSearch = ({
   existingSearchTerm,
@@ -22,7 +22,6 @@ const DashboardCourseSearch = ({
         type="text"
         className="w-full border-none bg-transparent outline-none"
         placeholder="Search Course"
-        disabled={isSearching}
         defaultValue={existingSearchTerm}
         onChange={(event) => {
           clearTimeout(timeoutId);
@@ -44,7 +43,11 @@ const DashboardCourseSearch = ({
         }}
       />
       <Link href={query ? `/courses?query=${query}` : "#"}>
-        <Search className="cursor-pointer text-blue-600" />
+        {isSearching ? (
+          <Loader2 size={25} className="animate-spin text-gray-600" />
+        ) : (
+          <Search className="cursor-pointer text-blue-600" />
+        )}
       </Link>
     </div>
   );

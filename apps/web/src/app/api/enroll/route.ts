@@ -65,7 +65,8 @@ export async function POST(request: NextRequest) {
         Authorization: `${env.ZOHO_MAIL_TOKEN}`,
       },
       body: JSON.stringify({
-        from: { address: "orders-donotreply@learningapp.link" },
+        name: `${env.FROM_NAME}`,
+        address: `${env.ORDER_EMAIL_ADDRESS}`,
         to: [
           {
             email_address: {
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
         <p>Track your progress and get involved with other learners via discussions tab.</p>
 
         <p>You have received this email because you have enrolled in <span>${courseData.title}</span> on LearningApp.</p>
-        <p>If you think this is a mistake, please contact us at <a href="mailto:support@learningapp.link">support@learningapp.link</a>.</p>
+        <p>If you think this is a mistake, please contact us at <a href="mailto:${env.SUPPORT_EMAIL}">${env.SUPPORT_EMAIL}</a>.</p>
       `,
       }),
     });

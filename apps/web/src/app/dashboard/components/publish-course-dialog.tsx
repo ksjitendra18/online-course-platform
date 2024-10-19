@@ -67,7 +67,7 @@ const PublishCourseDialog = ({
             Please make sure that content is arranged and ready to be published.
             Before publishing, please review all the content.
           </p>
-          <DialogFooter>
+          <DialogFooter className="flex items-center">
             <DialogClose asChild>
               <Button type="button" variant="secondary">
                 Close
