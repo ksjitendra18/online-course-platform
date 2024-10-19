@@ -13,7 +13,7 @@ const CourseSearch = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timer>();
+  const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout>>();
   const [query, setQuery] = useState("");
   // const isSearching = !!timeoutId || isPending;
   return (
