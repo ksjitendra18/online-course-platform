@@ -17,6 +17,7 @@ const nextConfig = {
       },
     ],
   },
+  compress: false,
 };
 
 export default nextConfig;
