@@ -34,11 +34,11 @@
     "cmdk": "^1.0.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.34.1",
+    "drizzle-orm": "^0.35.2",
     "eslint-config-dev": "^3.3.1",
     "ioredis": "^5.4.1",
     "lodash.debounce": "^4.0.8",
-    "lucide-react": "^0.441.0",
+    "lucide-react": "^0.453.0",
     "nanoid": "^5.0.7",
     "next": "14.2.15",
     "nextjs-toploader": "^3.7.15",
@@ -59,7 +59,7 @@
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.4",
     "zod": "^3.23.8",
-    "zustand": "^4.5.5"
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
@@ -70,7 +70,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
-    "drizzle-kit": "0.25.0",
+    "drizzle-kit": "0.26.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.15",
     "eslint-config-prettier": "^9.1.0",
