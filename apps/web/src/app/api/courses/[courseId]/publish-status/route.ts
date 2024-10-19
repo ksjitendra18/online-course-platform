@@ -140,6 +140,18 @@ export async function GET(
       );
     }
 
+    if (!hasPublishedModule) {
+      return Response.json(
+        {
+          error: {
+            code: "unpublished_modules",
+            message: "Please publish at least one module",
+            hasPublishedModule: hasPublishedModule,
+          },
+        },
+        { status: 400 }
+      );
+    }
     return NextResponse.json({ data: { hasPublishedModule } });
   } catch (error) {
     console.error("Error checking published module status:", error);

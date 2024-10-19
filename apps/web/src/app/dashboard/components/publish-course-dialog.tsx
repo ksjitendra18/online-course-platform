@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 type PublishCourseDialogProps = {
   triggerMsg: string;
@@ -31,6 +32,7 @@ const PublishCourseDialog = ({
   fetchPublishStatus,
 }: PublishCourseDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const handlePublish = async () => {
     try {
       setIsLoading(true);
@@ -40,6 +42,7 @@ const PublishCourseDialog = ({
 
       if (res.status === 200) {
         toast.success("Course published successfully");
+        router.refresh();
       } else {
         toast.error("Error while publishing course");
       }
@@ -77,7 +80,9 @@ const PublishCourseDialog = ({
             {isLoading ? (
               <Loader2 className="mx-auto animate-spin" />
             ) : (
-              <Button onClick={handlePublish}>Publish</Button>
+              <Button variant="app" onClick={handlePublish}>
+                Publish
+              </Button>
             )}
           </DialogFooter>
         </DialogContent>

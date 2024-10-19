@@ -8,6 +8,7 @@ import { chapter, courseModule, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import redis from "@/lib/redis";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
+import { revalidateTag } from "next/cache";
 
 const PartialChapterSchema = ChapterInfoSchema.partial();
 
@@ -89,6 +90,8 @@ export async function PATCH(
         })
         .where(eq(videoData.chapterId, params.chapterId));
     }
+
+    revalidateTag("get-course-data");
     return Response.json({ success: true });
   } catch (error) {
     console.log(

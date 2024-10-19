@@ -27,8 +27,7 @@ import ReviewDialog from "../_components/review-dialog";
 import ApplyDiscount from "./apply-discount";
 import ShowDiscountCode from "./show-discount-code";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+
 
 export async function generateMetadata({
   params,
@@ -159,7 +158,6 @@ const CoursePage = async ({
                       ₹{courseData.price}
                     </p>
                   </div>
-              
 
                   <ShowDiscountCode code={discountData.code} />
                 </div>

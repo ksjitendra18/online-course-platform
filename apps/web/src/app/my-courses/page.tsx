@@ -14,6 +14,7 @@ export type CourseWithProgress = {
   validity: number | null;
   progress: number;
 };
+
 const MyCourses = async () => {
   const userSession = await getUserSessionRedis();
 

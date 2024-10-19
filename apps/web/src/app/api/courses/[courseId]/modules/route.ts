@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+
 import { and, eq } from "drizzle-orm";
 
 import { db } from "@/db/index";
@@ -79,6 +81,8 @@ export async function POST(
         id: courseModule.id,
         modulePosition: courseModule.position,
       });
+
+    revalidateTag("get-course-data");
 
     return Response.json(
       {

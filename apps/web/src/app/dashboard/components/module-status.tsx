@@ -42,11 +42,11 @@ const ModuleStatus = ({
       });
 
       if (res.status === 200) {
-        toast.success("Module Deleted Successfully");
+        toast.success("Module Published Successfully");
         router.refresh();
       }
     } catch (error) {
-      toast.error("Error while deleting module");
+      toast.error("Error while publishing module");
     } finally {
       setLoading(false);
     }
