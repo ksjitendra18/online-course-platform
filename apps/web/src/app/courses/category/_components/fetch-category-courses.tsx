@@ -1,15 +1,24 @@
-import React from "react";
 
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 import { db } from "@/db";
-import { courseCategory } from "@/db/schema";
+import { course, courseCategory } from "@/db/schema";
 
 import CourseCard from "../../_components/course-card";
 
 const FetchCategoryCourses = async ({ categoryId }: { categoryId: string }) => {
+  
   const courseCategoryInfo = await db.query.courseCategory.findMany({
-    where: eq(courseCategory.categoryId, categoryId),
+    where: and(
+      eq(courseCategory.categoryId, categoryId),
+      inArray(
+        courseCategory.courseId,
+        db
+          .select({ id: course.id })
+          .from(course)
+          .where(eq(course.status, "published"))
+      )
+    ),
     with: {
       course: {
         columns: {
@@ -30,6 +39,7 @@ const FetchCategoryCourses = async ({ categoryId }: { categoryId: string }) => {
       },
     },
   });
+ 
 
   return (
     <>

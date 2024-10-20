@@ -15,8 +15,8 @@ export const metadata = {
   title: "Courses",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+// export const revalidate = 0;
+// export const dynamic = "force-dynamic";
 
 const CourseCategoryPage = async ({
   params,

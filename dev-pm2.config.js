@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
       {
-        name: 'next-app',
+        name: 'dev-next-app',
         script: 'npm',
         args: 'start',
         cwd: './apps/web',
@@ -12,7 +12,7 @@ module.exports = {
         }
       },
       {
-        name: 'upload-api',
+        name: 'dev-upload-api',
         script: './apps/upload-api/dist/index.js',
         interpreter: "bun",
         env: {

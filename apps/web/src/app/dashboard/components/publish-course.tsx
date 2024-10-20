@@ -41,15 +41,16 @@ const PublishCourse = ({
       const res = await fetch(`/api/courses/${courseId}/publish-status`);
       const json = await res.json();
 
-      console.log("res",res.status, json);
+      console.log("res", res.status, json);
       if (res.status !== 200) {
-        setMissingFields(json.error.missingFields);
-        setInvalidFields(json.error.invalidFields);
         if (json.error.hasPublishedModule) {
           setHasPublishedModule(true);
         } else {
           setHasPublishedModule(false);
+          // return;
         }
+        setMissingFields(json.error.missingFields ?? []);
+        setInvalidFields(json.error.invalidFields ?? []);
       } else {
         setHasPublishedModule(true);
       }

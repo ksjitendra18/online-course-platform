@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Book, GraduationCap, Home, LogIn, Menu } from "lucide-react";
 import { MdSpaceDashboard } from "react-icons/md";
@@ -32,6 +33,14 @@ type CurrentUser = {
 } | null;
 
 export default function Navbar({ currentUser }: NavbarProps) {
+  const pathName = usePathname();
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathName]);
+
   const navItems = [
     { label: "Home", href: "/", icon: Home },
     { label: "Courses", href: "/courses", icon: Book },
@@ -61,8 +70,6 @@ export default function Navbar({ currentUser }: NavbarProps) {
     </>
   );
 
-  const router = useRouter();
-
   const handleLogout = async () => {
     await fetch("/api/auth/logout");
     router.push("/");
@@ -75,10 +82,9 @@ export default function Navbar({ currentUser }: NavbarProps) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <GraduationCap className="h-8 w-8 text-primary" />
+              <GraduationCap className="text-primary h-8 w-8" />
               <span className="ml-2 text-xl font-bold">LearningApp</span>
             </Link>
-
           </div>
 
           <div className="hidden items-center space-x-4 md:flex">
@@ -124,7 +130,7 @@ export default function Navbar({ currentUser }: NavbarProps) {
           </div>
 
           <div className="md:hidden">
-            <Sheet>
+            <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open menu">
                   <Menu className="h-6 w-6" />
@@ -147,7 +153,7 @@ export default function Navbar({ currentUser }: NavbarProps) {
                         </Avatar>
                         <div>
                           <p className="font-medium">{currentUser.name}</p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-muted-foreground text-sm">
                             {currentUser.role}
                           </p>
                         </div>

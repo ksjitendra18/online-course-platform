@@ -22,9 +22,6 @@ import ChapterQuiz from "../../_components/chapter-quiz";
 import QuizDuration from "../../_components/quiz-duration";
 import VideoPlayerWithProgress from "../../_components/video-player-progress";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const ChapterPage = async ({
   params,
 }: {
@@ -174,7 +171,14 @@ const ChapterPage = async ({
                     </p>
                   </>
                 ) : (
-                  <QuizDuration duration={chapterInfo.quiz[0].duration} />
+                  <>
+                    {courseData?.isFree ||
+                    chapterInfo.isFree ||
+                    purchaseInfo ||
+                    isPartOfCourse ? (
+                      <QuizDuration duration={chapterInfo.quiz[0].duration} />
+                    ) : null}
+                  </>
                 )}
               </div>
             ) : null}

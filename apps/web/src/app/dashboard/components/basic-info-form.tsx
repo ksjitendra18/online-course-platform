@@ -147,7 +147,7 @@ const BasicInformation = ({
       <div className="auth-options flex w-full flex-col items-center justify-center px-6">
         <form
           onSubmit={handleCreateCourse}
-          className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
+          className="mx-auto w-[100%] md:w-3/4 xl:w-1/2"
         >
           <label htmlFor="courseName" className="mt-5 block text-gray-600">
             Course Name

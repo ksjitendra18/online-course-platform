@@ -22,7 +22,7 @@ const QuizDuration = ({ duration }: Props) => {
             setHasStarted();
             setDuration(duration);
           }}
-          className="bg-blue-600 text-white"
+          variant="app"
         >
           Start Quiz | {duration} Minutes
         </Button>

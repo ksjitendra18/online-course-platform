@@ -64,11 +64,16 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
       <div className="flex items-center justify-between gap-x-3 md:justify-start">
         <h1 className="my-3 text-2xl font-bold">Edit Course Details</h1>
         {courseInfo.status === "published" ? null : (
+          // <PublishCourse
+          //   triggerMsg="Publish Course"
+          //   courseId={courseInfo.id}
+          //   variant={"app"}
+          // />
           <PublishCourse
-            triggerMsg="Publish Course"
-            courseId={courseInfo.id}
-            variant={"app"}
-          />
+          triggerMsg="Publish"
+          courseId={courseInfo.id}
+          variant={"app"}
+        />
         )}
       </div>
       <OtherInformation

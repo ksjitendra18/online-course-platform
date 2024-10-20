@@ -1,10 +1,7 @@
 import { type IconType } from "react-icons";
 import { FaJava } from "react-icons/fa";
 import { FaC, FaDatabase, FaNodeJs, FaPython, FaReact } from "react-icons/fa6";
-import {
-  FcEngineering,
-  FcMultipleDevices
-} from "react-icons/fc";
+import { FcEngineering, FcMultipleDevices } from "react-icons/fc";
 import { MdWeb } from "react-icons/md";
 
 import { Category } from "@/db/schema";
@@ -23,7 +20,7 @@ const iconMap: Record<Category["name"], IconType> = {
   Java: FaJava,
   "Web Development": MdWeb,
   Python: FaPython,
-  "C / C++": FaC,
+  "C/C++": FaC,
   React: FaReact,
   SQL: FaDatabase,
   "Node.js": FaNodeJs,
