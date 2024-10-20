@@ -71,7 +71,7 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
           // />
           <PublishCourse
           triggerMsg="Publish"
-          courseId={courseId}
+          courseId={courseInfo.id}
           variant={"app"}
         />
         )}
