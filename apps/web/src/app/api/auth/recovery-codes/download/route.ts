@@ -9,7 +9,7 @@ import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 export const dynamic = "force-dynamic";
 export async function GET() {
   try {
-    const authToken = cookies().get("auth-token")?.value;
+    const authToken = (await cookies()).get("auth-token")?.value;
 
     if (!authToken) {
       return Response.json(

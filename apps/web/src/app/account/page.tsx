@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic";
 
 const AccountPage = async () => {
   const userSession = await getUserSessionRedis();
-  const sessionToken = cookies().get("auth-token")?.value;
+  const sessionToken = (await cookies()).get("auth-token")?.value;
   if (!userSession || !sessionToken) {
     return redirect("/login");
   }

@@ -17,7 +17,8 @@ export const metadata = {
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const OtherPage = async ({ params }: { params: { slug: string } }) => {
+const OtherPage = async (props: { params: Promise<{ slug: string }> }) => {
+  const params = await props.params;
   const userSession = await getUserSessionRedis();
   if (!userSession) {
     return redirect("/");
@@ -41,7 +42,7 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
     return redirect("/");
   }
   return (
-    <section className="w-full px-6 py-3">
+    (<section className="w-full px-6 py-3">
       <div className="my-5 flex items-center gap-2">
         <Link className="flex items-center gap-3 ease-in" href="/dashboard">
           <FaHome />
@@ -60,7 +61,6 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
           Other Info
         </Link>
       </div>
-
       <div className="flex items-center justify-between gap-x-3 md:justify-start">
         <h1 className="my-3 text-2xl font-bold">Edit Course Details</h1>
         {courseInfo.status === "published" ? null : (
@@ -69,11 +69,11 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
           //   courseId={courseInfo.id}
           //   variant={"app"}
           // />
-          <PublishCourse
+          (<PublishCourse
           triggerMsg="Publish"
           courseId={courseInfo.id}
           variant={"app"}
-        />
+        />)
         )}
       </div>
       <OtherInformation
@@ -90,7 +90,7 @@ const OtherPage = async ({ params }: { params: { slug: string } }) => {
           (category) => category.categoryId
         )}
       />
-    </section>
+    </section>)
   );
 };
 

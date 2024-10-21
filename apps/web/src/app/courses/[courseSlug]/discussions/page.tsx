@@ -15,11 +15,12 @@ import { formatDate } from "@/lib/utils";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const DiscussionPage = async ({
-  params,
-}: {
-  params: { courseSlug: string };
-}) => {
+const DiscussionPage = async (
+  props: {
+    params: Promise<{ courseSlug: string }>;
+  }
+) => {
+  const params = await props.params;
   const userSession = await getUserSessionRedis();
   const courseData = await getCourseData({
     courseSlug: params.courseSlug,

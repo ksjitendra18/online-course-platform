@@ -11,11 +11,12 @@ import DashboardCourseSearch from "../../components/dashboard-search";
 export const metadata = {
   title: "Manage Course",
 };
-const Courses = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
+const Courses = async (
+  props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   const search =
     typeof searchParams.courseName === "string"
       ? searchParams.courseName

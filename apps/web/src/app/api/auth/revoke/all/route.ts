@@ -10,7 +10,7 @@ import { checkAuth } from "@/lib/auth";
 export async function POST() {
   try {
     const { isAuth, userInfo } = await checkAuth();
-    const currentSession = cookies().get("auth-token")?.value;
+    const currentSession = (await cookies()).get("auth-token")?.value;
     if (!isAuth || !userInfo || !currentSession) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },

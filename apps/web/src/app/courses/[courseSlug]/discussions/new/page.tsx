@@ -8,11 +8,12 @@ import NewDiscussionForm from "../_components/new-discussion-form";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const AddNewDiscussion = async ({
-  params,
-}: {
-  params: { courseSlug: string };
-}) => {
+const AddNewDiscussion = async (
+  props: {
+    params: Promise<{ courseSlug: string }>;
+  }
+) => {
+  const params = await props.params;
   const userSession = await getUserSessionRedis();
 
   const courseData = await getCourseData({

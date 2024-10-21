@@ -8,7 +8,7 @@ import { EncryptionPurpose, aesDecrypt } from "@/lib/aes";
 import redis from "@/lib/redis";
 
 export async function GET() {
-  const authToken = cookies().get("auth-token")?.value;
+  const authToken = (await cookies()).get("auth-token")?.value;
   try {
     if (authToken) {
       const decryptedToken = aesDecrypt(
@@ -26,6 +26,6 @@ export async function GET() {
     console.error("Error while logout", error, authToken);
     return Response.json({ success: true });
   } finally {
-    cookies().delete("auth-token");
+    (await cookies()).delete("auth-token");
   }
 }

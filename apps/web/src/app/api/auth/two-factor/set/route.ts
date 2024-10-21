@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "validation_error" }, { status: 400 });
     }
 
-    const authToken = cookies().get("auth-token")?.value;
+    const authToken = (await cookies()).get("auth-token")?.value;
 
     if (!authToken) {
       return Response.json(

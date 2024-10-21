@@ -15,7 +15,8 @@ export const metadata = {
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const SettingsPage = async ({ params }: { params: { slug: string } }) => {
+const SettingsPage = async (props: { params: Promise<{ slug: string }> }) => {
+  const params = await props.params;
   const userInfo = await getUserSessionRedis();
 
   if (!userInfo) {

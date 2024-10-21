@@ -14,8 +14,9 @@ const PartialModuleInfoSchema = ModuleInfoSchema.partial();
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { courseId: string; moduleId: string } }
+  props: { params: Promise<{ courseId: string; moduleId: string }> }
 ) {
+  const params = await props.params;
   try {
     const reqBody = await request.json();
 
@@ -92,8 +93,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { courseId: string; moduleId: string } }
+  props: { params: Promise<{ courseId: string; moduleId: string }> }
 ) {
+  const params = await props.params;
   try {
     const { isAuth, userInfo } = await checkAuth();
 

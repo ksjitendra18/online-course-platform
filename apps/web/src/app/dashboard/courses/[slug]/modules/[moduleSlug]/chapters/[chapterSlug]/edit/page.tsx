@@ -16,11 +16,12 @@ export const metadata = {
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const EditChapter = async ({
-  params,
-}: {
-  params: { slug: string; moduleSlug: string; chapterSlug: string };
-}) => {
+const EditChapter = async (
+  props: {
+    params: Promise<{ slug: string; moduleSlug: string; chapterSlug: string }>;
+  }
+) => {
+  const params = await props.params;
   const userExists = await getUserSessionRedis();
 
   const courseExists = await db.query.course.findFirst({

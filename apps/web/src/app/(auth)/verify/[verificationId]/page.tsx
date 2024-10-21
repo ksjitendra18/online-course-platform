@@ -7,11 +7,12 @@ export const metadata: Metadata = {
   title: "Verify Email",
 };
 
-const EmailVerification = ({
-  params,
-}: {
-  params: { verificationId: string };
-}) => {
+const EmailVerification = async (
+  props: {
+    params: Promise<{ verificationId: string }>;
+  }
+) => {
+  const params = await props.params;
   return <VerifyEmailCode verificationId={params.verificationId} />;
 };
 

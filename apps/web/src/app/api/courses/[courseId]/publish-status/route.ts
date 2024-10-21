@@ -40,10 +40,8 @@ const CompleteCourseSchema = z
     }
   });
 
-export async function GET(
-  request: Request,
-  { params }: { params: { courseId: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   const courseId = params.courseId;
 
   try {

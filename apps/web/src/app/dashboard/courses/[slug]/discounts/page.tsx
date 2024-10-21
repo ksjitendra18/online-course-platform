@@ -21,7 +21,8 @@ export const metadata = {
   title: "Discounts",
 };
 
-const Discounts = async ({ params }: { params: { slug: string } }) => {
+const Discounts = async (props: { params: Promise<{ slug: string }> }) => {
+  const params = await props.params;
   const courseInfo = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),
     columns: {

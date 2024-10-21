@@ -10,8 +10,9 @@ import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { courseId: string; quizId: string } }
+  props: { params: Promise<{ courseId: string; quizId: string }> }
 ) {
+  const params = await props.params;
   try {
     const { isAuth, userInfo } = await checkAuth();
 

@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   title: "Verify Email",
 };
 
-const ResetPass = ({ params }: { params: { id: string } }) => {
+const ResetPass = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
   return <SetNewPassword id={params.id} />;
 };
 

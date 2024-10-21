@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const twoFaToken = cookies().get("2fa_auth")?.value;
+    const twoFaToken = (await cookies()).get("2fa_auth")?.value;
 
     if (!twoFaToken) {
       return Response.json(
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
     const validStrategies = ["google", "credentials", "magic_link"] as const;
     type LoginStrategy = (typeof validStrategies)[number];
 
-    const loginMethod = cookies().get("login_method")?.value;
+    const loginMethod = (await cookies()).get("login_method")?.value;
     const strategy: LoginStrategy = validStrategies.includes(
       loginMethod as LoginStrategy
     )
@@ -186,14 +186,14 @@ export async function POST(request: NextRequest) {
       strategy: strategy,
     });
 
-    cookies().delete("2fa_auth");
+    (await cookies()).delete("2fa_auth");
 
     const encryptedCookie = aesEncrypt(
       sessionId,
       EncryptionPurpose.SESSION_COOKIE
     );
 
-    cookies().set("auth-token", encryptedCookie, {
+    (await cookies()).set("auth-token", encryptedCookie, {
       path: "/",
       httpOnly: true,
       expires: expiresAt,

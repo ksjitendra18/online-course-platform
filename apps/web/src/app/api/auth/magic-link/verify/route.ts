@@ -47,14 +47,14 @@ export async function POST(request: Request) {
     if (userExists.twoFactorEnabled) {
       const faSess = await create2FASession(userExists.id);
 
-      cookies().set("login_method", "magic_link", {
+      (await cookies()).set("login_method", "magic_link", {
         path: "/",
         httpOnly: true,
         sameSite: "lax",
         secure: env.NODE_ENV === "production",
       });
 
-      cookies().set("2fa_auth", faSess, {
+      (await cookies()).set("2fa_auth", faSess, {
         path: "/",
         httpOnly: true,
         sameSite: "lax",
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       EncryptionPurpose.SESSION_COOKIE
     );
 
-    cookies().set("auth-token", encryptedSessionId, {
+    (await cookies()).set("auth-token", encryptedSessionId, {
       sameSite: "lax",
       expires: expiresAt,
       domain: env.NODE_ENV === "production" ? ".learningapp.link" : "localhost",
