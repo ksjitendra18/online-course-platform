@@ -46,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install -g turbo
-          pnpm install
+          pnpm install  --frozen-lockfile
 
       - name: Load env files
         run: |
@@ -82,7 +82,7 @@ jobs:
           fi
           echo "PNPM version: $(pnpm --version)"
           git pull
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm run build
           pm2 restart all
           EOF
