@@ -43,13 +43,18 @@ export type CourseData = {
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const CourseLayout = async ({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { courseSlug: string; slug: string[] };
-}) => {
+const CourseLayout = async (
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ courseSlug: string; slug: string[] }>;
+  }
+) => {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const userSession = await getUserSessionRedis();
   const courseData = await getCourseData({
     courseSlug: params.courseSlug,

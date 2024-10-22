@@ -25,7 +25,8 @@ export const metadata = {
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const Enrollments = async ({ params }: { params: { slug: string } }) => {
+const Enrollments = async (props: { params: Promise<{ slug: string }> }) => {
+  const params = await props.params;
   const courseData = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),
     columns: { id: true, isFree: true },

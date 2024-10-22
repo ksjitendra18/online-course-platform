@@ -7,10 +7,8 @@ import { courseModule } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { courseId: string } }
-) {
+export async function POST(request: Request, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   try {
     const { moduleName, moduleDescription, moduleSlug } = await request.json();
 

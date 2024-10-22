@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const webhookBody = await request.json();
 
     if (webhookBody.event === "payment.captured") {
-      const razorPaySignature = headers().get("X-RazorPay-Signature");
+      const razorPaySignature = (await headers()).get("X-RazorPay-Signature");
 
       const stringifiedBody = JSON.stringify(webhookBody);
 

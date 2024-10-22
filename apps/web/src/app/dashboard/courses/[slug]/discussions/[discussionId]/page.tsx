@@ -17,11 +17,12 @@ export const metadata = {
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const DiscussionIdPage = async ({
-  params,
-}: {
-  params: { slug: string; discussionId: string };
-}) => {
+const DiscussionIdPage = async (
+  props: {
+    params: Promise<{ slug: string; discussionId: string }>;
+  }
+) => {
+  const params = await props.params;
   const userSession = await getUserSessionRedis();
 
   if (!userSession) {

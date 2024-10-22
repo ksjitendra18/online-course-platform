@@ -16,13 +16,18 @@ import {
 
 import CourseSidebar from "../../_components/course-sidebar";
 
-const DiscussionLayout = async ({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: { courseSlug: string };
-}) => {
+const DiscussionLayout = async (
+  props: {
+    children: ReactNode;
+    params: Promise<{ courseSlug: string }>;
+  }
+) => {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const userSession = await getUserSessionRedis();
   const courseData = await getCourseData({
     courseSlug: params.courseSlug,

@@ -442,7 +442,7 @@ export const sendPasswordResetMail = async ({
 
 export const checkAuth = async () => {
   try {
-    const token = cookies().get("auth-token")?.value;
+    const token = (await cookies()).get("auth-token")?.value;
 
     if (!token) {
       return { isAuth: false, userInfo: null };

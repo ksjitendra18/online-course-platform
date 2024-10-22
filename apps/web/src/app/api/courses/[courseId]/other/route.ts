@@ -8,10 +8,8 @@ import { course, courseCategory } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { OtherInfoSchema } from "@/validations/other-info";
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { courseId: string } }
-) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   try {
     const {
       teacherName,

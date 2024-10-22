@@ -5,10 +5,8 @@ import { db } from "@/db";
 import { course } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { courseId: string } }
-) {
+export async function POST(request: Request, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   const courseId = params.courseId;
 
   try {

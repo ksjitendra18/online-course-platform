@@ -29,11 +29,12 @@ import ShowDiscountCode from "./show-discount-code";
 
 
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { courseSlug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ courseSlug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const courseData = await getCourseData({ courseSlug: params.courseSlug });
 
   return {
@@ -41,13 +42,14 @@ export async function generateMetadata({
   };
 }
 
-const CoursePage = async ({
-  params,
-  searchParams,
-}: {
-  params: { courseSlug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
+const CoursePage = async (
+  props: {
+    params: Promise<{ courseSlug: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const userSession = await getUserSessionRedis();
 
   const courseData = await getCourseData({

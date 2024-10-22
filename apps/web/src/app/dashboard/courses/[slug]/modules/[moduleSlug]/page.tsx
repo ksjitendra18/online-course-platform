@@ -17,11 +17,12 @@ export const metadata = {
   title: "Module Chapters",
 };
 
-const ModuleSlugPage = async ({
-  params,
-}: {
-  params: { slug: string; moduleSlug: string };
-}) => {
+const ModuleSlugPage = async (
+  props: {
+    params: Promise<{ slug: string; moduleSlug: string }>;
+  }
+) => {
+  const params = await props.params;
   const courseModuleWithChapters = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),
     columns: {

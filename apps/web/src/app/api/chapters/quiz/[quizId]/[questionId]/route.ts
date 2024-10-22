@@ -9,8 +9,9 @@ import { QuizEditSchema } from "@/validations/quiz-question";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { quizId: string; questionId: string } }
+  props: { params: Promise<{ quizId: string; questionId: string }> }
 ) {
+  const params = await props.params;
   try {
     const { question, options } = await request.json();
 
@@ -124,8 +125,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { quizId: string; questionId: string } }
+  props: { params: Promise<{ quizId: string; questionId: string }> }
 ) {
+  const params = await props.params;
   try {
     const quizExists = await db.query.quiz.findFirst({
       where: eq(quiz.id, params.quizId),

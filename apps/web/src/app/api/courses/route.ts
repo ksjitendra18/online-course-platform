@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     // check if user is valid
-    const token = cookies().get("auth-token")?.value;
+    const token = (await cookies()).get("auth-token")?.value;
     if (!token) {
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },

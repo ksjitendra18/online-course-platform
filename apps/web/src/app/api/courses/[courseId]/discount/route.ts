@@ -4,10 +4,8 @@ import { courseDiscount } from "@/db/schema/course-discount";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { DiscountSchema } from "@/validations/discount";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { courseId: string } }
-) {
+export async function POST(request: Request, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   try {
     const requestBody = await request.json();
 

@@ -14,16 +14,16 @@ export async function GET(request: NextRequest) {
 
   const googleOauthState = createId();
 
-  cookies().set("google_oauth_state", googleOauthState, {
+  (await cookies()).set("google_oauth_state", googleOauthState, {
     path: "/",
   });
 
-  cookies().set("login_method", "google", {
+  (await cookies()).set("login_method", "google", {
     path: "/",
   });
 
   if (type) {
-    cookies().set("signup_type", "organization", {
+    (await cookies()).set("signup_type", "organization", {
       path: "/",
     });
   }
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     .update(googleCodeChallenge)
     .digest("base64url");
 
-  cookies().set("google_code_challenge", googleCodeChallenge, {
+  (await cookies()).set("google_code_challenge", googleCodeChallenge, {
     path: "/",
   });
 

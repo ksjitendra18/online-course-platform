@@ -28,7 +28,7 @@ type SessionExists = {
 };
 
 export async function getUserSessionRedis() {
-  const authToken = cookies().get("auth-token")?.value;
+  const authToken = (await cookies()).get("auth-token")?.value;
 
   if (!authToken) {
     return null;
