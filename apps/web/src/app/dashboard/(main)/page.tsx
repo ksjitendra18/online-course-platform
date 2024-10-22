@@ -6,9 +6,6 @@ import { getPublishedCourses, getTotalEnrollments } from "@/db/queries/courses";
 
 import { DataCard } from "./analytics/_components/data-card";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Dashboard",
 };

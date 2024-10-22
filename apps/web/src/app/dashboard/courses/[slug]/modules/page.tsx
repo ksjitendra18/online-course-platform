@@ -14,9 +14,6 @@ export const metadata = {
   title: "Modules",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const ModulesPage = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;
   const courseInfo = await db.query.course.findFirst({

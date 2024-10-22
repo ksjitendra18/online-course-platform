@@ -9,15 +9,9 @@ export const metadata = {
   title: "Courses",
 };
 
-// !REMOVED CACHE
-// export const revalidate = 0;
-// export const dynamic = "force-dynamic";
-
-const CoursesPage = async (
-  props: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  }
-) => {
+const CoursesPage = async (props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
   const searchParams = await props.searchParams;
   const search =
     typeof searchParams.query === "string" ? searchParams.query : undefined;

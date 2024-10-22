@@ -13,10 +13,9 @@ export const metadata = {
   title: "Discussions",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
-const DiscussionsPage = async (props: { params: Promise<{ slug: string }> }) => {
+const DiscussionsPage = async (props: {
+  params: Promise<{ slug: string }>;
+}) => {
   const params = await props.params;
   const userSession = await getUserSessionRedis();
 

@@ -1,15 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { eq } from "drizzle-orm";
 import { FaHome } from "react-icons/fa";
 
 import BasicInformation from "@/app/dashboard/components/basic-info-form";
-import { db } from "@/db";
-import { course } from "@/db/schema";
-
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+import { getUserSessionRedis } from "@/db/queries/auth";
+import { getCourseInfo } from "@/db/queries/courses";
 
 export const metadata = {
   title: "Basic Info",
@@ -17,16 +13,14 @@ export const metadata = {
 
 const BasicPage = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;
-  const courseInfo = await db.query.course.findFirst({
-    where: eq(course.slug, params.slug),
-    columns: {
-      id: true,
-      slug: true,
-      title: true,
-      description: true,
-      isFree: true,
-    },
-  });
+
+  const userInfo = await getUserSessionRedis();
+
+  if (!userInfo) {
+    return redirect("/");
+  }
+
+  const courseInfo = await getCourseInfo(params.slug, userInfo.userId);
 
   if (!courseInfo) {
     return redirect("/");
@@ -55,8 +49,8 @@ const BasicPage = async (props: { params: Promise<{ slug: string }> }) => {
         <h1 className="my-3 text-2xl font-bold">Edit Course Details</h1>
       </div>
       <BasicInformation
-        courseSlug={courseInfo?.slug}
-        courseId={courseInfo?.id}
+        courseSlug={courseInfo.slug}
+        courseId={courseInfo.id}
         courseName={courseInfo.title}
         courseDescription={courseInfo.description}
         isFree={courseInfo.isFree}

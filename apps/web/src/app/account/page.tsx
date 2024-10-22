@@ -18,8 +18,6 @@ export const metadata = {
   title: "Account",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
 
 const AccountPage = async () => {
   const userSession = await getUserSessionRedis();

@@ -13,14 +13,9 @@ export const metadata: Metadata = {
   title: "Edit Module",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
-const EditModules = async (
-  props: {
-    params: Promise<{ slug: string; moduleSlug: string }>;
-  }
-) => {
+const EditModules = async (props: {
+  params: Promise<{ slug: string; moduleSlug: string }>;
+}) => {
   const params = await props.params;
   const courseInfo = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),

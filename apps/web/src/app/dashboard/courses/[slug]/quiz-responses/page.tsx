@@ -22,9 +22,6 @@ type UserScores = {
   };
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const QuizResponses = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;
   const courseData = await courseWithQuizData(params.slug);

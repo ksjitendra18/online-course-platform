@@ -9,20 +9,13 @@ import { course, courseMember } from "@/db/schema";
 
 import CourseDashboardSidebar from "../../components/course-dashboard-sidebar";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
-const DashboardLayout = async (
-  props: {
-    children: React.ReactNode;
-    params: Promise<{ slug: string }>;
-  }
-) => {
+const DashboardLayout = async (props: {
+  children: React.ReactNode;
+  params: Promise<{ slug: string }>;
+}) => {
   const params = await props.params;
 
-  const {
-    children
-  } = props;
+  const { children } = props;
 
   const currentUser = await getUserSessionRedis();
 

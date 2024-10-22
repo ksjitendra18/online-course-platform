@@ -10,18 +10,13 @@ import { db } from "@/db";
 import { chapter, course, courseModule } from "@/db/schema";
 import { cn, formatDuration } from "@/lib/utils";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Module Chapters",
 };
 
-const ModuleSlugPage = async (
-  props: {
-    params: Promise<{ slug: string; moduleSlug: string }>;
-  }
-) => {
+const ModuleSlugPage = async (props: {
+  params: Promise<{ slug: string; moduleSlug: string }>;
+}) => {
   const params = await props.params;
   const courseModuleWithChapters = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),

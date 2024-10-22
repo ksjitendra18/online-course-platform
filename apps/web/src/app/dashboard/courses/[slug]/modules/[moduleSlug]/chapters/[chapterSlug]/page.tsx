@@ -16,14 +16,9 @@ export const metadata = {
   title: "View Chapter",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
-const ViewChapter = async (
-  props: {
-    params: Promise<{ slug: string; moduleSlug: string; chapterSlug: string }>;
-  }
-) => {
+const ViewChapter = async (props: {
+  params: Promise<{ slug: string; moduleSlug: string; chapterSlug: string }>;
+}) => {
   const params = await props.params;
   const userExists = await getUserSessionRedis();
 

@@ -5,9 +5,6 @@ import { getUserSessionRedis } from "@/db/queries/auth";
 
 import DashboardSidebar from "../components/dashboard-sidebar";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUserSessionRedis();
 

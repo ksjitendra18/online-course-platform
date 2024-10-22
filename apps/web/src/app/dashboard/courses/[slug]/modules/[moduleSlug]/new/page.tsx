@@ -12,14 +12,9 @@ export const metadata = {
   title: "Create new chapter",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
-const NewChapter = async (
-  props: {
-    params: Promise<{ slug: string; moduleSlug: string }>;
-  }
-) => {
+const NewChapter = async (props: {
+  params: Promise<{ slug: string; moduleSlug: string }>;
+}) => {
   const params = await props.params;
   const courseModuleInfo = await db.query.course.findFirst({
     where: eq(course.slug, params.slug),
