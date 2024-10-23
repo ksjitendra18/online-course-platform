@@ -2,6 +2,9 @@ import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@node-rs/xxhash", "@node-rs/argon2"],
+  devIndicators: {
+    appIsrStatus: true,
+  },
 
   eslint: {
     ignoreDuringBuilds: true,

@@ -1,67 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
-import { getUserSessionRedis } from "@/db/queries/auth";
 import { getAllCoursesByUserId } from "@/db/queries/courses";
 import { formatPrice } from "@/lib/utils";
 
-import DashboardCourseSearch from "../../components/dashboard-search";
+export const FetchMemberCourses = async ({
+  search,
+  userId,
+}: {
+  search: string | undefined;
+  userId: string;
+}) => {
 
-export const metadata = {
-  title: "Manage Course",
-};
-const Courses = async (
-  props: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  }
-) => {
-  const searchParams = await props.searchParams;
-  const search =
-    typeof searchParams.courseName === "string"
-      ? searchParams.courseName
-      : undefined;
-
-  const currentSearchParams = new URLSearchParams();
-
-  if (search) {
-    currentSearchParams.set("courseName", search as string);
-  }
-  const currentUser = await getUserSessionRedis();
-
-  if (!currentUser) {
-    return redirect("/login");
-  }
-
-  const memberCourses = await getAllCoursesByUserId(currentUser.userId, search);
+  const memberCourses = await getAllCoursesByUserId(userId, search);
 
   return (
     <>
-      <section className="w-full p-6">
-        <h1 className="my-3 text-2xl font-bold">Courses</h1>
-
-        <div className="my-3 flex items-center justify-between">
-          <DashboardCourseSearch existingSearchTerm={search ?? ""} />
-
-          <Link
-            className="rounded-md bg-blue-600 px-5 py-2 text-white"
-            href="/dashboard/courses/create"
-          >
-            Add New Course
-          </Link>
-        </div>
-      </section>
-
       <section className="grid auto-rows-[1fr] items-center gap-5 p-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
         {memberCourses?.map((memberCourse) => (
           <div
             key={memberCourse.courseId}
             className="relative flex h-full w-full flex-col justify-between rounded-md border-2 border-blue-600"
           >
-            {/* width unknown how to do? */}
-            <div className="aspect-video w-full overflow-hidden rounded-md">
-              <img
+            <div className="relative aspect-video w-full overflow-hidden rounded-md">
+              <Image
                 alt="Course Image"
+                fill
                 src={
                   memberCourse.course.imageUrl ??
                   "https://cdn.learningapp.link/images/default-course-image.png"
@@ -114,8 +78,7 @@ const Courses = async (
           </div>
         ))}
       </section>
+      ;
     </>
   );
 };
-
-export default Courses;
