@@ -19,6 +19,7 @@ export const getCourseInfo = unstable_cache(
         title: true,
         slug: true,
         status: true,
+        description: true,
         isFree: true,
       },
       where: and(

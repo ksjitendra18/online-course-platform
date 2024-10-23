@@ -12,9 +12,6 @@ export const metadata = {
   title: "Update Profile",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const UpdateProfile = async () => {
   const userSession = await getUserSessionRedis();
   if (!userSession) {

@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest } from "next/server";
 
 import { eq } from "drizzle-orm";
@@ -11,7 +11,10 @@ import { BasicInfoSchema } from "@/validations/basic-info";
 
 const PartialBasicInfoSchema = BasicInfoSchema.partial();
 
-export async function PATCH(request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
+export async function PATCH(
+  request: NextRequest,
+  props: { params: Promise<{ courseId: string }> }
+) {
   const params = await props.params;
   try {
     const reqBody = await request.json();
@@ -88,6 +91,7 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ cou
 
     revalidatePath("/dashboard/courses");
     revalidatePath("/courses");
+    revalidateTag("get-course-info");
     return Response.json({ success: true });
   } catch (error) {
     console.log("Error while updating course", error);
@@ -100,7 +104,10 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ cou
   }
 }
 
-export async function DELETE(request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  props: { params: Promise<{ courseId: string }> }
+) {
   const params = await props.params;
   try {
     const { isAuth, userInfo } = await checkAuth();

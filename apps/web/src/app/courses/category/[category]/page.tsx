@@ -15,14 +15,9 @@ export const metadata = {
   title: "Courses",
 };
 
-// export const revalidate = 0;
-// export const dynamic = "force-dynamic";
-
-const CourseCategoryPage = async (
-  props: {
-    params: Promise<{ category: string }>;
-  }
-) => {
+const CourseCategoryPage = async (props: {
+  params: Promise<{ category: string }>;
+}) => {
   const params = await props.params;
   const categoryInfo = await db.query.category.findFirst({
     columns: {

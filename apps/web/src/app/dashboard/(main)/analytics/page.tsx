@@ -7,9 +7,6 @@ import { getAnalytics } from "@/db/queries/course-analytics";
 import { Chart } from "./_components/chart";
 import { DataCard } from "./_components/data-card";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const AnalyticsPage = async () => {
   const userInfo = await getUserSessionRedis();
 

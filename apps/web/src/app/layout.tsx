@@ -16,9 +16,6 @@ export const metadata: Metadata = {
   description: "Cloud Native Way of course platform",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 export default async function RootLayout({
   children,
 }: Readonly<{

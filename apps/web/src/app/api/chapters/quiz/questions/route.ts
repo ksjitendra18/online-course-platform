@@ -7,9 +7,6 @@ import { db } from "@/db";
 import { chapter, quiz } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const GetQuestionsSchema = z.object({
   courseId: z
     .string({ required_error: "Course ID is required" })

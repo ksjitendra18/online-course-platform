@@ -15,21 +15,11 @@ export const metadata = {
   title: "Discussion",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
-const DiscussionIdPage = async (
-  props: {
-    params: Promise<{ courseSlug: string; discussionId: string }>;
-  }
-) => {
+const DiscussionIdPage = async (props: {
+  params: Promise<{ courseSlug: string; discussionId: string }>;
+}) => {
   const params = await props.params;
-  // const courseData = await db.query.course.findFirst({
-  //   columns: {
-  //     id: true,
-  //   },
-  //   where: eq(course.slug, params.courseSlug),
-  // });
+
   const courseData = await getCourseData({ courseSlug: params.courseSlug });
 
   const discussionInfo = await db.query.discussion.findFirst({

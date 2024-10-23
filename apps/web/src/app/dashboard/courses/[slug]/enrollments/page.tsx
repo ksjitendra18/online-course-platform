@@ -22,9 +22,6 @@ export const metadata = {
   title: "Enrollments",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 const Enrollments = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;
   const courseData = await db.query.course.findFirst({

@@ -49,7 +49,6 @@ const Login = () => {
         return;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 5000));
       const res = await fetch("/api/auth/magic-link", {
         method: "POST",
         body: JSON.stringify({ email: email }),
