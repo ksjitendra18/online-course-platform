@@ -1,7 +1,4 @@
-import { and, eq, like } from "drizzle-orm";
-
-import { db } from "@/db";
-import { course } from "@/db/schema";
+import { getPublishedCourses } from "@/db/queries/courses";
 
 import CourseCard from "./_components/course-card";
 
@@ -20,28 +17,7 @@ const FetchCourse = async ({ searchParams }: Props) => {
     currentSearchParams.set("query", search as string);
   }
 
-  const courses = await db.query.course.findMany({
-    columns: {
-      id: true,
-      title: true,
-      imageUrl: true,
-      price: true,
-      isFree: true,
-      slug: true,
-    },
-    where: and(
-      eq(course.status, "published"),
-      like(course.title, `%${search ? search : ""}%`)
-    ),
-
-    with: {
-      courseModule: {
-        columns: {
-          id: true,
-        },
-      },
-    },
-  });
+  const courses = await getPublishedCourses(search);
   return (
     <div className="my-5 grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
       {courses.map((course) => (

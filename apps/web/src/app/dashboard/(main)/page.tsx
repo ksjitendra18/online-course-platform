@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getAnalytics } from "@/db/queries/course-analytics";
-import { getPublishedCourses, getTotalEnrollments } from "@/db/queries/courses";
+import { getAdminPublishedCoursesLength, getTotalEnrollments } from "@/db/queries/courses";
 
 import { DataCard } from "./analytics/_components/data-card";
 
@@ -17,7 +17,7 @@ const DashboardPage = async () => {
   }
 
   const [publishedCourses, totalEnrollments, analytics] = await Promise.all([
-    getPublishedCourses(userInfo.userId),
+    getAdminPublishedCoursesLength(userInfo.userId),
     getTotalEnrollments(userInfo.userId),
     getAnalytics(userInfo.userId),
   ]);
@@ -28,7 +28,7 @@ const DashboardPage = async () => {
       <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <DataCard
           label="Total Published Course"
-          value={publishedCourses.length}
+          value={publishedCourses}
         />
         <DataCard label="Total Enrollments" value={totalEnrollments.length} />
         <DataCard label="Total Revenue" shouldFormat value={totalRevenue} />

@@ -27,13 +27,9 @@ import ReviewDialog from "../_components/review-dialog";
 import ApplyDiscount from "./apply-discount";
 import ShowDiscountCode from "./show-discount-code";
 
-
-
-export async function generateMetadata(
-  props: {
-    params: Promise<{ courseSlug: string }>;
-  }
-): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Promise<{ courseSlug: string }>;
+}): Promise<Metadata> {
   const params = await props.params;
   const courseData = await getCourseData({ courseSlug: params.courseSlug });
 
@@ -42,12 +38,10 @@ export async function generateMetadata(
   };
 }
 
-const CoursePage = async (
-  props: {
-    params: Promise<{ courseSlug: string }>;
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  }
-) => {
+const CoursePage = async (props: {
+  params: Promise<{ courseSlug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
   const searchParams = await props.searchParams;
   const params = await props.params;
   const userSession = await getUserSessionRedis();
@@ -130,6 +124,7 @@ const CoursePage = async (
     courseId: courseData.id,
     code: discountCode,
   });
+
   return (
     <div className="flex flex-col-reverse md:flex-row">
       <CourseSidebar

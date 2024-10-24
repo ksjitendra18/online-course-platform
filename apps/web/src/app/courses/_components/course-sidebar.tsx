@@ -57,7 +57,7 @@ const CourseSidebar = ({
     <nav className="relative w-full max-w-sm flex-shrink-0 lg:block">
       <div className="sticky top-0 h-auto">
         <ScrollArea className="relative h-[calc(100vh-0rem)] overflow-hidden pb-9 pt-2">
-          <div className="mx-3 mt-3 rounded-md bg-white pt-5">
+          <div className="mx-3 mt-3 rounded-md border-2 bg-white pt-5">
             <Link href={`/courses/${courseData.slug}`}>
               <h1 className="text-center text-xl font-bold hover:underline">
                 {courseData.title}
@@ -88,7 +88,7 @@ const CourseSidebar = ({
               {courseData.courseModule.map((module) => (
                 <div key={module.id} className="pb-3">
                   <AccordionItem value={module.slug}>
-                    <AccordionTrigger className="rounded-tl-md rounded-tr-md border-b-2 bg-white px-4 py-1 no-underline hover:no-underline">
+                    <AccordionTrigger className="rounded-tl-md rounded-tr-md border-2 border-b-2 bg-white px-4 py-1 no-underline hover:no-underline">
                       <span className="my-2 px-3 text-center font-semibold">
                         {module.title}
                       </span>

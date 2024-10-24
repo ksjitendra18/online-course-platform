@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
@@ -16,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type PublishCourseDialogProps = {
   triggerMsg: string;
@@ -31,11 +32,12 @@ const PublishCourseDialog = ({
   courseId,
   fetchPublishStatus,
 }: PublishCourseDialogProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
   const handlePublish = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const res = await fetch(`/api/courses/${courseId}/publish`, {
         method: "POST",
       });
@@ -49,7 +51,7 @@ const PublishCourseDialog = ({
     } catch (error) {
       toast.error("Error while publishing course");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
   return (
@@ -77,13 +79,23 @@ const PublishCourseDialog = ({
               </Button>
             </DialogClose>
 
-            {isLoading ? (
-              <Loader2 className="mx-auto animate-spin" />
-            ) : (
-              <Button variant="app" onClick={handlePublish}>
-                Publish
-              </Button>
-            )}
+            <Button
+              disabled={loading}
+              onClick={handlePublish}
+              variant="app"
+              className="relative"
+            >
+              <div
+                className={cn(
+                  "absolute inset-0 flex items-center justify-center",
+                  !loading && "invisible"
+                )}
+              >
+                <Loader2 className="animate-spin" />
+              </div>
+
+              <span className={cn(loading && "invisible")}>Publish</span>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

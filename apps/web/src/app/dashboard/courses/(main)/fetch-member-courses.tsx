@@ -30,7 +30,7 @@ export const FetchMemberCourses = async ({
                   memberCourse.course.imageUrl ??
                   "https://cdn.learningapp.link/images/default-course-image.png"
                 }
-                className="rounded-t-md object-cover"
+                className=" object-cover"
               />
             </div>
             <div className="mt-2 flex flex-col px-4">

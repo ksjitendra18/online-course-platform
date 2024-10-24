@@ -22,12 +22,11 @@ import ChapterQuiz from "../../_components/chapter-quiz";
 import QuizDuration from "../../_components/quiz-duration";
 import VideoPlayerWithProgress from "../../_components/video-player-progress";
 
-const ChapterPage = async (
-  props: {
-    params: Promise<{ courseSlug: string; slug: string[] }>;
-  }
-) => {
+const ChapterPage = async (props: {
+  params: Promise<{ courseSlug: string; slug: string[] }>;
+}) => {
   const params = await props.params;
+  await new Promise((resolve) => setTimeout(resolve, 5000));
   const courseData = await db.query.course.findFirst({
     where: eq(course.slug, params.courseSlug),
     columns: {
@@ -155,7 +154,7 @@ const ChapterPage = async (
   }
 
   return (
-    (<section className="h-full">
+    <section className="h-full">
       <div className="flex items-center justify-start gap-5 px-3">
         {/* <h2 className="my-5 text-center text-2xl font-bold">
           {chapterInfo?.title}
@@ -194,7 +193,7 @@ const ChapterPage = async (
           <div className="fill mx-auto rounded-t-md">
             {chapterInfo.type === "video" && (
               // <div className="flex items-center justify-center mx-auto max-w-[900px]">
-              (<>
+              <>
                 <div className="mx-auto flex items-center justify-center">
                   <VideoPlayerWithProgress
                     userId={userSession?.userId}
@@ -208,7 +207,7 @@ const ChapterPage = async (
                 <h2 className="my-5 px-4 text-3xl font-semibold">
                   {chapterInfo?.title}
                 </h2>
-              </>)
+              </>
             )}
 
             {/* {chapterInfo.type === "quiz" && (
@@ -270,7 +269,7 @@ const ChapterPage = async (
           </div>
         )}
       </div>
-    </section>)
+    </section>
   );
 };
 

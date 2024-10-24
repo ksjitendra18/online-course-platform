@@ -110,6 +110,7 @@ export const getAllCoursesByUserId = unstable_cache(
         course: {
           with: {
             courseModule: {
+              where: eq(courseModule.status, "published"),
               columns: {
                 id: true,
               },
@@ -198,14 +199,12 @@ export const getEnrolledCourses = unstable_cache(
   { revalidate: 7200, tags: ["get-enrolled-courses"] }
 );
 
-export const getPublishedCourses = unstable_cache(
+export const getAdminPublishedCoursesLength = unstable_cache(
   async (userId: string) => {
-    return await db.query.course.findMany({
-      columns: {
-        id: true,
-      },
-      where: and(
-        eq(courseModule.status, "published"),
+    return await db.$count(
+      course,
+      and(
+        eq(course.status, "published"),
         inArray(
           course.id,
           db
@@ -213,9 +212,39 @@ export const getPublishedCourses = unstable_cache(
             .from(courseMember)
             .where(eq(courseMember.userId, userId))
         )
+      )
+    );
+  },
+  ["get-admin-published-course-length"],
+  { revalidate: 7200, tags: ["get-admin-published-course-length"] }
+);
+
+export const getPublishedCourses = unstable_cache(
+  async (search?: string) => {
+    return await db.query.course.findMany({
+      columns: {
+        id: true,
+        title: true,
+        imageUrl: true,
+        price: true,
+        isFree: true,
+        slug: true,
+      },
+      where: and(
+        eq(course.status, "published"),
+        like(course.title, `%${search ? search : ""}%`)
       ),
+
+      with: {
+        courseModule: {
+          columns: {
+            id: true,
+          },
+        },
+      },
     });
   },
+
   ["get-published-course"],
   { revalidate: 7200, tags: ["get-published-courses"] }
 );
