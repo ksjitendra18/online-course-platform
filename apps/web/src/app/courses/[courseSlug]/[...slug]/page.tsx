@@ -26,7 +26,6 @@ const ChapterPage = async (props: {
   params: Promise<{ courseSlug: string; slug: string[] }>;
 }) => {
   const params = await props.params;
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   const courseData = await db.query.course.findFirst({
     where: eq(course.slug, params.courseSlug),
     columns: {
