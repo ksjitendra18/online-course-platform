@@ -27,24 +27,21 @@ const CourseSidebar = ({
   courseData,
   chapterSlug,
   moduleSlug,
-  userHasEnrolled,
+  isEnrolled,
   progressCount,
   completedChapterIds,
 }: {
   courseSlug: string;
   courseData: CourseData;
-  purchaseInfo?: Purchase;
+  purchaseInfo?: Partial<Purchase>;
   isPartOfCourse: boolean;
   chapterSlug: string;
   moduleSlug: string;
-  userHasEnrolled: boolean;
+  isEnrolled: boolean;
   progressCount: number;
   userId?: string;
   completedChapterIds: string[];
 }) => {
-  // sometimes in dev this is causing error
-  // TypeError: Cannot read properties of null (reading 'useContext')
-
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -57,7 +54,7 @@ const CourseSidebar = ({
     <nav className="relative w-full max-w-sm flex-shrink-0 lg:block">
       <div className="sticky top-0 h-auto">
         <ScrollArea className="relative h-[calc(100vh-0rem)] overflow-hidden pb-9 pt-2">
-          <div className="mx-3 mt-3 rounded-md bg-white pt-5">
+          <div className="mx-3 mt-3 rounded-md border-2 bg-white pt-5">
             <Link href={`/courses/${courseData.slug}`}>
               <h1 className="text-center text-xl font-bold hover:underline">
                 {courseData.title}
@@ -74,7 +71,7 @@ const CourseSidebar = ({
             </Link>
           </div>
 
-          {userHasEnrolled && (
+          {isEnrolled && (
             <div className="mx-3 my-3 rounded-md bg-white px-3 py-4">
               <h2 className="mb-3 text-center text-xl font-semibold">
                 Progress
@@ -88,7 +85,7 @@ const CourseSidebar = ({
               {courseData.courseModule.map((module) => (
                 <div key={module.id} className="pb-3">
                   <AccordionItem value={module.slug}>
-                    <AccordionTrigger className="rounded-tl-md rounded-tr-md border-b-2 bg-white px-4 py-1 no-underline hover:no-underline">
+                    <AccordionTrigger className="rounded-tl-md rounded-tr-md border-2 border-b-2 bg-white px-4 py-1 no-underline hover:no-underline">
                       <span className="my-2 px-3 text-center font-semibold">
                         {module.title}
                       </span>
@@ -131,7 +128,7 @@ const CourseSidebar = ({
                               <LockIcon />
                             )}
                             {chapter.title}
-                            {userHasEnrolled ? (
+                            {isEnrolled ? (
                               <>
                                 {completedChapterIds.includes(chapter.id) ? (
                                   <Check

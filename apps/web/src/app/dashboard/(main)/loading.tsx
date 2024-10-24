@@ -1,9 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const metadata = {
-  title: "Dashboard",
-};
-
 const DashboardLoadingPage = async () => {
   return (
     <section className="p-6">

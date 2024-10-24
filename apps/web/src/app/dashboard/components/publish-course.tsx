@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 import "@radix-ui/react-dialog";
-import { AlertTriangle } from "lucide-react";
+import { AlertCircle, AlertTriangle } from "lucide-react";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,13 +26,25 @@ type PublishCourseProps = {
   variant: ButtonProps["variant"];
 };
 
+type FieldMappings = {
+  imageUrl: string;
+  price: string;
+  validity: string;
+};
+
 const PublishCourse = ({
   triggerMsg,
   variant,
   courseId,
 }: PublishCourseProps) => {
-  const [missingFields, setMissingFields] = useState<string[]>([]);
-  const [invalidFields, setInvalidFields] = useState<string[]>([]);
+  const [missingFields, setMissingFields] = useState<
+    Array<keyof FieldMappings>
+  >([]);
+
+  const [invalidFields, setInvalidFields] = useState<
+    Array<keyof FieldMappings>
+  >([]);
+
   const [hasPublishedModule, setHasPublishedModule] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,6 +76,16 @@ const PublishCourse = ({
   useEffect(() => {
     fetchPublishStatus();
   }, []);
+
+  const missingorInvalidFieldMaps: FieldMappings = {
+    imageUrl: "Image URL",
+    price: "Price",
+    validity: "Course Validity",
+  };
+
+  console.log("conf", hasPublishedModule &&
+    missingFields.length === 0 &&
+    invalidFields.length === 0 );
 
   return (
     <>
@@ -98,14 +121,40 @@ const PublishCourse = ({
               )}
               {missingFields.length > 0 && (
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="h-6 w-6 text-red-500" />
-                  Missing fields: {missingFields.join(", ")}
+                  {missingFields.length > 0 && (
+                    <Alert variant="destructive" className="mt-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <p>Please fill in the following required fields:</p>
+                        <ul className="mt-1 list-disc pl-5">
+                          {missingFields.map((field) => (
+                            <li key={field}>
+                              {missingorInvalidFieldMaps[field] || field}
+                            </li>
+                          ))}
+                        </ul>
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </div>
               )}
               {invalidFields.length > 0 && (
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="h-6 w-6 text-red-500" />
-                  Invalid fields: {invalidFields.join(", ")}
+                  {invalidFields.length > 0 && (
+                    <Alert variant="destructive" className="mt-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <p>Following fields are invalid:</p>
+                        <ul className="mt-1 list-disc pl-5">
+                          {invalidFields.map((field) => (
+                            <li key={field}>
+                              {missingorInvalidFieldMaps[field] || field}
+                            </li>
+                          ))}
+                        </ul>
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </div>
               )}
             </div>
@@ -117,7 +166,7 @@ const PublishCourse = ({
                 </Button>
               </DialogClose>
 
-              <Button variant="outline" disabled={isLoading} onClick={() => {}}>
+              <Button variant="app" disabled={true}>
                 Publish
               </Button>
             </DialogFooter>

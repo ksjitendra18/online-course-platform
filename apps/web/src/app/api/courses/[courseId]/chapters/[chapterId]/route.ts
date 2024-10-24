@@ -1,14 +1,15 @@
+import { revalidateTag } from "next/cache";
 import { NextRequest } from "next/server";
 
 import { eq } from "drizzle-orm";
 
+import { clearCourseData } from "@/actions/clear-course-data";
 import { clearTagCache } from "@/actions/clear-tag-cache";
 import { db } from "@/db";
 import { chapter, courseModule, videoData } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import redis from "@/lib/redis";
 import { ChapterInfoSchema } from "@/validations/chapter-info";
-import { revalidateTag } from "next/cache";
 
 const PartialChapterSchema = ChapterInfoSchema.partial();
 
@@ -93,6 +94,7 @@ export async function PATCH(
     }
 
     revalidateTag("get-course-data");
+    clearCourseData();
     return Response.json({ success: true });
   } catch (error) {
     console.log(
@@ -187,6 +189,8 @@ export async function DELETE(
     });
 
     clearTagCache("get-course-data");
+    clearCourseData();
+
     return Response.json({ success: true });
   } catch (error) {
     console.log(

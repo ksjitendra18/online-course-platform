@@ -34,14 +34,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userHasEnrolled = await db.query.courseEnrollment.findFirst({
+    const isEnrolled = await db.query.courseEnrollment.findFirst({
       where: and(
         eq(courseEnrollment.courseId, courseId),
         eq(courseEnrollment.userId, userInfo.id)
       ),
     });
 
-    if (userHasEnrolled) {
+    if (isEnrolled) {
       return Response.json(
         {
           data: {

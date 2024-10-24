@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 const ChapterStatus = ({
   courseId,
@@ -73,15 +74,27 @@ const ChapterStatus = ({
           </DialogHeader>
           <DialogFooter className="flex items-center">
             <DialogClose asChild>
-              <Button variant={"outline"}>Cancel</Button>
+              <Button variant={"outline"} disabled={loading}>
+                Cancel
+              </Button>
             </DialogClose>
 
-            <Button onClick={handleClick} variant="default">
-              {loading ? (
-                <Loader2 className="mx-auto animate-spin" />
-              ) : (
-                <>Publish</>
-              )}
+            <Button
+              disabled={loading}
+              onClick={handleClick}
+              variant="app"
+              className="relative"
+            >
+              <div
+                className={cn(
+                  "absolute inset-0 flex items-center justify-center",
+                  !loading && "invisible"
+                )}
+              >
+                <Loader2 className="animate-spin" />
+              </div>
+
+              <span className={cn(loading && "invisible")}>Publish</span>
             </Button>
           </DialogFooter>
         </DialogContent>

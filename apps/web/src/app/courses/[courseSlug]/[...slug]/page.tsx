@@ -6,27 +6,17 @@ import { and, desc, eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
-import {
-  CourseEnrollment,
-  Purchase,
-  chapter,
-  course,
-  courseEnrollment,
-  courseModule,
-  purchase,
-  quizResponse,
-} from "@/db/schema";
+import { getEnrollmentStatus } from "@/db/queries/enrollment";
+import { chapter, course, courseModule, quizResponse } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
 
 import ChapterQuiz from "../../_components/chapter-quiz";
 import QuizDuration from "../../_components/quiz-duration";
 import VideoPlayerWithProgress from "../../_components/video-player-progress";
 
-const ChapterPage = async (
-  props: {
-    params: Promise<{ courseSlug: string; slug: string[] }>;
-  }
-) => {
+const ChapterPage = async (props: {
+  params: Promise<{ courseSlug: string; slug: string[] }>;
+}) => {
   const params = await props.params;
   const courseData = await db.query.course.findFirst({
     where: eq(course.slug, params.courseSlug),
@@ -80,43 +70,14 @@ const ChapterPage = async (
     return redirect("/");
   }
 
-  let purchaseInfo: Purchase | undefined;
   let isPartOfCourse;
-  let isEnrolled: CourseEnrollment | undefined;
+  let isEnrolled = false;
 
   if (userSession) {
-    [purchaseInfo, isEnrolled] = await Promise.all([
-      db.query.purchase.findFirst({
-        where: and(
-          eq(purchase.courseId, courseData.id),
-          eq(purchase.userId, userSession.userId)
-        ),
-      }),
-
-      db.query.courseEnrollment.findFirst({
-        where: and(
-          eq(courseEnrollment.courseId, courseData.id),
-          eq(courseEnrollment.userId, userSession.userId)
-        ),
-      }),
-    ]);
-    purchaseInfo = await db.query.purchase.findFirst({
-      where: and(
-        eq(purchase.courseId, courseData.id),
-        eq(purchase.userId, userSession.userId)
-      ),
+    isEnrolled = await getEnrollmentStatus({
+      courseId: courseData.id,
+      userId: userSession.userId,
     });
-
-    // isPartOfCourse = courseData.courseMember.find(
-    //   (mem) => mem.userId === userSession.userId
-    // );
-
-    // isEnrolled = await db.query.courseEnrollment.findFirst({
-    //   where: and(
-    //     eq(courseEnrollment.courseId, courseData.id),
-    //     eq(courseEnrollment.userId, userSession.userId)
-    //   ),
-    // });
   }
 
   const chapterInfo = await db.query.chapter.findFirst({
@@ -155,7 +116,7 @@ const ChapterPage = async (
   }
 
   return (
-    (<section className="h-full">
+    <section className="h-full">
       <div className="flex items-center justify-start gap-5 px-3">
         {/* <h2 className="my-5 text-center text-2xl font-bold">
           {chapterInfo?.title}
@@ -175,7 +136,7 @@ const ChapterPage = async (
                   <>
                     {courseData?.isFree ||
                     chapterInfo.isFree ||
-                    purchaseInfo ||
+                    isEnrolled ||
                     isPartOfCourse ? (
                       <QuizDuration duration={chapterInfo.quiz[0].duration} />
                     ) : null}
@@ -189,26 +150,26 @@ const ChapterPage = async (
       <div>
         {courseData?.isFree ||
         chapterInfo.isFree ||
-        purchaseInfo ||
+        isEnrolled ||
         isPartOfCourse ? (
           <div className="fill mx-auto rounded-t-md">
             {chapterInfo.type === "video" && (
               // <div className="flex items-center justify-center mx-auto max-w-[900px]">
-              (<>
+              <>
                 <div className="mx-auto flex items-center justify-center">
                   <VideoPlayerWithProgress
                     userId={userSession?.userId}
                     chapterId={chapterInfo.id}
                     autoPlay
                     playbackId={chapterInfo.videoData[0].playbackId!}
-                    isEnrolled={!!isEnrolled}
+                    isEnrolled={isEnrolled}
                     courseId={courseData.id}
                   />
                 </div>
                 <h2 className="my-5 px-4 text-3xl font-semibold">
                   {chapterInfo?.title}
                 </h2>
-              </>)
+              </>
             )}
 
             {/* {chapterInfo.type === "quiz" && (
@@ -270,7 +231,7 @@ const ChapterPage = async (
           </div>
         )}
       </div>
-    </section>)
+    </section>
   );
 };
 

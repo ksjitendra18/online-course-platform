@@ -162,6 +162,7 @@ export async function POST(request: NextRequest) {
 
         revalidateTag("get-enrolled-courses");
         revalidateTag("get-total-enrollments");
+        revalidateTag("get-enrollment-status");
 
         return Response.json({ success: true });
       } else {

@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 
-import { and, eq, inArray, like } from "drizzle-orm";
+import { and, eq, inArray, like, sum } from "drizzle-orm";
 
 import { db } from "@/db";
 import {
@@ -9,6 +9,7 @@ import {
   courseEnrollment,
   courseMember,
   courseModule,
+  videoData,
 } from "@/db/schema";
 
 export const getCourseInfo = unstable_cache(
@@ -110,6 +111,7 @@ export const getAllCoursesByUserId = unstable_cache(
         course: {
           with: {
             courseModule: {
+              where: eq(courseModule.status, "published"),
               columns: {
                 id: true,
               },
@@ -198,14 +200,12 @@ export const getEnrolledCourses = unstable_cache(
   { revalidate: 7200, tags: ["get-enrolled-courses"] }
 );
 
-export const getPublishedCourses = unstable_cache(
+export const getAdminPublishedCoursesLength = unstable_cache(
   async (userId: string) => {
-    return await db.query.course.findMany({
-      columns: {
-        id: true,
-      },
-      where: and(
-        eq(courseModule.status, "published"),
+    return await db.$count(
+      course,
+      and(
+        eq(course.status, "published"),
         inArray(
           course.id,
           db
@@ -213,9 +213,39 @@ export const getPublishedCourses = unstable_cache(
             .from(courseMember)
             .where(eq(courseMember.userId, userId))
         )
+      )
+    );
+  },
+  ["get-admin-published-course-length"],
+  { revalidate: 7200, tags: ["get-admin-published-course-length"] }
+);
+
+export const getPublishedCourses = unstable_cache(
+  async (search?: string) => {
+    return await db.query.course.findMany({
+      columns: {
+        id: true,
+        title: true,
+        imageUrl: true,
+        price: true,
+        isFree: true,
+        slug: true,
+      },
+      where: and(
+        eq(course.status, "published"),
+        like(course.title, `%${search ? search : ""}%`)
       ),
+
+      with: {
+        courseModule: {
+          columns: {
+            id: true,
+          },
+        },
+      },
     });
   },
+
   ["get-published-course"],
   { revalidate: 7200, tags: ["get-published-courses"] }
 );
@@ -237,4 +267,33 @@ export const getTotalEnrollments = unstable_cache(
   },
   ["get-total-enrollments"],
   { revalidate: 7200, tags: ["get-total-enrollments"] }
+);
+
+export const getCourseMetaData = unstable_cache(
+  async (courseId: string) => {
+    return await db.transaction(async (tx) => {
+      const videoCount = await tx.$count(
+        chapter,
+        and(eq(chapter.courseId, courseId), eq(chapter.type, "video"))
+      );
+
+      const videoDuration = await tx
+        .select({ duration: sum(videoData.duration) })
+        .from(videoData)
+        .where(eq(videoData.courseId, courseId));
+
+      const quizCount = await tx.$count(
+        chapter,
+        and(eq(chapter.courseId, courseId), eq(chapter.type, "quiz"))
+      );
+
+      return {
+        videosCount: videoCount,
+        quizzesCount: quizCount,
+        videoDuration: videoDuration[0].duration ?? "0",
+      };
+    });
+  },
+  ["get-course-metadata"],
+  { revalidate: 7200, tags: ["get-course-metadata"] }
 );

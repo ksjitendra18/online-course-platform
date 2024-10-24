@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 
 import { eq } from "drizzle-orm";
 
+import { clearCourseData } from "@/actions/clear-course-data";
 import { clearTagCache } from "@/actions/clear-tag-cache";
 import { db } from "@/db";
 import { courseModule } from "@/db/schema";
@@ -77,6 +78,7 @@ export async function PATCH(
     await clearTagCache("get-course-data");
     revalidateTag("get-all-courses-admin");
     revalidateTag("get-published-course");
+    revalidateTag("get-admin-published-course-length");
 
     return Response.json({ success: true });
   } catch (error) {
@@ -160,6 +162,8 @@ export async function DELETE(
     await clearTagCache("get-course-data");
     revalidateTag("get-all-courses-admin");
     revalidateTag("get-published-course");
+    revalidateTag("get-admin-published-course-length");
+    clearCourseData();
 
     return Response.json({ success: true });
   } catch (error) {
