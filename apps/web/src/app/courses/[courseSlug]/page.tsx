@@ -2,22 +2,12 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { and, eq } from "drizzle-orm";
-
 import { Button } from "@/components/ui/button";
-import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getProgress } from "@/db/queries/course-progress";
-import { getCourseData } from "@/db/queries/courses";
+import { getCourseData, getCourseMetaData } from "@/db/queries/courses";
 import { getDiscountedPrice } from "@/db/queries/discount";
-import {
-  CourseEnrollment,
-  Purchase,
-  chapter,
-  courseEnrollment,
-  purchase,
-  videoData,
-} from "@/db/schema";
+import { getEnrollmentStatus } from "@/db/queries/enrollment";
 import { capitalizeFirstWord, formatDuration } from "@/lib/utils";
 
 import BuyCourse from "../_components/buy-course";
@@ -55,66 +45,36 @@ const CoursePage = async (props: {
     return redirect("/");
   }
 
-  const { videosCount, quizzesCount, videoDuration } = await db.transaction(
-    async (tx) => {
-      const videoCount = await tx.$count(
-        chapter,
-        and(eq(chapter.courseId, courseData.id), eq(chapter.type, "video"))
-      );
-
-      const videoDuration = await tx
-        .select({ duration: videoData.duration })
-        .from(videoData)
-        .where(eq(videoData.courseId, courseData.id));
-
-      const quizCount = await tx.$count(
-        chapter,
-        and(eq(chapter.courseId, courseData.id), eq(chapter.type, "quiz"))
-      );
-
-      return {
-        videosCount: videoCount,
-        quizzesCount: quizCount,
-        videoDuration,
-      };
-    }
+  const { videosCount, quizzesCount, videoDuration } = await getCourseMetaData(
+    courseData.id
   );
 
   let completedChapterIds: string[] = [];
-  let purchaseInfo: Purchase | undefined;
+  // let purchaseInfo: Partial<Purchase> | undefined;
+  // let isEnrolled: CourseEnrollment | undefined;
+
+  let isEnrolled: boolean = false;
   let isPartOfCourse;
-  let userHasEnrolled: CourseEnrollment | undefined;
   let progressCount = 0;
 
   if (userSession) {
-    purchaseInfo = await db.query.purchase.findFirst({
-      where: and(
-        eq(purchase.courseId, courseData.id),
-        eq(purchase.userId, userSession.userId)
-      ),
-    });
-
     isPartOfCourse = courseData.courseMember.find(
       (mem) => mem.userId === userSession.userId
     );
 
-    userHasEnrolled = await db.query.courseEnrollment.findFirst({
-      where: and(
-        eq(courseEnrollment.courseId, courseData.id),
-        eq(courseEnrollment.userId, userSession.userId)
-      ),
+    isEnrolled = await getEnrollmentStatus({
+      courseId: courseData.id,
+      userId: userSession.userId,
     });
-    const progressData = await getProgress(userSession.userId, courseData.id);
-    completedChapterIds = progressData.completedChapters.map(
-      (chapter) => chapter.chapterId
-    );
-    progressCount = progressData.progressPercentage ?? 0;
-  }
 
-  const totalDuration = videoDuration.reduce(
-    (total, video) => total + video.duration,
-    0
-  );
+    if (isEnrolled) {
+      const progressData = await getProgress(userSession.userId, courseData.id);
+      completedChapterIds = progressData.completedChapters.map(
+        (chapter) => chapter.chapterId
+      );
+      progressCount = progressData.progressPercentage ?? 0;
+    }
+  }
 
   const discountCode = Array.isArray(searchParams.discountCode)
     ? searchParams.discountCode[0]
@@ -131,11 +91,10 @@ const CoursePage = async (props: {
         courseData={courseData}
         courseSlug={params.courseSlug}
         isPartOfCourse={!!isPartOfCourse}
-        purchaseInfo={purchaseInfo}
         chapterSlug=""
         moduleSlug=""
         progressCount={progressCount}
-        userHasEnrolled={!!userHasEnrolled}
+        isEnrolled={!!isEnrolled}
         completedChapterIds={completedChapterIds}
       />
       <div className="mx-auto mt-5 w-full md:px-4">
@@ -145,7 +104,7 @@ const CoursePage = async (props: {
           </h2>
           <p className="mt-5">{courseData.description}</p>
 
-          {!courseData.isFree && !userHasEnrolled ? (
+          {!courseData.isFree && !isEnrolled ? (
             <>
               {discountData ? (
                 <div className="flex items-center gap-3 md:gap-6">
@@ -169,7 +128,7 @@ const CoursePage = async (props: {
           <div className="my-5 flex flex-col items-center gap-5 md:flex-row">
             {userSession ? (
               <>
-                {userHasEnrolled || isPartOfCourse ? (
+                {isEnrolled || isPartOfCourse ? (
                   <div className="flex items-center gap-5">
                     <Button variant="app" asChild>
                       <Link
@@ -238,9 +197,9 @@ const CoursePage = async (props: {
             <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
               {videosCount} Videos
             </p>
-            {totalDuration > 0 && (
+            {parseInt(videoDuration) > 0 && (
               <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
-                {formatDuration(totalDuration)}
+                {formatDuration(parseInt(videoDuration))}
               </p>
             )}
             <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">

@@ -6,16 +6,8 @@ import { and, desc, eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
-import {
-  CourseEnrollment,
-  Purchase,
-  chapter,
-  course,
-  courseEnrollment,
-  courseModule,
-  purchase,
-  quizResponse,
-} from "@/db/schema";
+import { getEnrollmentStatus } from "@/db/queries/enrollment";
+import { chapter, course, courseModule, quizResponse } from "@/db/schema";
 import { formatDate } from "@/lib/utils";
 
 import ChapterQuiz from "../../_components/chapter-quiz";
@@ -78,43 +70,14 @@ const ChapterPage = async (props: {
     return redirect("/");
   }
 
-  let purchaseInfo: Purchase | undefined;
   let isPartOfCourse;
-  let isEnrolled: CourseEnrollment | undefined;
+  let isEnrolled = false;
 
   if (userSession) {
-    [purchaseInfo, isEnrolled] = await Promise.all([
-      db.query.purchase.findFirst({
-        where: and(
-          eq(purchase.courseId, courseData.id),
-          eq(purchase.userId, userSession.userId)
-        ),
-      }),
-
-      db.query.courseEnrollment.findFirst({
-        where: and(
-          eq(courseEnrollment.courseId, courseData.id),
-          eq(courseEnrollment.userId, userSession.userId)
-        ),
-      }),
-    ]);
-    purchaseInfo = await db.query.purchase.findFirst({
-      where: and(
-        eq(purchase.courseId, courseData.id),
-        eq(purchase.userId, userSession.userId)
-      ),
+    isEnrolled = await getEnrollmentStatus({
+      courseId: courseData.id,
+      userId: userSession.userId,
     });
-
-    // isPartOfCourse = courseData.courseMember.find(
-    //   (mem) => mem.userId === userSession.userId
-    // );
-
-    // isEnrolled = await db.query.courseEnrollment.findFirst({
-    //   where: and(
-    //     eq(courseEnrollment.courseId, courseData.id),
-    //     eq(courseEnrollment.userId, userSession.userId)
-    //   ),
-    // });
   }
 
   const chapterInfo = await db.query.chapter.findFirst({
@@ -173,7 +136,7 @@ const ChapterPage = async (props: {
                   <>
                     {courseData?.isFree ||
                     chapterInfo.isFree ||
-                    purchaseInfo ||
+                    isEnrolled ||
                     isPartOfCourse ? (
                       <QuizDuration duration={chapterInfo.quiz[0].duration} />
                     ) : null}
@@ -187,7 +150,7 @@ const ChapterPage = async (props: {
       <div>
         {courseData?.isFree ||
         chapterInfo.isFree ||
-        purchaseInfo ||
+        isEnrolled ||
         isPartOfCourse ? (
           <div className="fill mx-auto rounded-t-md">
             {chapterInfo.type === "video" && (
@@ -199,7 +162,7 @@ const ChapterPage = async (props: {
                     chapterId={chapterInfo.id}
                     autoPlay
                     playbackId={chapterInfo.videoData[0].playbackId!}
-                    isEnrolled={!!isEnrolled}
+                    isEnrolled={isEnrolled}
                     courseId={courseData.id}
                   />
                 </div>

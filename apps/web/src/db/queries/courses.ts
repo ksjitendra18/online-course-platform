@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 
-import { and, eq, inArray, like } from "drizzle-orm";
+import { and, eq, inArray, like, sum } from "drizzle-orm";
 
 import { db } from "@/db";
 import {
@@ -9,6 +9,7 @@ import {
   courseEnrollment,
   courseMember,
   courseModule,
+  videoData,
 } from "@/db/schema";
 
 export const getCourseInfo = unstable_cache(
@@ -266,4 +267,33 @@ export const getTotalEnrollments = unstable_cache(
   },
   ["get-total-enrollments"],
   { revalidate: 7200, tags: ["get-total-enrollments"] }
+);
+
+export const getCourseMetaData = unstable_cache(
+  async (courseId: string) => {
+    return await db.transaction(async (tx) => {
+      const videoCount = await tx.$count(
+        chapter,
+        and(eq(chapter.courseId, courseId), eq(chapter.type, "video"))
+      );
+
+      const videoDuration = await tx
+        .select({ duration: sum(videoData.duration) })
+        .from(videoData)
+        .where(eq(videoData.courseId, courseId));
+
+      const quizCount = await tx.$count(
+        chapter,
+        and(eq(chapter.courseId, courseId), eq(chapter.type, "quiz"))
+      );
+
+      return {
+        videosCount: videoCount,
+        quizzesCount: quizCount,
+        videoDuration: videoDuration[0].duration ?? "0",
+      };
+    });
+  },
+  ["get-course-metadata"],
+  { revalidate: 7200, tags: ["get-course-metadata"] }
 );

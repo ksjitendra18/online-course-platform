@@ -1,18 +1,10 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import { and, eq } from "drizzle-orm";
-
-import { db } from "@/db";
 import { getUserSessionRedis } from "@/db/queries/auth";
 import { getProgress } from "@/db/queries/course-progress";
 import { getCourseData } from "@/db/queries/courses";
-import {
-  CourseEnrollment,
-  Purchase,
-  courseEnrollment,
-  purchase,
-} from "@/db/schema";
+import { getEnrollmentStatus } from "@/db/queries/enrollment";
 
 import CourseSidebar from "../../_components/course-sidebar";
 
@@ -59,34 +51,27 @@ const CourseLayout = async (props: {
   }
 
   let completedChapterIds: string[] = [];
-  let purchaseInfo: Purchase | undefined;
   let isPartOfCourse;
-  let progressCount = -1;
-  let userHasEnrolled: CourseEnrollment | undefined;
+  let progressCount = 0;
+  let isEnrolled = false;
 
   if (userSession) {
-    purchaseInfo = await db.query.purchase.findFirst({
-      where: and(
-        eq(purchase.courseId, courseData.id),
-        eq(purchase.userId, userSession.userId)
-      ),
-    });
-
     isPartOfCourse = courseData.courseMember.find(
       (mem) => mem.userId === userSession.userId
     );
 
-    userHasEnrolled = await db.query.courseEnrollment.findFirst({
-      where: and(
-        eq(courseEnrollment.courseId, courseData.id),
-        eq(courseEnrollment.userId, userSession.userId)
-      ),
+    isEnrolled = await getEnrollmentStatus({
+      courseId: courseData.id,
+      userId: userSession.userId,
     });
-    const progressData = await getProgress(userSession.userId, courseData.id);
-    completedChapterIds = progressData.completedChapters.map(
-      (chapter) => chapter.chapterId
-    );
-    progressCount = progressData.progressPercentage ?? 0;
+
+    if (isEnrolled) {
+      const progressData = await getProgress(userSession.userId, courseData.id);
+      completedChapterIds = progressData.completedChapters.map(
+        (chapter) => chapter.chapterId
+      );
+      progressCount = progressData.progressPercentage ?? 0;
+    }
   }
 
   return (
@@ -95,10 +80,9 @@ const CourseLayout = async (props: {
         courseData={courseData}
         courseSlug={params.courseSlug}
         isPartOfCourse={!!isPartOfCourse}
-        purchaseInfo={purchaseInfo}
         chapterSlug={params.slug[1]}
         moduleSlug={params.slug[0]}
-        userHasEnrolled={!!userHasEnrolled}
+        isEnrolled={isEnrolled}
         progressCount={progressCount}
         userId={userSession?.userId}
         completedChapterIds={completedChapterIds}

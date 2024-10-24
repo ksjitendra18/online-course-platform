@@ -6,8 +6,12 @@ import { db } from "@/db/index";
 import { courseModule } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
+import { clearCourseData } from "@/actions/clear-course-data";
 
-export async function POST(request: Request, props: { params: Promise<{ courseId: string }> }) {
+export async function POST(
+  request: Request,
+  props: { params: Promise<{ courseId: string }> }
+) {
   const params = await props.params;
   try {
     const { moduleName, moduleDescription, moduleSlug } = await request.json();
@@ -81,6 +85,7 @@ export async function POST(request: Request, props: { params: Promise<{ courseId
       });
 
     revalidateTag("get-course-data");
+    clearCourseData();
 
     return Response.json(
       {

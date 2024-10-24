@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userHasEnrolled = await db.query.courseEnrollment.findFirst({
+    const isEnrolled = await db.query.courseEnrollment.findFirst({
       columns: { id: true },
       where: and(
         eq(courseEnrollment.courseId, courseId),
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       ),
     });
 
-    if (userHasEnrolled) {
+    if (isEnrolled) {
       return Response.json(
         {
           error: {
@@ -89,6 +89,7 @@ export async function POST(request: NextRequest) {
 
     revalidateTag("get-enrolled-courses");
     revalidateTag("get-total-enrollments");
+    revalidateTag("get-enrollment-status");
 
     return Response.json({ success: true }, { status: 201 });
   } catch (error) {

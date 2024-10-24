@@ -27,24 +27,21 @@ const CourseSidebar = ({
   courseData,
   chapterSlug,
   moduleSlug,
-  userHasEnrolled,
+  isEnrolled,
   progressCount,
   completedChapterIds,
 }: {
   courseSlug: string;
   courseData: CourseData;
-  purchaseInfo?: Purchase;
+  purchaseInfo?: Partial<Purchase>;
   isPartOfCourse: boolean;
   chapterSlug: string;
   moduleSlug: string;
-  userHasEnrolled: boolean;
+  isEnrolled: boolean;
   progressCount: number;
   userId?: string;
   completedChapterIds: string[];
 }) => {
-  // sometimes in dev this is causing error
-  // TypeError: Cannot read properties of null (reading 'useContext')
-
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -74,7 +71,7 @@ const CourseSidebar = ({
             </Link>
           </div>
 
-          {userHasEnrolled && (
+          {isEnrolled && (
             <div className="mx-3 my-3 rounded-md bg-white px-3 py-4">
               <h2 className="mb-3 text-center text-xl font-semibold">
                 Progress
@@ -131,7 +128,7 @@ const CourseSidebar = ({
                               <LockIcon />
                             )}
                             {chapter.title}
-                            {userHasEnrolled ? (
+                            {isEnrolled ? (
                               <>
                                 {completedChapterIds.includes(chapter.id) ? (
                                   <Check
