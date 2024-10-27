@@ -58,7 +58,7 @@ export async function POST(request: Request, props: { params: Promise<{ courseId
       .set({ status: "published" })
       .where(eq(course.id, courseId));
 
-    await clearCourseData(courseInfo.slug);
+    await clearCourseData();
 
     return Response.json({
       data: {
