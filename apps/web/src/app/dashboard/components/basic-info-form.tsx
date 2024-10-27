@@ -5,14 +5,11 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 import { Info, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { FiAlertTriangle } from "react-icons/fi";
 import slugify from "slugify";
 import { type ZodFormattedError } from "zod";
 
-import {
-  clearTagCache,
-  clearTagCacheByUserId,
-} from "@/actions/clear-tag-cache";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -64,15 +61,15 @@ const BasicInformation = ({
     setSlugExists(false);
     const formData = new FormData(e.currentTarget);
 
-    const courseName = formData.get("courseName");
-    const courseSlug = formData.get("courseSlug");
-    const courseDescription = formData.get("courseDescription");
+    const title = formData.get("title");
+    const slug = formData.get("slug");
+    const description = formData.get("description");
 
     try {
       const parsedResult = BasicInfoSchema.safeParse({
-        courseName,
-        courseSlug,
-        courseDescription,
+        title,
+        slug,
+        description,
         isFree: courseFree,
         level: courseLevel,
       });
@@ -113,19 +110,16 @@ const BasicInformation = ({
         setSlugExists(true);
       }
       if (res.status === 201) {
-        await clearTagCache("get-all-courses-admin");
-        await clearTagCache("get-course-data");
-        await clearTagCacheByUserId("get-all-courses-admin-userId");
         router.push(`/dashboard/courses/${resData.data.courseSlug}/modules`);
+        toast.success("Course created successfully");
       }
 
       if (res.status === 200) {
-        await clearTagCache("get-all-courses-admin");
-        await clearTagCache("get-course-data");
-        await clearTagCacheByUserId("get-all-courses-admin-userId");
         router.refresh();
+        toast.success("Course updated successfully");
       }
     } catch (error) {
+      toast.success("Error while updating course");
       setCustomError(true);
     } finally {
       setIsLoading(false);
@@ -149,26 +143,26 @@ const BasicInformation = ({
           onSubmit={handleCreateCourse}
           className="mx-auto w-[100%] md:w-3/4 xl:w-1/2"
         >
-          <label htmlFor="courseName" className="mt-5 block text-gray-600">
+          <label htmlFor="title" className="mt-5 block text-gray-600">
             Course Name
           </label>
           <input
             type="text"
-            name="courseName"
-            id="courseName"
+            name="title"
+            id="title"
             defaultValue={courseName}
             onInput={handleNameChange}
             placeholder="Name of the course"
             className={`${
-              formErrors?.courseName || customError
+              formErrors?.title || customError
                 ? "border-red-600"
                 : "border-slate-400"
             } w-full rounded-md border-2 px-3 py-2`}
           />
 
-          {formErrors?.courseName && (
+          {formErrors?.title && (
             <>
-              {formErrors.courseName._errors.map((err) => (
+              {formErrors.title._errors.map((err) => (
                 <div key={err}>
                   <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
@@ -178,25 +172,25 @@ const BasicInformation = ({
               ))}
             </>
           )}
-          <label htmlFor="courseSlug" className="mt-5 block text-gray-600">
+          <label htmlFor="slug" className="mt-5 block text-gray-600">
             Course Slug
           </label>
           <input
             type="text"
-            name="courseSlug"
-            id="courseSlug"
+            name="slug"
+            id="slug"
             defaultValue={courseSlug ?? slug}
             placeholder="Slug of the course"
             className={`${
-              formErrors?.courseSlug || customError
+              formErrors?.slug || customError
                 ? "border-red-600"
                 : "border-slate-400"
             } w-full rounded-md border-2 px-3 py-2`}
           />
 
-          {formErrors?.courseSlug && (
+          {formErrors?.slug && (
             <>
-              {formErrors.courseSlug._errors.map((err, index) => (
+              {formErrors.slug._errors.map((err, index) => (
                 <div key={index}>
                   <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
@@ -303,26 +297,23 @@ const BasicInformation = ({
             </button>
           </div>
 
-          <label
-            htmlFor="courseDescription"
-            className="mt-5 block text-gray-600"
-          >
+          <label htmlFor="description" className="mt-5 block text-gray-600">
             Course Description
           </label>
           <textarea
-            name="courseDescription"
-            id="courseDescription"
+            name="description"
+            id="description"
             placeholder="Description of the course (under 300 words)"
             defaultValue={courseDescription ?? ""}
             className={`${
-              formErrors?.courseDescription || customError
+              formErrors?.description || customError
                 ? "border-red-600"
                 : "border-slate-400"
             } w-full rounded-md border-2 px-3 py-2`}
           ></textarea>
-          {formErrors?.courseDescription && (
+          {formErrors?.description && (
             <>
-              {formErrors.courseDescription._errors.map((err, index) => (
+              {formErrors.description._errors.map((err, index) => (
                 <div key={index}>
                   <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />

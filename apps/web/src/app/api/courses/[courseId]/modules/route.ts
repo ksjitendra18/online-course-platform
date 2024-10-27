@@ -2,11 +2,11 @@ import { revalidateTag } from "next/cache";
 
 import { and, eq } from "drizzle-orm";
 
+import { clearCourseData } from "@/actions/clear-course-data";
 import { db } from "@/db/index";
 import { courseModule } from "@/db/schema";
 import { checkAuth } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
-import { clearCourseData } from "@/actions/clear-course-data";
 
 export async function POST(
   request: Request,
@@ -45,7 +45,7 @@ export async function POST(
 
     const slugExists = await db.query.courseModule.findFirst({
       where: and(
-        eq(courseModule.slug, parsedData.data.moduleSlug),
+        eq(courseModule.slug, parsedData.data.slug),
         eq(courseModule.courseId, params.courseId)
       ),
       columns: { id: true },
@@ -72,9 +72,9 @@ export async function POST(
     const newModule = await db
       .insert(courseModule)
       .values({
-        title: parsedData.data.moduleName,
-        description: parsedData.data.moduleDescription,
-        slug: parsedData.data.moduleSlug,
+        title: parsedData.data.title,
+        description: parsedData.data.description,
+        slug: parsedData.data.slug,
         courseId: params.courseId,
         status: "draft",
         position: courseModulesCount + 1,

@@ -3,12 +3,16 @@ import { NextRequest } from "next/server";
 
 import { eq } from "drizzle-orm";
 
+import { clearCourseData } from "@/actions/clear-course-data";
 import { db } from "@/db";
 import { course, courseCategory } from "@/db/schema";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { OtherInfoSchema } from "@/validations/other-info";
 
-export async function PATCH(request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
+export async function PATCH(
+  request: NextRequest,
+  props: { params: Promise<{ courseId: string }> }
+) {
   const params = await props.params;
   try {
     const {
@@ -28,8 +32,6 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ cou
       courseImg,
       courseValidity,
     });
-
-    console.log("parsedData", courseValidity, parsedData, courseValidity);
 
     if (!parsedData.success) {
       return Response.json(
@@ -76,18 +78,19 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ cou
         .where(eq(courseCategory.courseId, params.courseId));
 
       await trx.insert(courseCategory).values(categoryData);
+
+      await trx
+        .update(course)
+        .set({
+          imageUrl: parsedData.data.courseImg,
+          validity: courseValidity,
+          price: parsedData.data.coursePrice,
+        })
+        .where(eq(course.id, params.courseId));
     });
 
-    await db
-      .update(course)
-      .set({
-        imageUrl: parsedData.data.courseImg,
-        validity: courseValidity,
-        price: parsedData.data.coursePrice,
-      })
-      .where(eq(course.id, params.courseId));
-
     revalidateTag("get-course-info");
+    clearCourseData();
     return Response.json({ success: true });
   } catch (error) {
     console.log(

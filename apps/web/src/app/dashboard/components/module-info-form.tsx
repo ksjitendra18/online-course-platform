@@ -50,15 +50,15 @@ const ModuleInformation = ({
     setSlugExists(false);
     const formData = new FormData(e.currentTarget);
 
-    const moduleName = formData.get("moduleName");
-    const moduleSlug = formData.get("moduleSlug");
-    const moduleDescription = formData.get("moduleDescription");
+    const title = formData.get("title");
+    const slug = formData.get("slug");
+    const description = formData.get("description");
 
     try {
       const parsedResult = ModuleInfoSchema.safeParse({
-        moduleName,
-        moduleSlug,
-        moduleDescription,
+        title,
+        slug,
+        description,
       });
 
       if (!parsedResult.success) {
@@ -107,31 +107,31 @@ const ModuleInformation = ({
 
   return (
     <>
-      <div className="auth-options flex w-full flex-col items-center justify-center px-6">
+      <div className="flex w-full flex-col items-center justify-center px-6">
         <form
           onSubmit={handleCreateModule}
           className="mx-auto w-[100%] md:w-3/4 lg:w-1/2"
         >
-          <label htmlFor="moduleName" className="mt-5 block text-gray-600">
+          <label htmlFor="title" className="mt-5 block text-gray-600">
             Module Name
           </label>
           <input
             type="text"
-            name="moduleName"
-            id="moduleName"
+            name="title"
+            id="title"
             defaultValue={moduleName}
             onChange={handleNameChange}
             placeholder="Name of the module"
             className={`${
-              formErrors?.moduleName || customError
+              formErrors?.title || customError
                 ? "border-red-600"
                 : "border-slate-400"
             } w-full rounded-md border-2 px-3 py-2`}
           />
 
-          {formErrors?.moduleName && (
+          {formErrors?.title && (
             <>
-              {formErrors.moduleName._errors.map((err) => (
+              {formErrors.title._errors.map((err) => (
                 <div key={err}>
                   <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
@@ -146,12 +146,12 @@ const ModuleInformation = ({
           </label>
           <input
             type="text"
-            name="moduleSlug"
-            id="moduleSlug"
+            name="slug"
+            id="slug"
             defaultValue={moduleSlug ?? slug}
             placeholder="Slug of the course"
             className={`${
-              formErrors?.moduleSlug || customError
+              formErrors?.slug || customError
                 ? "border-red-600"
                 : "border-slate-400"
             } w-full rounded-md border-2 px-3 py-2`}
@@ -165,9 +165,9 @@ const ModuleInformation = ({
               </div>
             </>
           )}
-          {formErrors?.moduleSlug && (
+          {formErrors?.slug && (
             <>
-              {formErrors.moduleSlug._errors.map((err, index) => (
+              {formErrors.slug._errors.map((err, index) => (
                 <div key={index}>
                   <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
@@ -178,26 +178,23 @@ const ModuleInformation = ({
             </>
           )}
 
-          <label
-            htmlFor="moduleDescription"
-            className="mt-5 block text-gray-600"
-          >
+          <label htmlFor="description" className="mt-5 block text-gray-600">
             Module Description
           </label>
           <textarea
-            name="moduleDescription"
-            id="moduleDescription"
+            name="description"
+            id="description"
             placeholder="Description of the course (under 300 words)"
             defaultValue={moduleDescription ?? ""}
             className={`${
-              formErrors?.moduleDescription || customError
+              formErrors?.description || customError
                 ? "border-red-600"
                 : "border-slate-400"
             } w-full rounded-md border-2 px-3 py-2`}
           ></textarea>
-          {formErrors?.moduleDescription && (
+          {formErrors?.description && (
             <>
-              {formErrors.moduleDescription._errors.map((err, index) => (
+              {formErrors.description._errors.map((err, index) => (
                 <div key={index}>
                   <div className="mt-2 flex items-center gap-3 py-1 text-red-600">
                     <FiAlertTriangle />
