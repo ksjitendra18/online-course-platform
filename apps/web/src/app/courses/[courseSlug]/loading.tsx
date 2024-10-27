@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const CourseSlugPageLoading = () => {
   return (
-    <div className="flex flex-row-reverse">
+    <div className="flex flex-col-reverse md:flex-row">
       <div className="w-full max-w-sm">
         <div className="m-3 pt-2">
           <div className="flex h-[136px] rounded-md border-2 bg-white">
