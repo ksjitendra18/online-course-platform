@@ -125,7 +125,7 @@ const CoursePage = async (props: {
             </>
           ) : null}
 
-          <div className="my-5 flex flex-col items-center gap-5 md:flex-row">
+          <div className="my-5 flex items-center gap-5 md:flex-row">
             {userSession ? (
               <>
                 {isEnrolled || isPartOfCourse ? (
@@ -187,22 +187,22 @@ const CoursePage = async (props: {
           </div>
 
           <div className="mt-8 grid grid-cols-2 items-center gap-8 md:grid-cols-5">
-            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
+            <p className="rounded-md bg-white/20 p-1 px-3 backdrop-blur-md">
               Level: {capitalizeFirstWord(courseData.level)}
             </p>
 
-            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
+            <p className="rounded-md bg-white/20 p-1 px-3 backdrop-blur-md">
               {courseData.courseModule.length} Modules
             </p>
-            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
+            <p className="rounded-md bg-white/20 p-1 px-3 backdrop-blur-md">
               {videosCount} Videos
             </p>
             {parseInt(videoDuration) > 0 && (
-              <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
+              <p className="rounded-md bg-white/20 p-1 px-3 backdrop-blur-md">
                 {formatDuration(parseInt(videoDuration))}
               </p>
             )}
-            <p className="rounded-md bg-white/20 p-1 backdrop-blur-md">
+            <p className="rounded-md bg-white/20 p-1 px-3 backdrop-blur-md">
               {quizzesCount} Quiz
             </p>
           </div>

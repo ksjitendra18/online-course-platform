@@ -22,7 +22,6 @@ import CourseProgress from "./course-progress";
 
 const CourseSidebar = ({
   courseSlug,
-  purchaseInfo,
   isPartOfCourse,
   courseData,
   chapterSlug,
@@ -110,7 +109,7 @@ const CourseSidebar = ({
                           >
                             {chapter.isFree ||
                             courseData.isFree ||
-                            purchaseInfo ||
+                            isEnrolled ||
                             isPartOfCourse ? (
                               <>
                                 {chapter.type === "video" && <PlayCircleIcon />}

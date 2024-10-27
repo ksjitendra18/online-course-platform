@@ -19,6 +19,7 @@ export async function PATCH(
   try {
     const reqBody = await request.json();
 
+    console.log("reqBody", reqBody);
     const parsedData = PartialBasicInfoSchema.safeParse(reqBody);
 
     if (!parsedData.success) {

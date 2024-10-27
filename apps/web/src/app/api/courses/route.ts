@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     );
 
     const slugExists = await db.query.course.findFirst({
-      where: eq(course.slug, parsedData.data.courseSlug),
+      where: eq(course.slug, parsedData.data.slug),
       columns: { id: true },
     });
 
@@ -89,9 +89,9 @@ export async function POST(request: Request) {
     const newCourse = await db
       .insert(course)
       .values({
-        title: parsedData.data.courseName,
-        slug: parsedData.data.courseSlug,
-        description: parsedData.data.courseDescription,
+        title: parsedData.data.title,
+        slug: parsedData.data.slug,
+        description: parsedData.data.description,
         organizationId: userOrgInfo[0].organizationId,
         isFree: parsedData.data.isFree,
         level: parsedData.data.level,

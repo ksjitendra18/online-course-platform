@@ -158,12 +158,7 @@ export default function Navbar({ currentUser }: NavbarProps) {
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" className="w-full justify-start">
-                        Profile
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start">
-                        Settings
-                      </Button>
+
                       <Button
                         onClick={handleLogout}
                         variant="ghost"

@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const BasicInfoSchema = z.object({
-  courseName: z
+  title: z
     .string({ required_error: "Course Name is required" })
     .min(1, { message: "Course Name is required" })
     .max(50, { message: "Course Name should be less than 50 characters" })
@@ -10,7 +10,7 @@ export const BasicInfoSchema = z.object({
     })
     .trim(),
 
-  courseSlug: z
+  slug: z
     .string({ required_error: "Course Slug is required" })
     .min(4, { message: "Slug should be 4 or more than 4 characters" })
     .max(50, { message: "Slug should be less than 50 characters" })
@@ -22,7 +22,7 @@ export const BasicInfoSchema = z.object({
     })
     .trim(),
 
-  courseDescription: z
+  description: z
     .string({ required_error: "Course Description is required" })
     .min(1, { message: "Course Description is required" })
     .max(300, {
