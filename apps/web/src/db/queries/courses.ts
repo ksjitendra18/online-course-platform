@@ -246,7 +246,7 @@ export const getPublishedCourses = unstable_cache(
     });
   },
 
-  ["get-published-course"],
+  ["get-published-courses"],
   { revalidate: 7200, tags: ["get-published-courses"] }
 );
 
