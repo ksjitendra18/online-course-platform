@@ -117,8 +117,10 @@ export async function POST(request: NextRequest) {
     console.log("Error while verifying two-factor authentication", err);
     return Response.json(
       {
-        error: "server_error",
-        message: "Internal server error. Please try again later.",
+        error: {
+          code: "server_error",
+          message: "Internal server error. Please try again later.",
+        },
       },
       { status: 500 }
     );

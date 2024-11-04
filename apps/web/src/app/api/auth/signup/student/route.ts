@@ -1,5 +1,5 @@
-import { createId } from "@paralleldrive/cuid2";
 import { eq } from "drizzle-orm";
+import { ulid } from "ulidx";
 
 import { db } from "@/db";
 import { user } from "@/db/schema";
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
     const hashedPassword = await hashPassword({
       password: parsedData.data.password,
     });
-    const userId = createId();
+    const userId = ulid();
 
     await db.batch([
       db.insert(user).values({

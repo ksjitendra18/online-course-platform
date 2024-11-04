@@ -1,6 +1,6 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { chapter } from "./chapter";
 
@@ -8,7 +8,7 @@ export const article = sqliteTable(
   "article",
   {
     id: text("id")
-      .$defaultFn(() => createId())
+      .$defaultFn(() => ulid())
       .primaryKey(),
 
     content: text("string").notNull(),

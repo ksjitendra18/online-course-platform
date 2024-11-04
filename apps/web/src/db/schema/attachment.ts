@@ -1,6 +1,6 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { chapter } from "./chapter";
 import { videoData } from "./video-data";
@@ -9,7 +9,7 @@ export const attachment = sqliteTable(
   "attachment",
   {
     id: text("id")
-      .$defaultFn(() => createId())
+      .$defaultFn(() => ulid())
       .primaryKey(),
     name: text("name").notNull(),
     url: text("url").notNull(),
@@ -44,7 +44,7 @@ export const videoAttachment = sqliteTable(
   "video_attachment",
   {
     id: text("id")
-      .$defaultFn(() => createId())
+      .$defaultFn(() => ulid())
       .primaryKey(),
     name: text("name").notNull(),
     url: text("url").notNull(),

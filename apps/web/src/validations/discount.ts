@@ -55,7 +55,6 @@ export const DiscountSchema = z
       case "value":
         if (data.discountValue >= data.originalPrice) {
           ctx.addIssue({
-            path: ["discountValue"],
             message: "Discount value must be less than the price",
             code: z.ZodIssueCode.custom,
           });
@@ -64,7 +63,6 @@ export const DiscountSchema = z
       case "percent":
         if (data.discountValue < 1 || data.discountValue >= 100) {
           ctx.addIssue({
-            path: ["newPrice"],
             message: "New Price should not be more than new price",
             code: z.ZodIssueCode.custom,
           });
@@ -75,7 +73,6 @@ export const DiscountSchema = z
     if (data.timeLimit === "limited") {
       if (!data.timeLimitValue || data.timeLimitValue <= data.activeFromValue) {
         ctx.addIssue({
-          path: ["activeFromValue", "timeLimitValue"],
           code: z.ZodIssueCode.custom,
           message: "Time Limit value should be more than active from",
         });
@@ -84,7 +81,6 @@ export const DiscountSchema = z
 
     if (data.usageLimit === "limited" && Number(data.usageLimitValue) <= 0) {
       ctx.addIssue({
-        path: ["usageLimitValue"],
         code: z.ZodIssueCode.custom,
         message: "Usage Limit must be greater than 0",
       });

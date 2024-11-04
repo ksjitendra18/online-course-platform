@@ -1,4 +1,3 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   index,
@@ -7,6 +6,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { user } from "./auth";
 import { course } from "./course";
@@ -15,7 +15,7 @@ export const courseEnrollment = sqliteTable(
   "course_enrollment",
   {
     id: text("id")
-      .$defaultFn(() => createId())
+      .$defaultFn(() => ulid())
       .primaryKey(),
     courseId: text("course_id")
       .notNull()
@@ -42,6 +42,9 @@ export const courseEnrollment = sqliteTable(
     enrollUserIdx: index("course_enrollment_user_id_idx").on(table.userId),
     enrollCourseIdx: index("course_enrollment_course_id_idx").on(
       table.courseId
+    ),
+    enrollCreatedAtIdx: index("course_enrollment_created_at_idx").on(
+      table.createdAt
     ),
   })
 );

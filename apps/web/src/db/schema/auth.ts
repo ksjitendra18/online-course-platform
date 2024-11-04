@@ -1,6 +1,6 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { chapterLogs } from "./chapter";
 import { course, courseLogs } from "./course";
@@ -14,7 +14,7 @@ import { purchase } from "./purchase";
 
 export const organization = sqliteTable("organization", {
   id: text("id")
-    .$default(() => createId())
+    .$default(() => ulid())
     .primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
@@ -34,7 +34,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
 
 export const user = sqliteTable("user", {
   id: text("id")
-    .$default(() => createId())
+    .$default(() => ulid())
     .primaryKey(),
   name: text("name").notNull(),
   userName: text("user_name").notNull().unique(),
@@ -89,7 +89,7 @@ export const oauthProvider = sqliteTable(
   "oauth_provider",
   {
     id: text("id")
-      .$default(() => createId())
+      .$default(() => ulid())
       .primaryKey(),
     userId: text("user_id")
       .references(() => user.id, {
@@ -152,7 +152,7 @@ export const passwordLogs = sqliteTable(
   "password_logs",
   {
     id: text("id")
-      .$default(() => createId())
+      .$default(() => ulid())
       .primaryKey(),
     userId: text("user_id")
       .notNull()
@@ -181,7 +181,7 @@ export const session = sqliteTable(
   "session",
   {
     id: text("id")
-      .$default(() => createId())
+      .$default(() => ulid())
       .primaryKey(),
     userId: text("user_id")
       .notNull()
@@ -211,7 +211,7 @@ export const sessRelations = relations(session, ({ one }) => ({
 
 export const loginLog = sqliteTable("login_log", {
   id: text("id")
-    .$default(() => createId())
+    .$default(() => ulid())
     .primaryKey(),
   sessionId: text("session_id").references(() => session.id, {
     onDelete: "cascade",
@@ -248,7 +248,7 @@ export const loginLogRelations = relations(loginLog, ({ one }) => ({
 
 export const recoveryCodes = sqliteTable("recovery_codes", {
   id: text("id")
-    .$defaultFn(() => createId())
+    .$defaultFn(() => ulid())
     .primaryKey(),
   userId: text("user_id").references(() => user.id, {
     onDelete: "cascade",
@@ -269,7 +269,7 @@ export const recoveryCodesRelations = relations(recoveryCodes, ({ one }) => ({
 
 export const adminAuthLogs = sqliteTable("admin_auth_logs", {
   id: text("id")
-    .$defaultFn(() => createId())
+    .$defaultFn(() => ulid())
     .primaryKey(),
   userId: text("user_id").references(() => user.id, {
     onDelete: "set null",

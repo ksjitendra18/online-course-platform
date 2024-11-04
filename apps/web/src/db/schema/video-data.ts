@@ -1,4 +1,3 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   index,
@@ -7,6 +6,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { videoAttachment } from "./attachment";
 import { chapter } from "./chapter";
@@ -16,7 +16,7 @@ export const videoData = sqliteTable(
   "video_data",
   {
     id: text("id")
-      .$defaultFn(() => createId())
+      .$defaultFn(() => ulid())
       .primaryKey(),
     playbackId: text("playback_id").notNull(),
     duration: integer("duration").notNull(),

@@ -1,4 +1,4 @@
-import { createId } from "@paralleldrive/cuid2";
+import { ulid } from "ulidx";
 
 import { db } from "@/db";
 import { organization, organizationMember } from "@/db/schema";
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const organizationId = createId();
+    const organizationId = ulid();
 
     await db.batch([
       db.insert(organization).values({

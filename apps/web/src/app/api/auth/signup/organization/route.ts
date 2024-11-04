@@ -1,5 +1,5 @@
-import { createId } from "@paralleldrive/cuid2";
 import { eq } from "drizzle-orm";
+import { ulid } from "ulidx";
 
 import { db } from "@/db";
 import {
@@ -106,8 +106,8 @@ export async function POST(request: Request) {
       password: parsedData.data.password,
     });
 
-    const organizationId = createId();
-    const userId = createId();
+    const organizationId = ulid();
+    const userId = ulid();
     await db.batch([
       db.insert(organization).values({
         id: organizationId,

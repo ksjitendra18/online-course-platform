@@ -56,8 +56,7 @@ export async function POST(request: NextRequest) {
     if (!enteredCode || enteredCode.length != 6) {
       return Response.json(
         {
-          error: "validation_error",
-          message: "Enter a valid code",
+          error: { code: "validation_error", message: "Enter a valid code" },
         },
         { status: 400 }
       );
@@ -67,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     if (!twoFaToken) {
       return Response.json(
-        { error: "authentication_error", message: "Log in" },
+        { error: { code: "authentication_error", message: "Log in" } },
         {
           status: 401,
         }
@@ -80,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     if (!userId) {
       return Response.json(
-        { error: "authentication_error", message: "Log in" },
+        { error: { code: "authentication_error", message: "Log in" } },
         {
           status: 401,
         }
@@ -98,7 +97,7 @@ export async function POST(request: NextRequest) {
 
     if (!userExists || userExists.recoveryCodes.length < 1) {
       return Response.json(
-        { error: "authentication_error", message: "Log in" },
+        { error: { code: "authentication_error", message: "Log in" } },
         {
           status: 401,
         }
@@ -150,9 +149,11 @@ export async function POST(request: NextRequest) {
     if (!isValidToken) {
       return Response.json(
         {
-          error: "verification_error",
-          message:
-            "Error while verifying multi factor code. Enter new code and try again.",
+          error: {
+            code: "verification_error",
+            message:
+              "Error while verifying multi factor code. Enter new code and try again.",
+          },
         },
         { status: 400 }
       );
@@ -210,8 +211,10 @@ export async function POST(request: NextRequest) {
     console.log("Error while verifying recovery code", err);
     return Response.json(
       {
-        error: "server_error",
-        message: "Internal server Error. Please try again later",
+        error: {
+          code: "server_error",
+          message: "Internal server Error. Please try again later",
+        },
       },
       { status: 500 }
     );

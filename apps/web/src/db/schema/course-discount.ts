@@ -1,6 +1,6 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import { index, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { course } from "./course";
 import { discount } from "./discount";
@@ -9,7 +9,7 @@ export const courseDiscount = sqliteTable(
   "course_discount",
   {
     id: text("id")
-      .$defaultFn(() => createId())
+      .$defaultFn(() => ulid())
       .primaryKey(),
     courseId: text("course_id")
       .references(() => course.id, {

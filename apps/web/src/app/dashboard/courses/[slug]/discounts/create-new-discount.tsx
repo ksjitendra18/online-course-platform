@@ -5,6 +5,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 
 import { Loader2, Plus } from "lucide-react";
 import toast from "react-hot-toast";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,11 @@ const CreateNewDiscount = ({
     "value"
   );
 
+  const [formErrors, setFormErrors] = useState<z.ZodFormattedError<
+    z.infer<typeof DiscountSchema>,
+    string
+  > | null>(null);
+
   const [newPrice, setNewPrice] = useState(price);
 
   const [usageLimit, setUsageLimit] = useState<"limited" | "unlimited">(
@@ -54,6 +60,7 @@ const CreateNewDiscount = ({
     setLoading(true);
     try {
       const formData = new FormData(e.currentTarget);
+      setFormErrors(null);
 
       const timeLimitData = formData.get("timeLimitValue");
       let timeLimitValue = null;
@@ -78,6 +85,9 @@ const CreateNewDiscount = ({
 
       if (!parsedData.success) {
         toast.error("One or more errors in form");
+        setFormErrors(parsedData.error.format());
+
+        console.log("parsed data", parsedData.error.format());
         console.log("parsed data", parsedData.error);
         return;
       }
@@ -269,7 +279,7 @@ const CreateNewDiscount = ({
           {activeFrom === "other" && (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="activeFromValue" className="text-right">
-                Limit
+                Active From Date
               </Label>
               <Input
                 name="activeFromValue"
@@ -304,7 +314,7 @@ const CreateNewDiscount = ({
           {timeLimit === "limited" && (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="timeLimitValue" className="text-right">
-                Limit
+                Valid Till Date
               </Label>
               <Input
                 name="timeLimitValue"
@@ -313,6 +323,18 @@ const CreateNewDiscount = ({
                 placeholder="For how much time this code can be used?"
                 className="col-span-3"
               />
+            </div>
+          )}
+          {formErrors && (
+            <div className="flex flex-col gap-3">
+              {formErrors?._errors?.map((err, idx) => (
+                <p
+                  key={idx}
+                  className="rounded-md bg-red-500 px-3 py-2 text-white"
+                >
+                  {err}
+                </p>
+              ))}
             </div>
           )}
           <DialogFooter>

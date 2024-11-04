@@ -1,10 +1,15 @@
+import { z } from "zod";
+
 import { db } from "@/db";
 import { discount } from "@/db/schema";
 import { courseDiscount } from "@/db/schema/course-discount";
 import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { DiscountSchema } from "@/validations/discount";
 
-export async function POST(request: Request, props: { params: Promise<{ courseId: string }> }) {
+export async function POST(
+  request: Request,
+  props: { params: Promise<{ courseId: string }> }
+) {
   const params = await props.params;
   try {
     const requestBody = await request.json();
@@ -44,6 +49,12 @@ export async function POST(request: Request, props: { params: Promise<{ courseId
       );
     }
 
+    console.log("----------------------------");
+    console.dir(parsedData.data);
+    console.log("data", parsedData.data);
+
+    console.log("----------------------------");
+
     await db.transaction(async (trx) => {
       const [newDiscount] = await trx
         .insert(discount)
@@ -52,7 +63,7 @@ export async function POST(request: Request, props: { params: Promise<{ courseId
           type: parsedData.data.discountType,
           discountValue: parsedData.data.discountValue,
           usageLimit: parsedData.data.usageLimitValue,
-          activeFrom: parsedData.data.activeFromValue,
+          activeFrom: parsedData.data.activeFromValue / 1000,
           validTill: parsedData.data.timeLimitValue,
           isActive: true,
         })

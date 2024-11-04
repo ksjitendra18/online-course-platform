@@ -1,6 +1,6 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import {
   chapter,
@@ -11,7 +11,7 @@ import {
   quiz,
   quizResponse,
   user,
-  videoData
+  videoData,
 } from ".";
 import { courseCategory } from "./course-category";
 import { courseDiscount } from "./course-discount";
@@ -22,7 +22,7 @@ import { review } from "./review";
 
 export const course = sqliteTable("course", {
   id: text("id")
-    .$defaultFn(() => createId())
+    .$defaultFn(() => ulid())
     .primaryKey(),
 
   organizationId: text("organization_id")
@@ -59,7 +59,7 @@ export const courseLogs = sqliteTable(
   "course_logs",
   {
     id: text("id")
-      .$defaultFn(() => createId())
+      .$defaultFn(() => ulid())
       .primaryKey(),
     action: text("action", {
       enum: [

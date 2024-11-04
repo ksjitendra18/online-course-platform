@@ -1,12 +1,12 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { courseCategory } from "./course-category";
 
 export const category = sqliteTable("category", {
   id: text("id")
-    .$defaultFn(() => createId())
+    .$defaultFn(() => ulid())
     .primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),

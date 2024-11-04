@@ -61,6 +61,8 @@ const Discounts = async (props: { params: Promise<{ slug: string }> }) => {
 
   const discounts = courseInfo.courseDiscount.map((data) => data.discount);
 
+  // console.log("discounts", discounts);
+
   return (
     <>
       <div className="flex items-center justify-between gap-5 p-6 md:justify-start">

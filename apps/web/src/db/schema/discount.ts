@@ -1,12 +1,12 @@
-import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulidx";
 
 import { courseDiscount } from "./course-discount";
 
 export const discount = sqliteTable("discount", {
   id: text("id")
-    .$defaultFn(() => createId())
+    .$defaultFn(() => ulid())
     .primaryKey(),
   code: text("code").notNull(),
   type: text("type", { enum: ["value", "percent"] }).notNull(),
