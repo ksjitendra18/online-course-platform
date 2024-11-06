@@ -1,5 +1,12 @@
 import { NextConfig } from "next";
 
+import BundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = BundleAnalyzer({
+  // eslint-disable-next-line n/no-process-env
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@node-rs/xxhash", "@node-rs/argon2"],
   devIndicators: {
@@ -23,4 +30,4 @@ const nextConfig: NextConfig = {
   compress: false,
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

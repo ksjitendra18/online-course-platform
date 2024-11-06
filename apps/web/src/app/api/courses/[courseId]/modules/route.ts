@@ -5,7 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { clearCourseData } from "@/actions/clear-course-data";
 import { db } from "@/db/index";
 import { courseModule } from "@/db/schema";
-import { checkAuth } from "@/lib/auth";
+import { checkAuth, checkAuthorizationOfCourse } from "@/lib/auth";
 import { ModuleInfoSchema } from "@/validations/module-info";
 
 export async function POST(
@@ -14,13 +14,9 @@ export async function POST(
 ) {
   const params = await props.params;
   try {
-    const { moduleName, moduleDescription, moduleSlug } = await request.json();
+    const requestBody = await request.json();
 
-    const parsedData = ModuleInfoSchema.safeParse({
-      moduleName,
-      moduleSlug,
-      moduleDescription,
-    });
+    const parsedData = ModuleInfoSchema.safeParse(requestBody);
 
     if (!parsedData.success) {
       return Response.json(
@@ -40,6 +36,18 @@ export async function POST(
       return Response.json(
         { error: { code: "unauthenticated", message: "Login" } },
         { status: 401 }
+      );
+    }
+
+    const isAuthorized = await checkAuthorizationOfCourse({
+      courseId: params.courseId,
+      userId: userInfo.id,
+    });
+
+    if (!isAuthorized) {
+      return Response.json(
+        { error: { code: "unauthorized", message: "Forbidden" } },
+        { status: 403 }
       );
     }
 

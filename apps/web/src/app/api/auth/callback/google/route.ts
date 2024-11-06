@@ -115,6 +115,7 @@ export async function GET(request: NextRequest) {
       const signupType = (await cookies()).get("signup_type")?.value;
 
       (await cookies()).delete("signup_type");
+      (await cookies()).delete("login_method");
 
       const redirectLocation =
         signupType === "organization" ? "/organization-setup" : "/dashboard";
@@ -174,6 +175,7 @@ export async function GET(request: NextRequest) {
 
     (await cookies()).delete("google_oauth_state");
     (await cookies()).delete("google_code_challenge");
+    (await cookies()).delete("login_method");
 
     const encryptedSessionId = aesEncrypt(
       sessionId,
@@ -198,6 +200,8 @@ export async function GET(request: NextRequest) {
     console.log("error GOOGLE LOGIN", error);
     (await cookies()).delete("google_oauth_state");
     (await cookies()).delete("google_code_challenge");
+    (await cookies()).delete("login_method");
+
     return new Response(null, {
       status: 302,
       headers: {

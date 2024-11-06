@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 
 import { hash } from "@node-rs/argon2";
-// import murmurHash from "murmurhash3js";
 import { xxh32, xxh64 } from "@node-rs/xxhash";
 import Bowser from "bowser";
 import { and, eq } from "drizzle-orm";
@@ -72,6 +71,7 @@ export const createUser = async ({
 
     return { userId: newUser[0].id };
   } catch (error) {
+    console.log("error while creating user", error);
     throw new Error("Error while creating user");
   }
 };
@@ -139,6 +139,7 @@ export const createOauthProvider = async ({
       provider: strategy,
     });
   } catch (error) {
+    console.log("error while creating oauth provider", error);
     throw new Error("Error while creating oauth provider");
   }
 };
@@ -467,6 +468,7 @@ export const checkAuth = async () => {
 
     return { isAuth: true, userInfo: sessionExists.user };
   } catch (error) {
+    console.log("error while checking auth", error);
     throw new Error("Error while checking auth");
   }
 };
@@ -491,6 +493,7 @@ export const checkAuthorizationOfCourse = async ({
     }
     return true;
   } catch (error) {
+    console.log("error while checking authorization", error);
     throw new Error("Error while checking authorization");
   }
 };
@@ -513,99 +516,136 @@ export const sendMagicLink = async ({
 }) => {
   const verificationId = generateVerificationId();
 
+  const LAST_SENT_TIME = {
+    key: `${email}:ml_sent`,
+    duration: 3600,
+  };
+
+  const EMAIL_SENT_COUNT = {
+    key: `${email}:ml_count`,
+    value: 0,
+    limit: 6,
+    duration: 86400,
+  };
+
+  const VERIFICATION_ID = {
+    key: verificationId,
+    value: email,
+    duration: 7200,
+  };
+
   try {
-    const lastEmailSentTime = await redis.get(`${email}:ml_sent`);
+    const lastEmailSentTime = await redis.get(LAST_SENT_TIME.key);
+    const emailSentCount = Number((await redis.get(EMAIL_SENT_COUNT.key)) || 0);
 
-    console.log(
-      "lastEmailSentTime",
-      lastEmailSentTime,
-      Math.floor((new Date().getTime() - Number(lastEmailSentTime)) / 3600)
-    );
-
-    if (lastEmailSentTime) {
-      return {
-        waitTime:
-          1 -
-          Math.floor((new Date().getTime() - Number(lastEmailSentTime)) / 3600),
-      };
+    if (Number(emailSentCount) >= EMAIL_SENT_COUNT.limit) {
+      return { emailSendLimit: true };
     }
 
-    const emailSentCount = await redis.get(`${email}:ml_count`);
+    if (lastEmailSentTime) {
+      const timeNow = new Date().getTime();
+      const differenceInSeconds = Math.floor(
+        (timeNow - Number(lastEmailSentTime)) / 1000
+      );
 
-    if (emailSentCount == null || Number(emailSentCount) > 0) {
-      const res = await fetch("https://api.zeptomail.in/v1.1/email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${env.ZOHO_MAIL_TOKEN}`,
-        },
-        body: JSON.stringify({
-          from: {
-            name: `${env.FROM_NAME}`,
-            address: `${env.AUTH_EMAIL_ADDRESS}`,
-          },
-          to: [
-            {
-              email_address: {
-                address: email,
-              },
-            },
-          ],
-          subject: "Log in to Learning App",
-          htmlbody: `<div>Log in as ${email} </div>
-          <a href="${url}/magic-link/${verificationId}">Log in</a>
+      let requiredInterval = 60; // default 1 minute for 3 requests
 
-          <div>If you wish to copy the link, here is the link</div>
-          <div>
-          ${url}/magic-link/${verificationId}
-          </div>
-          <div>The link is valid for 2 hours</div>
-          <div>You have received this email because you or someone tried to signup on the website </div>
-          <div>If you didn't signup, kindly ignore this email.</div>
-          <div>For support contact us at ${env.SUPPORT_EMAIL}</div>
-          `,
-        }),
-      });
-
-      if (res.ok) {
-        const verificationIdPromise = redis.set(
-          verificationId,
-          email,
-          "EX",
-          7200
-        );
-
-        let emailCountPromise;
-
-        if (emailSentCount === null) {
-          emailCountPromise = redis.set(`${email}:ml_count`, 4, "EX", 86400);
-        } else {
-          emailCountPromise = redis.decr(`${email}:ml_count`);
-        }
-
-        const emailSentPromise = redis.set(
-          `${email}:ml_sent`,
-          new Date().getTime(),
-          "EX",
-          60
-        );
-
-        const [res1, res2, res3] = await Promise.all([
-          verificationIdPromise,
-          emailCountPromise,
-          emailSentPromise,
-        ]);
-
-        if (res1 && res2 && res3) {
-          return { verificationId };
-        } else {
-          throw new Error("Error while sending mail");
-        }
-      } else {
-        throw new Error("Error while sending mail");
+      if (emailSentCount >= 3) {
+        requiredInterval = 600; // next 3 requests should be in 1 minute
       }
+
+      if (differenceInSeconds < requiredInterval) {
+        const remainingTime = requiredInterval - differenceInSeconds;
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+
+        if (minutes > 0) {
+          return {
+            waitTime: `${minutes} minutes ${seconds} seconds`,
+          };
+        } else {
+          return {
+            waitTime: `${seconds} seconds`,
+          };
+        }
+      }
+    }
+
+    const res = await fetch("https://api.zeptomail.in/v1.1/email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${env.ZOHO_MAIL_TOKEN}`,
+      },
+      body: JSON.stringify({
+        from: {
+          name: `${env.FROM_NAME}`,
+          address: `${env.AUTH_EMAIL_ADDRESS}`,
+        },
+        to: [
+          {
+            email_address: {
+              address: email,
+            },
+          },
+        ],
+        subject: "Log in to Learning App",
+        htmlbody: `<div>Log in as ${email} </div>
+        <a href="${url}/magic-link/${verificationId}">Log in</a>
+
+        <div>If you wish to copy the link, here is the link</div>
+        <div>
+        ${url}/magic-link/${verificationId}
+        </div>
+        <div>The link is valid for 2 hours</div>
+        <div>You have received this email because you or someone tried to signup on the website </div>
+        <div>If you didn't signup, kindly ignore this email.</div>
+        <div>For support contact us at ${env.SUPPORT_EMAIL}</div>
+        `,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Error while sending mail");
+    }
+
+    const verificationIdPromise = redis.set(
+      VERIFICATION_ID.key,
+      VERIFICATION_ID.value,
+      "EX",
+      VERIFICATION_ID.duration
+    );
+
+    let emailCountPromise;
+
+    if (emailSentCount === null) {
+      emailCountPromise = redis.set(
+        EMAIL_SENT_COUNT.key,
+        EMAIL_SENT_COUNT.value,
+        "EX",
+        EMAIL_SENT_COUNT.duration
+      );
     } else {
-      return { emailSendLimit: true };
+      emailCountPromise = redis.incr(EMAIL_SENT_COUNT.key);
+    }
+
+    const emailSentPromise = redis.set(
+      LAST_SENT_TIME.key,
+      new Date().getTime(),
+      "EX",
+      LAST_SENT_TIME.duration
+    );
+
+    const [res1, res2, res3] = await Promise.all([
+      verificationIdPromise,
+      emailCountPromise,
+      emailSentPromise,
+    ]);
+
+    if (res1 && res2 && res3) {
+      return { verificationId };
+    } else {
+      throw new Error("Error while sending mail");
     }
   } catch (error) {
     console.log("error while sending mail", error);

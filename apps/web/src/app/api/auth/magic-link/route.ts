@@ -54,13 +54,13 @@ export async function POST(req: Request) {
         { status: 429 }
       );
     } else if (res.verificationId) {
-      return Response.json(null, { status: 200 });
+      return Response.json({ sucess: true }, { status: 200 });
     } else if (res.waitTime) {
       return Response.json(
         {
           error: {
             code: "resend_limit",
-            message: `Please wait for ${res.waitTime} minutes before generating new request for mail`,
+            message: `Please wait for ${res.waitTime} before generating new request for mail`,
           },
         },
         { status: 429 }

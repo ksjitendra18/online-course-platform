@@ -76,7 +76,6 @@ export const userRelations = relations(user, ({ one, many }) => ({
   chapterLogs: many(chapterLogs),
   discussionVotes: many(discussionVote),
   discussionReplies: many(discussionReply),
-  passwordLogs: many(passwordLogs),
   oauthProvider: many(oauthProvider),
   adminAuthLogs: many(adminAuthLogs),
   recoveryCodes: many(recoveryCodes),
@@ -144,35 +143,6 @@ export const password = sqliteTable("password", {
 export const passwordRelations = relations(password, ({ one }) => ({
   user: one(user, {
     fields: [password.userId],
-    references: [user.id],
-  }),
-}));
-
-export const passwordLogs = sqliteTable(
-  "password_logs",
-  {
-    id: text("id")
-      .$default(() => ulid())
-      .primaryKey(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      }),
-
-    createdAt: integer("created_at")
-      .default(sql`(unixepoch())`)
-      .notNull(),
-  },
-  (table) => ({
-    userIdIdx: index("user_id_idx").on(table.userId),
-  })
-);
-
-export const passwordLogsRelations = relations(passwordLogs, ({ one }) => ({
-  user: one(user, {
-    fields: [passwordLogs.userId],
     references: [user.id],
   }),
 }));

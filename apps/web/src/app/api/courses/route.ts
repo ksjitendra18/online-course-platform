@@ -9,16 +9,9 @@ import { BasicInfoSchema } from "@/validations/basic-info";
 
 export async function POST(request: Request) {
   try {
-    const { courseName, courseSlug, courseDescription, isFree, level } =
-      await request.json();
+    const requestBody = await request.json();
 
-    const parsedData = BasicInfoSchema.safeParse({
-      courseName,
-      courseSlug,
-      courseDescription,
-      isFree,
-      level,
-    });
+    const parsedData = BasicInfoSchema.safeParse(requestBody);
 
     if (!parsedData.success) {
       return Response.json(
@@ -64,9 +57,22 @@ export async function POST(request: Request) {
     }
 
     // ! GET USER ORGANIZATION INFO
+    // CURRENTLY WE ARE SELECTING THE VERY FIRST ORGANIZATION
     const userOrgInfo = sessionExists.user.organizationMember.filter(
       (org) => org.role === "owner" || org.role === "admin"
     );
+
+    if (userOrgInfo.length === 0) {
+      return Response.json(
+        {
+          error: {
+            code: "unauthorized",
+            message: "You are not authorized to create a course",
+          },
+        },
+        { status: 403 }
+      );
+    }
 
     const slugExists = await db.query.course.findFirst({
       where: eq(course.slug, parsedData.data.slug),
@@ -86,33 +92,35 @@ export async function POST(request: Request) {
       );
     }
 
-    const newCourse = await db
-      .insert(course)
-      .values({
-        title: parsedData.data.title,
-        slug: parsedData.data.slug,
-        description: parsedData.data.description,
-        organizationId: userOrgInfo[0].organizationId,
-        isFree: parsedData.data.isFree,
-        level: parsedData.data.level,
-        status: "draft",
-      })
-      .returning({ id: course.id, slug: course.slug });
+    await db.transaction(async (trx) => {
+      const newCourse = await trx
+        .insert(course)
+        .values({
+          title: parsedData.data.title,
+          slug: parsedData.data.slug,
+          description: parsedData.data.description,
+          organizationId: userOrgInfo[0].organizationId,
+          isFree: parsedData.data.isFree,
+          level: parsedData.data.level,
+          status: "draft",
+        })
+        .returning({ id: course.id, slug: course.slug });
 
-    await db.insert(courseMember).values({
-      courseId: newCourse[0].id,
-      userId: userOrgInfo[0].userId,
-      role: "owner",
-    });
+      await trx.insert(courseMember).values({
+        courseId: newCourse[0].id,
+        userId: userOrgInfo[0].userId,
+        role: "owner",
+      });
 
-    await db.insert(courseLogs).values({
-      courseId: newCourse[0].id,
-      userId: userOrgInfo[0].userId,
-      action: "create",
+      await trx.insert(courseLogs).values({
+        courseId: newCourse[0].id,
+        userId: userOrgInfo[0].userId,
+        action: "create",
+      });
     });
 
     return Response.json(
-      { data: { courseId: newCourse[0].id, courseSlug: newCourse[0].slug } },
+      { data: { courseSlug: parsedData.data.slug } },
       { status: 201 }
     );
   } catch (error) {
